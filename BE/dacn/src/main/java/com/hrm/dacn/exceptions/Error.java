@@ -48,16 +48,15 @@ public enum Error {
     JWT_MALFORMED(14003, "Malformed JWT token", HttpStatus.UNAUTHORIZED),
     INVALID_REFRESH_TOKEN(14004, "Invalid refresh token", HttpStatus.UNAUTHORIZED),
 
-    // General validation errors
-    INVALID_DATE_FORMAT(33001, "Invalid date format", HttpStatus.BAD_REQUEST),
-    INVALID_TIME_FORMAT(33002, "Invalid time format", HttpStatus.BAD_REQUEST),
-    INVALID_NUMERIC_VALUE(33003, "Invalid numeric value", HttpStatus.BAD_REQUEST),
-    INVALID_ENUM_VALUE(33004, "Invalid enum value", HttpStatus.BAD_REQUEST),
-    REQUIRED_FIELD_MISSING(33005, "Required field is missing", HttpStatus.BAD_REQUEST),
-    FIELD_TOO_LONG(33006, "Field value exceeds maximum length", HttpStatus.BAD_REQUEST),
-    FIELD_TOO_SHORT(33007, "Field value is below minimum length", HttpStatus.BAD_REQUEST),
-    INVALID_EMAIL_FORMAT(33008, "Invalid email format", HttpStatus.BAD_REQUEST),
-    INVALID_PHONE_FORMAT(33009, "Invalid phone number format", HttpStatus.BAD_REQUEST),
+    // Employee errors
+    EMPLOYEE_NOT_FOUND(2001, "Employee not found", HttpStatus.NOT_FOUND),
+
+
+    // Contract errors
+    CONTRACT_NOT_FOUND(3001,  "Contract not found", HttpStatus.NOT_FOUND),
+    CONTRACT_DATE_INVALID(3002, "Contract date valid", HttpStatus.BAD_REQUEST),
+    CONTRACT_ALREADY_ACTIVATED(3003, "Contract already activated", HttpStatus.BAD_REQUEST),
+
 
     // Business logic errors
     INSUFFICIENT_PRIVILEGES(34001, "Insufficient privileges to perform this action", HttpStatus.FORBIDDEN),

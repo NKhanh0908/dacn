@@ -96,9 +96,9 @@ public class Contracts {
     // =========================
     // Relationship (optional)
     // =========================
-    // @ManyToOne(fetch = FetchType.LAZY)
-    // @JoinColumn(name = "employ_id", insertable = false, updatable = false)
-    // private Employee employee;
+     @ManyToOne(fetch = FetchType.LAZY)
+     @JoinColumn(name = "employ_id", insertable = false, updatable = false)
+     private Employee employee;
 
     // =========================
     // Business logic (Transient)

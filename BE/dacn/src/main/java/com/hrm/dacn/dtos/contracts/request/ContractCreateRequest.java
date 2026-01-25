@@ -14,6 +14,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 public class ContractCreateRequest {
 
+
     @NotBlank(message = "Contract number must not be blank")
     @Size(max = 50, message = "Contract number must not exceed 50 characters")
     private String contractNumber;

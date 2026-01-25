@@ -7,6 +7,7 @@ import com.hrm.dacn.entities.Contracts;
 
 import java.math.BigDecimal;
 
+
 public class ContractMapper {
 
     private ContractMapper() {
@@ -25,8 +26,8 @@ public class ContractMapper {
                 .contractNumber(request.getContractNumber())
                 .contractType(request.getContractType())
                 .startDate(request.getStartDate())
-                .endDate(request.getEndDate())
-                .basicSalary(request.getBasicSalary())
+                .endDate(request.getEndDate() != null ? request.getEndDate() : null)
+                .basicSalary(request.getBasicSalary() != null ? request.getBasicSalary() : BigDecimal.ZERO)
                 .allowances(
                         request.getAllowances() != null
                                 ? request.getAllowances()
@@ -34,9 +35,9 @@ public class ContractMapper {
                 )
                 .workingHoursPerDay(request.getWorkingHoursPerDay())
                 .workingDaysPerWeek(request.getWorkingDaysPerWeek())
-                .probationPeriod(request.getProbationPeriod())
+                .probationPeriod(request.getProbationPeriod() != null ? request.getProbationPeriod() : 0)
                 .jobDescription(request.getJobDescription())
-                .signedDate(request.getSignedDate())
+                .signedDate(request.getSignedDate() != null ? request.getSignedDate() : null)
                 .build();
     }
 
@@ -48,22 +49,73 @@ public class ContractMapper {
             return;
         }
 
-        contract.setContractType(request.getContractType());
-        contract.setStartDate(request.getStartDate());
-        contract.setEndDate(request.getEndDate());
-        contract.setBasicSalary(request.getBasicSalary());
+        contract.setContractType(
+                request.getContractType() != null
+                        ? request.getContractType()
+                        : contract.getContractType()
+        );
+
+        contract.setStartDate(
+                request.getStartDate() != null
+                        ? request.getStartDate()
+                        : contract.getStartDate()
+        );
+
+        contract.setEndDate(
+                request.getEndDate() != null
+                        ? request.getEndDate()
+                        : contract.getEndDate()
+        );
+
+        contract.setBasicSalary(
+                request.getBasicSalary() != null
+                        ? request.getBasicSalary()
+                        : contract.getBasicSalary()
+        );
+
         contract.setAllowances(
                 request.getAllowances() != null
                         ? request.getAllowances()
-                        : BigDecimal.ZERO
+                        : contract.getAllowances()
         );
-        contract.setWorkingHoursPerDay(request.getWorkingHoursPerDay());
-        contract.setWorkingDaysPerWeek(request.getWorkingDaysPerWeek());
-        contract.setProbationPeriod(request.getProbationPeriod());
-        contract.setJobDescription(request.getJobDescription());
-        contract.setSignedDate(request.getSignedDate());
-        contract.setStatus(request.getStatus());
+
+        contract.setWorkingHoursPerDay(
+                request.getWorkingHoursPerDay() != null
+                        ? request.getWorkingHoursPerDay()
+                        : contract.getWorkingHoursPerDay()
+        );
+
+        contract.setWorkingDaysPerWeek(
+                request.getWorkingDaysPerWeek() != null
+                        ? request.getWorkingDaysPerWeek()
+                        : contract.getWorkingDaysPerWeek()
+        );
+
+        contract.setProbationPeriod(
+                request.getProbationPeriod() != null
+                        ? request.getProbationPeriod()
+                        : contract.getProbationPeriod()
+        );
+
+        contract.setJobDescription(
+                request.getJobDescription() != null
+                        ? request.getJobDescription()
+                        : contract.getJobDescription()
+        );
+
+        contract.setSignedDate(
+                request.getSignedDate() != null
+                        ? request.getSignedDate()
+                        : contract.getSignedDate()
+        );
+
+        contract.setStatus(
+                request.getStatus() != null
+                        ? request.getStatus()
+                        : contract.getStatus()
+        );
     }
+
 
     // =========================
     // RESPONSE

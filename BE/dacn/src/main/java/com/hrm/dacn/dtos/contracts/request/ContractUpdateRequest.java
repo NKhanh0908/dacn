@@ -15,9 +15,6 @@ import java.time.LocalDate;
 @AllArgsConstructor
 public class ContractUpdateRequest {
 
-    @NotNull(message = "Contract ID must not be null")
-    private Long contractId;
-
     @NotNull(message = "Contract type must not be null")
     private ContractType contractType;
 
