@@ -1,4 +1,4 @@
-package com.hrm.dacn.enums;
+package com.hrm.dacn.enums.Employee;
 
 public enum Gender {
     MALE("Nam"),

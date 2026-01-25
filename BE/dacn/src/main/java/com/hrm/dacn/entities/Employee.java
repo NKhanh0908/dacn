@@ -3,8 +3,8 @@ package com.hrm.dacn.entities;
 import java.beans.Transient;
 import java.time.LocalDate;
 
-import com.hrm.dacn.enums.EmployeeStatus;
-import com.hrm.dacn.enums.Gender;
+import com.hrm.dacn.enums.Employee.EmployeeStatus;
+import com.hrm.dacn.enums.Employee.Gender;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;

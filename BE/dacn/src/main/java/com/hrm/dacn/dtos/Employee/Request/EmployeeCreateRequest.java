@@ -4,8 +4,8 @@ import lombok.*;
 import jakarta.validation.constraints.*;
 import java.time.LocalDate;
 
-import com.hrm.dacn.enums.EmployeeStatus;
-import com.hrm.dacn.enums.Gender;
+import com.hrm.dacn.enums.Employee.EmployeeStatus;
+import com.hrm.dacn.enums.Employee.Gender;
 
 @Getter
 @Setter
