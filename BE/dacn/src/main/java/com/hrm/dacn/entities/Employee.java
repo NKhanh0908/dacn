@@ -12,6 +12,7 @@ import lombok.*;
 
 @Entity
 @Table(name = "employees")
+@Builder
 @Getter
 @Setter
 @NoArgsConstructor
