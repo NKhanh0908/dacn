@@ -2,6 +2,8 @@ package com.hrm.dacn.services.impl;
 
 import java.util.List;
 
+import org.springframework.stereotype.Service;
+
 import com.hrm.dacn.dtos.Employee.Request.EmployeeCreateRequest;
 import com.hrm.dacn.dtos.Employee.Request.EmployeeUpdateRequest;
 import com.hrm.dacn.dtos.Employee.Response.EmployeeResponse;
@@ -10,6 +12,7 @@ import com.hrm.dacn.mappers.EmployeeMapper;
 import com.hrm.dacn.repositories.EmployeeRepository;
 import com.hrm.dacn.services.EmployeeService;
 
+@Service
 public class EmployeeServiceImpl implements EmployeeService {
 
     private final EmployeeRepository employeeRepository;
