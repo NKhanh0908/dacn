@@ -41,6 +41,8 @@ public enum Error {
     PASSWORD_RESET_INVALID_REQUEST(1011, "Invalid password reset request", HttpStatus.BAD_REQUEST),
     ACCOUNT_EMAIL_ALREADY_EXISTS(1012, "Email already exists", HttpStatus.CONFLICT),
     ACCOUNT_USERNAME_ALREADY_EXISTS(1013, "Username already exists", HttpStatus.CONFLICT),
+    ACCOUNT_DISABLED(1014, "Account is disabled", HttpStatus.FORBIDDEN),
+    REFRESH_TOKEN_NOT_EXPIRED(1013, "Refresh token is not expired", HttpStatus.BAD_REQUEST),
 
     // JWT token-related errors
     JWT_INVALID(14001, "Invalid JWT token", HttpStatus.UNAUTHORIZED),
