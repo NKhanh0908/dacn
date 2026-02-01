@@ -36,7 +36,8 @@ public enum Error {
     ACCOUNT_USERNAME_TO_SHORT(1008, "Username account to short", HttpStatus.BAD_REQUEST),
     ACCOUNT_USERNAME_TO_LONG(1008, "Username account to long", HttpStatus.BAD_REQUEST),
     ACCOUNT_PASSWORD_TO_SHORT(1008, "Password account to short", HttpStatus.BAD_REQUEST),
-    ACCOUNT_LOCKED_TEMPORARILY(1009, "Account is temporarily locked due to too many failed login attempts", HttpStatus.FORBIDDEN),
+    ACCOUNT_LOCKED_TEMPORARILY(1009, "Account is temporarily locked due to too many failed login attempts",
+            HttpStatus.FORBIDDEN),
     PASSWORD_RESET_FAILED(1010, "Password reset failed", HttpStatus.INTERNAL_SERVER_ERROR),
     PASSWORD_RESET_INVALID_REQUEST(1011, "Invalid password reset request", HttpStatus.BAD_REQUEST),
     ACCOUNT_EMAIL_ALREADY_EXISTS(1012, "Email already exists", HttpStatus.CONFLICT),
@@ -53,12 +54,17 @@ public enum Error {
     // Employee errors
     EMPLOYEE_NOT_FOUND(2001, "Employee not found", HttpStatus.NOT_FOUND),
 
-
     // Contract errors
-    CONTRACT_NOT_FOUND(3001,  "Contract not found", HttpStatus.NOT_FOUND),
+    CONTRACT_NOT_FOUND(3001, "Contract not found", HttpStatus.NOT_FOUND),
     CONTRACT_DATE_INVALID(3002, "Contract date valid", HttpStatus.BAD_REQUEST),
     CONTRACT_ALREADY_ACTIVATED(3003, "Contract already activated", HttpStatus.BAD_REQUEST),
 
+    // Attendance errors
+    ATTENDANCE_NOT_FOUND(4001, "Attendance not found", HttpStatus.NOT_FOUND),
+    ALREADY_CHECKED_IN(4002, "You have already checked in today", HttpStatus.BAD_REQUEST),
+    NOT_CHECKED_IN(4003, "You haven't checked in today", HttpStatus.BAD_REQUEST),
+    ALREADY_CHECKED_OUT(4004, "You have already checked out today", HttpStatus.BAD_REQUEST),
+    WORK_SCHEDULE_NOT_FOUND(4005, "Default work schedule not found", HttpStatus.NOT_FOUND),
 
     // Business logic errors
     INSUFFICIENT_PRIVILEGES(34001, "Insufficient privileges to perform this action", HttpStatus.FORBIDDEN),
@@ -88,7 +94,7 @@ public enum Error {
     MFA_SETTINGS_ALREADY_EXISTS(40006, "MFA settings already exist", HttpStatus.CONFLICT),
     MFA_METHOD_NOT_SUPPORTED(40007, "MFA method not supported", HttpStatus.BAD_REQUEST),
 
-    //Trust Device
+    // Trust Device
     TRUST_DEVICE_NOT_FOUND(1100, "Trust device not found", HttpStatus.NOT_FOUND),
 
     // Totp related errors

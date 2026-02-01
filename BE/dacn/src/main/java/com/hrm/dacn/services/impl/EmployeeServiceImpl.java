@@ -54,7 +54,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public List<EmployeeResponse> getAll(Specification<Employee> spec, Pageable pageable) {
+    public ResultPagination getAll(Specification<Employee> spec, Pageable pageable) {
 
         Page<Employee> page = employeeRepository.findAll(spec, pageable);
 

@@ -2,8 +2,10 @@ package com.hrm.dacn.entities;
 
 import java.beans.Transient;
 import java.time.LocalDate;
+import java.time.LocalTime;
 
 import com.hrm.dacn.enums.Employee.EmployeeStatus;
+import com.hrm.dacn.enums.Employee.EmployeeType;
 import com.hrm.dacn.enums.Employee.Gender;
 
 import jakarta.persistence.*;
@@ -89,6 +91,13 @@ public class Employee {
 
     @Column(name = "emergency_contact_relationship", length = 50)
     private String emergencyContactRelationship;
+
+    // GIỜ LÀM VIỆC MẶC ĐỊNH - ĐƠN GIẢN
+    @Column(name = "work_start_time")
+    private LocalTime workStartTime = LocalTime.of(8, 30);
+
+    @Column(name = "work_end_time")
+    private LocalTime workEndTime = LocalTime.of(17, 30);
 
     // @CreationTimestamp
     // @Column(name = "created_at", updatable = false)
