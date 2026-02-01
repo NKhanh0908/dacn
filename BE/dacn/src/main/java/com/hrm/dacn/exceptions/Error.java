@@ -59,6 +59,38 @@ public enum Error {
     CONTRACT_DATE_INVALID(3002, "Contract date valid", HttpStatus.BAD_REQUEST),
     CONTRACT_ALREADY_ACTIVATED(3003, "Contract already activated", HttpStatus.BAD_REQUEST),
 
+    // ========== COMPANY ERRORS ==========
+    COMPANY_NOT_FOUND(404, "Company not found", HttpStatus.NOT_FOUND),
+    COMPANY_ALREADY_EXISTS(409, "Company already exists", HttpStatus.CONFLICT),
+
+    // ========== CONTRACT VALIDATION ERRORS ==========
+    CONTRACT_ALREADY_SIGNED_CANNOT_EDIT(400, "Hợp đồng đã được ký, không thể chỉnh sửa", HttpStatus.BAD_REQUEST),
+    CONTRACT_CANNOT_DELETE(400, "Không thể xóa hợp đồng đã được ký", HttpStatus.BAD_REQUEST),
+    CONTRACT_NOT_ACTIVE(400, "Hợp đồng không ở trạng thái hoạt động", HttpStatus.BAD_REQUEST),
+    CONTRACT_INVALID_STATUS_FOR_SIGNING(400, "Trạng thái hợp đồng không hợp lệ để ký", HttpStatus.BAD_REQUEST),
+
+    // ========== CONTRACT DATE ERRORS ==========
+    START_DATE_REQUIRED(400, "Ngày bắt đầu hợp đồng là bắt buộc", HttpStatus.BAD_REQUEST),
+    END_DATE_REQUIRED(400, "Ngày kết thúc hợp đồng là bắt buộc", HttpStatus.BAD_REQUEST),
+    END_DATE_MUST_AFTER_START_DATE(400, "Ngày kết thúc phải sau ngày bắt đầu", HttpStatus.BAD_REQUEST),
+
+    // ========== CONTRACT TYPE SPECIFIC ERRORS ==========
+    PROBATION_CONTRACT_MUST_HAVE_END_DATE(400, "Hợp đồng thử việc phải có ngày kết thúc", HttpStatus.BAD_REQUEST),
+    PROBATION_CONTRACT_TOO_LONG(400, "Hợp đồng thử việc không được quá 60 ngày", HttpStatus.BAD_REQUEST),
+    PROBATION_CONTRACT_NO_PROBATION_PERIOD(400, "Hợp đồng thử việc không có thời gian thử việc riêng", HttpStatus.BAD_REQUEST),
+
+    FIXED_TERM_CONTRACT_MUST_HAVE_END_DATE(400, "Hợp đồng có thời hạn phải có ngày kết thúc", HttpStatus.BAD_REQUEST),
+    FIXED_TERM_CONTRACT_EXCEEDS_MAX_DURATION(400, "Hợp đồng có thời hạn không được vượt quá 36 tháng (3 năm)", HttpStatus.BAD_REQUEST),
+
+    INDEFINITE_CONTRACT_SHOULD_NOT_HAVE_END_DATE(400, "Hợp đồng vô thời hạn không nên có ngày kết thúc", HttpStatus.BAD_REQUEST),
+
+    // ========== PROBATION ERRORS ==========
+    PROBATION_PERIOD_TOO_LONG(400, "Thời gian thử việc quá dài (tối đa 60 ngày)", HttpStatus.BAD_REQUEST),
+
+    // ========== SALARY ERRORS ==========
+    INVALID_SALARY(400, "Mức lương không hợp lệ", HttpStatus.BAD_REQUEST),
+    SALARY_BELOW_MINIMUM_WAGE(400, "Lương thấp hơn mức lương tối thiểu", HttpStatus.BAD_REQUEST),
+
     // Attendance errors
     ATTENDANCE_NOT_FOUND(4001, "Attendance not found", HttpStatus.NOT_FOUND),
     ALREADY_CHECKED_IN(4002, "You have already checked in today", HttpStatus.BAD_REQUEST),

@@ -3,7 +3,9 @@ package com.hrm.dacn.mappers;
 import com.hrm.dacn.dtos.contracts.request.ContractCreateRequest;
 import com.hrm.dacn.dtos.contracts.request.ContractUpdateRequest;
 import com.hrm.dacn.dtos.contracts.response.ContractResponse;
+import com.hrm.dacn.entities.Company;
 import com.hrm.dacn.entities.Contracts;
+import com.hrm.dacn.entities.Employee;
 
 import java.math.BigDecimal;
 
@@ -17,105 +19,121 @@ public class ContractMapper {
     // =========================
     // CREATE
     // =========================
-    public static Contracts toEntity(ContractCreateRequest request) {
-        if (request == null) {
-            return null;
-        }
+    public static Contracts toEntity(
+            ContractCreateRequest r
+    ) {
+        if (r == null) return null;
 
         return Contracts.builder()
-                .contractNumber(request.getContractNumber())
-                .contractType(request.getContractType())
-                .startDate(request.getStartDate())
-                .endDate(request.getEndDate() != null ? request.getEndDate() : null)
-                .basicSalary(request.getBasicSalary() != null ? request.getBasicSalary() : BigDecimal.ZERO)
-                .allowances(
-                        request.getAllowances() != null
-                                ? request.getAllowances()
-                                : BigDecimal.ZERO
+                .contractNumber(r.getContractNumber())
+
+                .contractType(r.getContractType())
+                .startDate(r.getStartDate())
+                .endDate(r.getEndDate())
+                .signedDate(r.getSignedDate())
+
+                .jobTitle(r.getJobTitle())
+                .department(r.getDepartment())
+                .jobDescription(r.getJobDescription())
+
+                .basicSalary(r.getBasicSalary())
+                .allowances(r.getAllowances() != null ? r.getAllowances() : BigDecimal.ZERO)
+                .allowanceDetails(r.getAllowanceDetails())
+
+                .workingHoursPerDay(
+                        r.getWorkingHoursPerDay() != null
+                                ? r.getWorkingHoursPerDay()
+                                : BigDecimal.valueOf(8)
                 )
-                .workingHoursPerDay(request.getWorkingHoursPerDay())
-                .workingDaysPerWeek(request.getWorkingDaysPerWeek())
-                .probationPeriod(request.getProbationPeriod() != null ? request.getProbationPeriod() : 0)
-                .jobDescription(request.getJobDescription())
-                .signedDate(request.getSignedDate() != null ? request.getSignedDate() : null)
+                .workingDaysPerWeek(
+                        r.getWorkingDaysPerWeek() != null
+                                ? r.getWorkingDaysPerWeek()
+                                : 5
+                )
+
+                .probationPeriod(r.getProbationPeriod())
+
+                .salaryPaymentMethod(r.getSalaryPaymentMethod())
+                .salaryPaymentDate(r.getSalaryPaymentDate())
+
+                .socialInsurance(
+                        r.getSocialInsurance() != null
+                                ? r.getSocialInsurance()
+                                : true
+                )
+                .insuranceSalary(r.getInsuranceSalary())
+
+                .employerRepresentative(r.getEmployerRepresentative())
+                .employerPosition(r.getEmployerPosition())
+
+                .confidentialityClause(r.getConfidentialityClause())
+                .technologyConfidentiality(r.getTechnologyConfidentiality())
+                .nonCompeteClause(r.getNonCompeteClause())
+                .confidentialityPeriodMonths(r.getConfidentialityPeriodMonths())
+
+                .noticePeriodDays(r.getNoticePeriodDays())
+                .notes(r.getNotes())
                 .build();
     }
+
 
     // =========================
     // UPDATE (merge)
     // =========================
-    public static void updateEntity(Contracts contract, ContractUpdateRequest request) {
-        if (contract == null || request == null) {
-            return;
-        }
+    public static void updateEntity(Contracts c, ContractUpdateRequest r) {
+        if (c == null || r == null) return;
 
-        contract.setContractType(
-                request.getContractType() != null
-                        ? request.getContractType()
-                        : contract.getContractType()
-        );
+        if (r.getContractType() != null) c.setContractType(r.getContractType());
+        if (r.getStatus() != null) c.setStatus(r.getStatus());
 
-        contract.setStartDate(
-                request.getStartDate() != null
-                        ? request.getStartDate()
-                        : contract.getStartDate()
-        );
+        if (r.getStartDate() != null) c.setStartDate(r.getStartDate());
+        if (r.getEndDate() != null) c.setEndDate(r.getEndDate());
+        if (r.getSignedDate() != null) c.setSignedDate(r.getSignedDate());
 
-        contract.setEndDate(
-                request.getEndDate() != null
-                        ? request.getEndDate()
-                        : contract.getEndDate()
-        );
+        if (r.getJobTitle() != null) c.setJobTitle(r.getJobTitle());
+        if (r.getDepartment() != null) c.setDepartment(r.getDepartment());
+        if (r.getJobDescription() != null) c.setJobDescription(r.getJobDescription());
 
-        contract.setBasicSalary(
-                request.getBasicSalary() != null
-                        ? request.getBasicSalary()
-                        : contract.getBasicSalary()
-        );
+        if (r.getBasicSalary() != null) c.setBasicSalary(r.getBasicSalary());
+        if (r.getAllowances() != null) c.setAllowances(r.getAllowances());
+        if (r.getAllowanceDetails() != null) c.setAllowanceDetails(r.getAllowanceDetails());
 
-        contract.setAllowances(
-                request.getAllowances() != null
-                        ? request.getAllowances()
-                        : contract.getAllowances()
-        );
+        if (r.getWorkingHoursPerDay() != null) c.setWorkingHoursPerDay(r.getWorkingHoursPerDay());
+        if (r.getWorkingDaysPerWeek() != null) c.setWorkingDaysPerWeek(r.getWorkingDaysPerWeek());
 
-        contract.setWorkingHoursPerDay(
-                request.getWorkingHoursPerDay() != null
-                        ? request.getWorkingHoursPerDay()
-                        : contract.getWorkingHoursPerDay()
-        );
+        if (r.getProbationPeriod() != null) c.setProbationPeriod(r.getProbationPeriod());
+        if (r.getProbationSalaryPercentage() != null)
+            c.setProbationSalaryPercentage(r.getProbationSalaryPercentage());
 
-        contract.setWorkingDaysPerWeek(
-                request.getWorkingDaysPerWeek() != null
-                        ? request.getWorkingDaysPerWeek()
-                        : contract.getWorkingDaysPerWeek()
-        );
+        if (r.getSalaryPaymentMethod() != null)
+            c.setSalaryPaymentMethod(r.getSalaryPaymentMethod());
+        if (r.getSalaryPaymentDate() != null)
+            c.setSalaryPaymentDate(r.getSalaryPaymentDate());
 
-        contract.setProbationPeriod(
-                request.getProbationPeriod() != null
-                        ? request.getProbationPeriod()
-                        : contract.getProbationPeriod()
-        );
+        if (r.getSocialInsurance() != null)
+            c.setSocialInsurance(r.getSocialInsurance());
+        if (r.getInsuranceSalary() != null)
+            c.setInsuranceSalary(r.getInsuranceSalary());
 
-        contract.setJobDescription(
-                request.getJobDescription() != null
-                        ? request.getJobDescription()
-                        : contract.getJobDescription()
-        );
+        if (r.getEmployerRepresentative() != null)
+            c.setEmployerRepresentative(r.getEmployerRepresentative());
+        if (r.getEmployerPosition() != null)
+            c.setEmployerPosition(r.getEmployerPosition());
 
-        contract.setSignedDate(
-                request.getSignedDate() != null
-                        ? request.getSignedDate()
-                        : contract.getSignedDate()
-        );
+        if (r.getConfidentialityClause() != null)
+            c.setConfidentialityClause(r.getConfidentialityClause());
+        if (r.getTechnologyConfidentiality() != null)
+            c.setTechnologyConfidentiality(r.getTechnologyConfidentiality());
+        if (r.getNonCompeteClause() != null)
+            c.setNonCompeteClause(r.getNonCompeteClause());
+        if (r.getConfidentialityPeriodMonths() != null)
+            c.setConfidentialityPeriodMonths(r.getConfidentialityPeriodMonths());
 
-        contract.setStatus(
-                request.getStatus() != null
-                        ? request.getStatus()
-                        : contract.getStatus()
-        );
+        if (r.getNoticePeriodDays() != null)
+            c.setNoticePeriodDays(r.getNoticePeriodDays());
+        if (r.getNotes() != null)
+            c.setNotes(r.getNotes());
     }
-
 
     // =========================
     // RESPONSE
@@ -126,34 +144,75 @@ public class ContractMapper {
         }
 
         return ContractResponse.builder()
+                // basic
                 .contractId(contract.getContractId())
                 .contractNumber(contract.getContractNumber())
 
-                // contract type
-                .contractType(contract.getContractType())
-                .contractTypeDisplay(contract.getContractType().name())
+                // company
+                .companyId(
+                        contract.getCompany() != null
+                                ? contract.getCompany().getCompanyId()
+                                : null
+                )
+                .companyName(
+                        contract.getCompany() != null
+                                ? contract.getCompany().getCompanyName()
+                                : null
+                )
 
-                // dates
+                // employee
+                .employeeId(
+                        contract.getEmployee() != null
+                                ? contract.getEmployee().getEmployeeId()
+                                : null
+                )
+                .employeeName(
+                        contract.getEmployee() != null
+                                ? contract.getEmployee().getFullName()
+                                : null
+                )
+
+                // contract info
+                .contractType(contract.getContractType())
+                .contractTypeDisplay(
+                        contract.getContractType() != null
+                                ? contract.getContractType().name()
+                                : null
+                )
+
                 .startDate(contract.getStartDate())
                 .endDate(contract.getEndDate())
                 .signedDate(contract.getSignedDate())
+
+                .jobTitle(contract.getJobTitle())
+                .department(contract.getDepartment())
+                .jobDescription(contract.getJobDescription())
 
                 // salary
                 .basicSalary(contract.getBasicSalary())
                 .allowances(contract.getAllowances())
                 .totalCompensation(contract.getTotalCompensation())
 
-                // working info
+                .salaryPaymentMethod(contract.getSalaryPaymentMethod())
+                .salaryPaymentDate(contract.getSalaryPaymentDate())
+
+                // working
                 .workingHoursPerDay(contract.getWorkingHoursPerDay())
                 .workingDaysPerWeek(contract.getWorkingDaysPerWeek())
                 .probationPeriod(contract.getProbationPeriod())
+                .probationSalaryPercentage(contract.getProbationSalaryPercentage())
 
-                // job
-                .jobDescription(contract.getJobDescription())
+                // insurance
+                .socialInsurance(contract.getSocialInsurance())
+                .insuranceSalary(contract.getInsuranceSalary())
 
                 // status
                 .status(contract.getStatus())
-                .statusDisplay(contract.getStatus().name())
+                .statusDisplay(
+                        contract.getStatus() != null
+                                ? contract.getStatus().name()
+                                : null
+                )
                 .active(contract.isActive())
 
                 // audit
@@ -161,4 +220,5 @@ public class ContractMapper {
                 .updatedAt(contract.getUpdatedAt())
                 .build();
     }
+
 }

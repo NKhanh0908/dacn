@@ -2,6 +2,8 @@ package com.hrm.dacn.controllers;
 
 import com.hrm.dacn.dtos.APIResponse;
 import com.hrm.dacn.dtos.contracts.request.ContractCreateRequest;
+import com.hrm.dacn.dtos.contracts.request.ContractSignRequest;
+import com.hrm.dacn.dtos.contracts.request.ContractTerminateRequest;
 import com.hrm.dacn.dtos.contracts.request.ContractUpdateRequest;
 import com.hrm.dacn.dtos.contracts.response.ContractResponse;
 import com.hrm.dacn.services.ContractService;
@@ -13,6 +15,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -94,6 +97,44 @@ public class ContractController {
                 new APIResponse<>(
                         true,
                         "Contract updated successfully",
+                        response,
+                        null,
+                        httpRequest.getRequestURI()
+                )
+        );
+    }
+
+    @PostMapping("/{contractId}/sign")
+    @Operation(summary = "Ký hợp đồng", description = "Ký hợp đồng bởi nhân viên hoặc nhà tuyển dụng")
+    public ResponseEntity<APIResponse<ContractResponse>> signContract(
+            @PathVariable Long contractId,
+            @Valid @RequestBody ContractSignRequest request,
+            HttpServletRequest httpRequest) {
+
+        ContractResponse response = contractService.signContract(contractId, request);
+        return ResponseEntity.ok(
+                new APIResponse<>(
+                        true,
+                        "Contract signed successfully",
+                        response,
+                        null,
+                        httpRequest.getRequestURI()
+                )
+        );
+    }
+
+    @PostMapping("/{contractId}/terminate")
+    @Operation(summary = "Chấm dứt hợp đồng", description = "Chấm dứt hợp đồng lao động")
+    public ResponseEntity<APIResponse<ContractResponse>> terminateContract(
+            @PathVariable Long contractId,
+            @Valid @RequestBody ContractTerminateRequest request,
+            HttpServletRequest httpRequest) {
+
+        ContractResponse response = contractService.terminateContract(contractId, request);
+        return ResponseEntity.ok(
+                new APIResponse<>(
+                        true,
+                        "Contract terminated successfully",
                         response,
                         null,
                         httpRequest.getRequestURI()
