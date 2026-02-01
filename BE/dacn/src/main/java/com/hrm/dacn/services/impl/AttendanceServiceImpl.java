@@ -24,7 +24,6 @@ import com.hrm.dacn.enums.Attendance.CheckMethod;
 import com.hrm.dacn.exceptions.CustomException;
 import com.hrm.dacn.mappers.AttendanceMapper;
 import com.hrm.dacn.repositories.AttendanceRepository;
-import com.hrm.dacn.repositories.ContractRepository;
 import com.hrm.dacn.repositories.EmployeeRepository;
 import com.hrm.dacn.repositories.WorkScheduleRepository;
 import com.hrm.dacn.services.AccountService;

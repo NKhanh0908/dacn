@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.hrm.dacn.dtos.WorkSchedule.request.WorkScheduleRequest;
 import com.hrm.dacn.dtos.WorkSchedule.response.WorkScheduleResponse;
+import com.hrm.dacn.entities.WorkSchedule;
 
 public interface WorkScheduleService {
 
