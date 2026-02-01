@@ -72,6 +72,71 @@ public enum Error {
     WORK_SCHEDULE_BREAK_TIME_INVALID(4104, "Work schedule break time is invalid", HttpStatus.BAD_REQUEST),
     WORK_SCHEDULE_ALREADY_DEFAULT(4105, "Work schedule is already default", HttpStatus.CONFLICT),
 
+    // ===================== Monthly Summary Errors =====================
+    MONTHLY_SUMMARY_NOT_FOUND(42001, "Monthly summary not found", HttpStatus.NOT_FOUND),
+
+    MONTHLY_SUMMARY_ALREADY_FINALIZED(
+            42002,
+            "Monthly summary is already finalized",
+            HttpStatus.BAD_REQUEST),
+
+    MONTHLY_SUMMARY_NOT_FINALIZED(
+            42003,
+            "Monthly summary is not finalized",
+            HttpStatus.BAD_REQUEST),
+
+    MONTHLY_SUMMARY_UNAPPROVED_ATTENDANCE(
+            42004,
+            "Monthly summary contains unapproved attendance records",
+            HttpStatus.CONFLICT),
+
+    MONTHLY_SUMMARY_GENERATION_FAILED(
+            42005,
+            "Failed to generate monthly summary",
+            HttpStatus.INTERNAL_SERVER_ERROR),
+
+    // ===================== Attendance Request Errors =====================
+
+    ATTENDANCE_REQUEST_NOT_FOUND(
+            43001,
+            "Attendance request not found",
+            HttpStatus.NOT_FOUND),
+
+    ATTENDANCE_REQUEST_ALREADY_PENDING(
+            43002,
+            "Attendance request already pending for this date",
+            HttpStatus.CONFLICT),
+
+    ATTENDANCE_REQUEST_ALREADY_REVIEWED(
+            43003,
+            "Attendance request has already been reviewed",
+            HttpStatus.BAD_REQUEST),
+
+    ATTENDANCE_REQUEST_INVALID_TIME(
+            43004,
+            "Invalid check-in or check-out time in attendance request",
+            HttpStatus.BAD_REQUEST),
+
+    ATTENDANCE_REQUEST_NOT_PENDING(
+            43005,
+            "Only pending attendance requests can be modified",
+            HttpStatus.BAD_REQUEST),
+
+    ATTENDANCE_REQUEST_NOT_OWNER(
+            43006,
+            "You can only operate on your own attendance requests",
+            HttpStatus.FORBIDDEN),
+
+    ATTENDANCE_REQUEST_ATTENDANCE_EXISTS(
+            43007,
+            "Attendance already exists for this date",
+            HttpStatus.CONFLICT),
+
+    ATTENDANCE_REQUEST_CREATION_FAILED(
+            43008,
+            "Failed to create attendance request",
+            HttpStatus.INTERNAL_SERVER_ERROR),
+
     // Business logic errors
     INSUFFICIENT_PRIVILEGES(34001, "Insufficient privileges to perform this action", HttpStatus.FORBIDDEN),
     OPERATION_NOT_PERMITTED(34002, "Operation not permitted in current state", HttpStatus.BAD_REQUEST),
