@@ -2,6 +2,13 @@ package com.hrm.dacn.services.impl;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.jpa.repository.query.Meta;
+import org.springframework.stereotype.Service;
+
+import com.hrm.dacn.dtos.ResultPagination;
 import com.hrm.dacn.dtos.Employee.Request.EmployeeCreateRequest;
 import com.hrm.dacn.dtos.Employee.Request.EmployeeUpdateRequest;
 import com.hrm.dacn.dtos.Employee.Response.EmployeeResponse;
@@ -10,6 +17,7 @@ import com.hrm.dacn.mappers.EmployeeMapper;
 import com.hrm.dacn.repositories.EmployeeRepository;
 import com.hrm.dacn.services.EmployeeService;
 
+@Service
 public class EmployeeServiceImpl implements EmployeeService {
 
     private final EmployeeRepository employeeRepository;
@@ -46,11 +54,22 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public List<EmployeeResponse> getAll() {
-        return employeeRepository.findAll()
-                .stream()
-                .map(employeeMapper::toResponse)
-                .toList();
+    public ResultPagination getAll(Specification<Employee> spec, Pageable pageable) {
+
+        Page<Employee> page = employeeRepository.findAll(spec, pageable);
+
+        ResultPagination.Meta meta = new ResultPagination.Meta();
+        meta.setPage(pageable.getPageNumber() + 1);
+        meta.setPageSize(pageable.getPageSize());
+        meta.setPages(page.getTotalPages());
+        meta.setTotal(page.getTotalElements());
+
+        ResultPagination result = new ResultPagination();
+        result.setMeta(meta);
+        result.setData(
+                EmployeeMapper.toResponseList(page.getContent()));
+
+        return result;
     }
 
     @Override

@@ -15,35 +15,42 @@ import java.time.LocalDate;
 @AllArgsConstructor
 public class ContractUpdateRequest {
 
-    @NotNull(message = "Contract type must not be null")
     private ContractType contractType;
+    private ContractStatus status;
 
-    @NotNull(message = "Start date must not be null")
     private LocalDate startDate;
-
     private LocalDate endDate;
-
-    @NotNull(message = "Basic salary must not be null")
-    @Positive(message = "Basic salary must be greater than 0")
-    private BigDecimal basicSalary;
-
-    @PositiveOrZero(message = "Allowances must be zero or positive")
-    private BigDecimal allowances;
-
-    @Positive(message = "Working hours per day must be greater than 0")
-    private BigDecimal workingHoursPerDay;
-
-    @Min(value = 1, message = "Working days per week must be at least 1")
-    @Max(value = 7, message = "Working days per week must not exceed 7")
-    private Integer workingDaysPerWeek;
-
-    @Min(value = 0, message = "Probation period must not be negative")
-    private Integer probationPeriod;
-
-    @Size(max = 500, message = "Job description must not exceed 500 characters")
-    private String jobDescription;
-
     private LocalDate signedDate;
 
-    private ContractStatus status;
+    private String jobTitle;
+    private String department;
+    private String jobDescription;
+
+    private BigDecimal basicSalary;
+    private BigDecimal allowances;
+    private String allowanceDetails;
+
+    private BigDecimal workingHoursPerDay;
+    private Integer workingDaysPerWeek;
+
+    private Integer probationPeriod;
+    private Integer probationSalaryPercentage;
+
+    private String salaryPaymentMethod;
+    private Integer salaryPaymentDate;
+
+    private Boolean socialInsurance;
+    private BigDecimal insuranceSalary;
+
+    private String employerRepresentative;
+    private String employerPosition;
+
+    private String confidentialityClause;
+    private String technologyConfidentiality;
+    private String nonCompeteClause;
+    private Integer confidentialityPeriodMonths;
+
+    private Integer noticePeriodDays;
+    private String notes;
 }
+

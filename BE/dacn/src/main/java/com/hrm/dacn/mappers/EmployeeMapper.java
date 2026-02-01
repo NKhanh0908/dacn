@@ -1,41 +1,67 @@
 package com.hrm.dacn.mappers;
 
-import org.springframework.stereotype.Component;
-
 import com.hrm.dacn.dtos.Employee.Request.EmployeeCreateRequest;
 import com.hrm.dacn.dtos.Employee.Request.EmployeeUpdateRequest;
 import com.hrm.dacn.dtos.Employee.Response.EmployeeResponse;
 import com.hrm.dacn.entities.Employee;
+import com.hrm.dacn.enums.Employee.EmployeeStatus;
 
-@Component
+import java.time.LocalDate;
+import java.util.List;
+import java.util.stream.Collectors;
+
 public class EmployeeMapper {
 
-    public Employee toEntity(EmployeeCreateRequest request) {
-        Employee employee = new Employee();
-        employee.setFullName(request.getFullName());
-        employee.setDateOfBirth(request.getDateOfBirth());
-        employee.setGender(request.getGender());
-        employee.setIdCard(request.getIdCard());
-        employee.setPhone(request.getPhone());
-        employee.setEmail(request.getEmail());
-        employee.setAddress(request.getAddress());
-        employee.setDepartment(request.getDepartment());
-        employee.setPosition(request.getPosition());
-        employee.setRoleId(request.getRoleId());
-        employee.setStartDate(request.getStartDate());
-        employee.setStatus(request.getStatus());
-        employee.setBankAccount(request.getBankAccount());
-        employee.setBankName(request.getBankName());
-        employee.setTaxCode(request.getTaxCode());
-        employee.setSocialInsuranceNumber(request.getSocialInsuranceNumber());
-        employee.setAvatarUrl(request.getAvatarUrl());
-        employee.setEmergencyContactName(request.getEmergencyContactName());
-        employee.setEmergencyContactPhone(request.getEmergencyContactPhone());
-        employee.setEmergencyContactRelationship(request.getEmergencyContactRelationship());
-        return employee;
+    private EmployeeMapper() {
+        // Utility class
     }
 
-    public void updateEntity(Employee employee, EmployeeUpdateRequest request) {
+    // =========================
+    // CREATE
+    // =========================
+    public static Employee toEntity(EmployeeCreateRequest request) {
+        if (request == null) {
+            return null;
+        }
+
+        return Employee.builder()
+                .fullName(request.getFullName())
+                .dateOfBirth(request.getDateOfBirth())
+                .gender(request.getGender())
+                .idCard(request.getIdCard())
+                .phone(request.getPhone())
+                .email(request.getEmail())
+                .address(request.getAddress())
+                .department(request.getDepartment())
+                .position(request.getPosition())
+                .roleId(request.getRoleId())
+                .startDate(
+                        request.getStartDate() != null
+                                ? request.getStartDate()
+                                : LocalDate.now())
+                .status(
+                        request.getStatus() != null
+                                ? request.getStatus()
+                                : EmployeeStatus.WORKING)
+                .bankAccount(request.getBankAccount())
+                .bankName(request.getBankName())
+                .taxCode(request.getTaxCode())
+                .socialInsuranceNumber(request.getSocialInsuranceNumber())
+                .avatarUrl(request.getAvatarUrl())
+                .emergencyContactName(request.getEmergencyContactName())
+                .emergencyContactPhone(request.getEmergencyContactPhone())
+                .emergencyContactRelationship(request.getEmergencyContactRelationship())
+                .build();
+    }
+
+    // =========================
+    // UPDATE (PARTIAL)
+    // =========================
+    public static void updateEntity(Employee employee, EmployeeUpdateRequest request) {
+        if (employee == null || request == null) {
+            return;
+        }
+
         if (request.getFullName() != null)
             employee.setFullName(request.getFullName());
         if (request.getDateOfBirth() != null)
@@ -78,14 +104,24 @@ public class EmployeeMapper {
             employee.setEmergencyContactRelationship(request.getEmergencyContactRelationship());
     }
 
-    public EmployeeResponse toResponse(Employee employee) {
+    // =========================
+    // RESPONSE
+    // =========================
+    public static EmployeeResponse toResponse(Employee employee) {
+        if (employee == null) {
+            return null;
+        }
+
         return EmployeeResponse.builder()
                 .employeeId(employee.getEmployeeId())
                 .fullName(employee.getFullName())
                 .dateOfBirth(employee.getDateOfBirth())
                 .age(employee.getAge())
                 .gender(employee.getGender())
-                .genderDisplay(employee.getGender() != null ? employee.getGender().getDisplayName() : null)
+                .genderDisplay(
+                        employee.getGender() != null
+                                ? employee.getGender().getDisplayName()
+                                : null)
                 .idCard(employee.getIdCard())
                 .phone(employee.getPhone())
                 .email(employee.getEmail())
@@ -93,12 +129,13 @@ public class EmployeeMapper {
                 .department(employee.getDepartment())
                 .position(employee.getPosition())
                 .roleId(employee.getRoleId())
-                // .roleName(employee.getRole() != null ? employee.getRole().getRoleName() :
-                // null)
                 .startDate(employee.getStartDate())
                 .yearsOfService(employee.getYearsOfService())
                 .status(employee.getStatus())
-                .statusDisplay(employee.getStatus() != null ? employee.getStatus().getDisplayName() : null)
+                .statusDisplay(
+                        employee.getStatus() != null
+                                ? employee.getStatus().getDisplayName()
+                                : null)
                 .bankAccount(employee.getBankAccount())
                 .bankName(employee.getBankName())
                 .taxCode(employee.getTaxCode())
@@ -107,9 +144,19 @@ public class EmployeeMapper {
                 .emergencyContactName(employee.getEmergencyContactName())
                 .emergencyContactPhone(employee.getEmergencyContactPhone())
                 .emergencyContactRelationship(employee.getEmergencyContactRelationship())
-                // .createdAt(employee.getCreatedAt())
-                // .updatedAt(employee.getUpdatedAt())
                 .build();
     }
 
+    // =========================
+    // LIST RESPONSE
+    // =========================
+    public static List<EmployeeResponse> toResponseList(List<Employee> employees) {
+        if (employees == null) {
+            return List.of();
+        }
+
+        return employees.stream()
+                .map(EmployeeMapper::toResponse)
+                .collect(Collectors.toList());
+    }
 }

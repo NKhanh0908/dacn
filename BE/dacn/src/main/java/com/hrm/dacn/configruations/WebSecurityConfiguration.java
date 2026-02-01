@@ -1,0 +1,93 @@
+package com.hrm.dacn.configruations;
+
+import com.hrm.dacn.enums.AccountRole;
+import com.hrm.dacn.services.impl.OurUserDetailsService;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfigurationSource;
+
+import static org.springframework.security.config.Customizer.withDefaults;
+
+@Configuration
+@EnableWebSecurity
+@EnableMethodSecurity
+public class WebSecurityConfiguration {
+    private final OurUserDetailsService ourUserDetailsService;
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
+
+    @Value("${server.servlet.context-path}")
+    private String contextPath;
+
+    private static final String USER_ADMIN = AccountRole.ADMIN.name();
+    private static final String USER_MANAGER = AccountRole.MANAGER.name();
+    private static final String USER_HR = AccountRole.HR.name();
+    private static final String USER_SUPERVISOR = AccountRole.SUPERVISOR.name();
+
+    public WebSecurityConfiguration(OurUserDetailsService ourUserDetailsService,
+                                    JwtAuthenticationFilter jwtAuthenticationFilter) {
+        this.ourUserDetailsService = ourUserDetailsService;
+        this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+    }
+
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity httpSecurity,
+            CorsConfigurationSource corsConfigurationSource) throws Exception {
+        httpSecurity.csrf(AbstractHttpConfigurer::disable)
+                .cors(withDefaults())
+                .authorizeHttpRequests((auth) -> auth
+                        .requestMatchers(
+                                "/v3/api-docs/**",
+                                "/swagger-ui/**",
+                                "/swagger-ui.html",
+
+                                "/accounts",
+                                "/accounts/sign-in",
+
+                                "/**"
+                        ).permitAll()
+                        .anyRequest()
+                        .authenticated())
+                .httpBasic(withDefaults())
+                .sessionManagement(manager -> manager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authenticationProvider(authenticationProvider()).addFilterBefore(
+                        jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+        return httpSecurity.build();
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration)
+            throws Exception {
+        return authenticationConfiguration.getAuthenticationManager();
+    }
+
+    @Bean
+    @Qualifier("daoAuthenticationProvider")
+    public AuthenticationProvider authenticationProvider() {
+        return new DaoAuthenticationProvider(
+                ourUserDetailsService
+        );
+    }
+
+
+}

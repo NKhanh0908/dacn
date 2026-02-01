@@ -36,11 +36,14 @@ public enum Error {
     ACCOUNT_USERNAME_TO_SHORT(1008, "Username account to short", HttpStatus.BAD_REQUEST),
     ACCOUNT_USERNAME_TO_LONG(1008, "Username account to long", HttpStatus.BAD_REQUEST),
     ACCOUNT_PASSWORD_TO_SHORT(1008, "Password account to short", HttpStatus.BAD_REQUEST),
-    ACCOUNT_LOCKED_TEMPORARILY(1009, "Account is temporarily locked due to too many failed login attempts", HttpStatus.FORBIDDEN),
+    ACCOUNT_LOCKED_TEMPORARILY(1009, "Account is temporarily locked due to too many failed login attempts",
+            HttpStatus.FORBIDDEN),
     PASSWORD_RESET_FAILED(1010, "Password reset failed", HttpStatus.INTERNAL_SERVER_ERROR),
     PASSWORD_RESET_INVALID_REQUEST(1011, "Invalid password reset request", HttpStatus.BAD_REQUEST),
     ACCOUNT_EMAIL_ALREADY_EXISTS(1012, "Email already exists", HttpStatus.CONFLICT),
     ACCOUNT_USERNAME_ALREADY_EXISTS(1013, "Username already exists", HttpStatus.CONFLICT),
+    ACCOUNT_DISABLED(1014, "Account is disabled", HttpStatus.FORBIDDEN),
+    REFRESH_TOKEN_NOT_EXPIRED(1013, "Refresh token is not expired", HttpStatus.BAD_REQUEST),
 
     // JWT token-related errors
     JWT_INVALID(14001, "Invalid JWT token", HttpStatus.UNAUTHORIZED),
@@ -51,12 +54,120 @@ public enum Error {
     // Employee errors
     EMPLOYEE_NOT_FOUND(2001, "Employee not found", HttpStatus.NOT_FOUND),
 
-
     // Contract errors
-    CONTRACT_NOT_FOUND(3001,  "Contract not found", HttpStatus.NOT_FOUND),
+    CONTRACT_NOT_FOUND(3001, "Contract not found", HttpStatus.NOT_FOUND),
     CONTRACT_DATE_INVALID(3002, "Contract date valid", HttpStatus.BAD_REQUEST),
     CONTRACT_ALREADY_ACTIVATED(3003, "Contract already activated", HttpStatus.BAD_REQUEST),
 
+    // ========== COMPANY ERRORS ==========
+    COMPANY_NOT_FOUND(404, "Company not found", HttpStatus.NOT_FOUND),
+    COMPANY_ALREADY_EXISTS(409, "Company already exists", HttpStatus.CONFLICT),
+
+    // ========== CONTRACT VALIDATION ERRORS ==========
+    CONTRACT_ALREADY_SIGNED_CANNOT_EDIT(400, "Hợp đồng đã được ký, không thể chỉnh sửa", HttpStatus.BAD_REQUEST),
+    CONTRACT_CANNOT_DELETE(400, "Không thể xóa hợp đồng đã được ký", HttpStatus.BAD_REQUEST),
+    CONTRACT_NOT_ACTIVE(400, "Hợp đồng không ở trạng thái hoạt động", HttpStatus.BAD_REQUEST),
+    CONTRACT_INVALID_STATUS_FOR_SIGNING(400, "Trạng thái hợp đồng không hợp lệ để ký", HttpStatus.BAD_REQUEST),
+
+    // ========== CONTRACT DATE ERRORS ==========
+    START_DATE_REQUIRED(400, "Ngày bắt đầu hợp đồng là bắt buộc", HttpStatus.BAD_REQUEST),
+    END_DATE_REQUIRED(400, "Ngày kết thúc hợp đồng là bắt buộc", HttpStatus.BAD_REQUEST),
+    END_DATE_MUST_AFTER_START_DATE(400, "Ngày kết thúc phải sau ngày bắt đầu", HttpStatus.BAD_REQUEST),
+
+    // ========== CONTRACT TYPE SPECIFIC ERRORS ==========
+    PROBATION_CONTRACT_MUST_HAVE_END_DATE(400, "Hợp đồng thử việc phải có ngày kết thúc", HttpStatus.BAD_REQUEST),
+    PROBATION_CONTRACT_TOO_LONG(400, "Hợp đồng thử việc không được quá 60 ngày", HttpStatus.BAD_REQUEST),
+    PROBATION_CONTRACT_NO_PROBATION_PERIOD(400, "Hợp đồng thử việc không có thời gian thử việc riêng", HttpStatus.BAD_REQUEST),
+
+    FIXED_TERM_CONTRACT_MUST_HAVE_END_DATE(400, "Hợp đồng có thời hạn phải có ngày kết thúc", HttpStatus.BAD_REQUEST),
+    FIXED_TERM_CONTRACT_EXCEEDS_MAX_DURATION(400, "Hợp đồng có thời hạn không được vượt quá 36 tháng (3 năm)", HttpStatus.BAD_REQUEST),
+
+    INDEFINITE_CONTRACT_SHOULD_NOT_HAVE_END_DATE(400, "Hợp đồng vô thời hạn không nên có ngày kết thúc", HttpStatus.BAD_REQUEST),
+
+    // ========== PROBATION ERRORS ==========
+    PROBATION_PERIOD_TOO_LONG(400, "Thời gian thử việc quá dài (tối đa 60 ngày)", HttpStatus.BAD_REQUEST),
+
+    // ========== SALARY ERRORS ==========
+    INVALID_SALARY(400, "Mức lương không hợp lệ", HttpStatus.BAD_REQUEST),
+    SALARY_BELOW_MINIMUM_WAGE(400, "Lương thấp hơn mức lương tối thiểu", HttpStatus.BAD_REQUEST),
+
+    // Attendance errors
+    ATTENDANCE_NOT_FOUND(4001, "Attendance not found", HttpStatus.NOT_FOUND),
+    ALREADY_CHECKED_IN(4002, "You have already checked in today", HttpStatus.BAD_REQUEST),
+    NOT_CHECKED_IN(4003, "You haven't checked in today", HttpStatus.BAD_REQUEST),
+    ALREADY_CHECKED_OUT(4004, "You have already checked out today", HttpStatus.BAD_REQUEST),
+
+    // Work Schedule errors
+    WORK_SCHEDULE_NOT_FOUND(4101, "Work schedule not found", HttpStatus.NOT_FOUND),
+    WORK_SCHEDULE_INACTIVE(4102, "Work schedule is inactive", HttpStatus.BAD_REQUEST),
+    WORK_SCHEDULE_TIME_INVALID(4103, "Work schedule time is invalid", HttpStatus.BAD_REQUEST),
+    WORK_SCHEDULE_BREAK_TIME_INVALID(4104, "Work schedule break time is invalid", HttpStatus.BAD_REQUEST),
+    WORK_SCHEDULE_ALREADY_DEFAULT(4105, "Work schedule is already default", HttpStatus.CONFLICT),
+
+    // ===================== Monthly Summary Errors =====================
+    MONTHLY_SUMMARY_NOT_FOUND(42001, "Monthly summary not found", HttpStatus.NOT_FOUND),
+
+    MONTHLY_SUMMARY_ALREADY_FINALIZED(
+            42002,
+            "Monthly summary is already finalized",
+            HttpStatus.BAD_REQUEST),
+
+    MONTHLY_SUMMARY_NOT_FINALIZED(
+            42003,
+            "Monthly summary is not finalized",
+            HttpStatus.BAD_REQUEST),
+
+    MONTHLY_SUMMARY_UNAPPROVED_ATTENDANCE(
+            42004,
+            "Monthly summary contains unapproved attendance records",
+            HttpStatus.CONFLICT),
+
+    MONTHLY_SUMMARY_GENERATION_FAILED(
+            42005,
+            "Failed to generate monthly summary",
+            HttpStatus.INTERNAL_SERVER_ERROR),
+
+    // ===================== Attendance Request Errors =====================
+
+    ATTENDANCE_REQUEST_NOT_FOUND(
+            43001,
+            "Attendance request not found",
+            HttpStatus.NOT_FOUND),
+
+    ATTENDANCE_REQUEST_ALREADY_PENDING(
+            43002,
+            "Attendance request already pending for this date",
+            HttpStatus.CONFLICT),
+
+    ATTENDANCE_REQUEST_ALREADY_REVIEWED(
+            43003,
+            "Attendance request has already been reviewed",
+            HttpStatus.BAD_REQUEST),
+
+    ATTENDANCE_REQUEST_INVALID_TIME(
+            43004,
+            "Invalid check-in or check-out time in attendance request",
+            HttpStatus.BAD_REQUEST),
+
+    ATTENDANCE_REQUEST_NOT_PENDING(
+            43005,
+            "Only pending attendance requests can be modified",
+            HttpStatus.BAD_REQUEST),
+
+    ATTENDANCE_REQUEST_NOT_OWNER(
+            43006,
+            "You can only operate on your own attendance requests",
+            HttpStatus.FORBIDDEN),
+
+    ATTENDANCE_REQUEST_ATTENDANCE_EXISTS(
+            43007,
+            "Attendance already exists for this date",
+            HttpStatus.CONFLICT),
+
+    ATTENDANCE_REQUEST_CREATION_FAILED(
+            43008,
+            "Failed to create attendance request",
+            HttpStatus.INTERNAL_SERVER_ERROR),
 
     // Business logic errors
     INSUFFICIENT_PRIVILEGES(34001, "Insufficient privileges to perform this action", HttpStatus.FORBIDDEN),
@@ -67,32 +178,6 @@ public enum Error {
     WORKFLOW_VIOLATION(34006, "Action violates workflow rules", HttpStatus.BAD_REQUEST),
     DATA_INTEGRITY_VIOLATION(34007, "Data integrity constraint violation", HttpStatus.CONFLICT),
 
-    // OTP related errors
-    OTP_NOT_FOUND(39001, "OTP not found", HttpStatus.NOT_FOUND),
-    OTP_EXPIRED_OR_INVALID(39002, "OTP expired or invalid", HttpStatus.UNAUTHORIZED),
-    OTP_INVALID(39003, "Invalid OTP", HttpStatus.UNAUTHORIZED),
-    OTP_ALREADY_USED(39004, "OTP has already been used", HttpStatus.BAD_REQUEST),
-    OTP_MAX_ATTEMPTS_EXCEEDED(39005, "Maximum OTP attempts exceeded", HttpStatus.TOO_MANY_REQUESTS),
-    OTP_ALREADY_SENT(39006, "OTP has already been sent", HttpStatus.BAD_REQUEST),
-    OTP_SEND_FAILED(39007, "Failed to send OTP", HttpStatus.INTERNAL_SERVER_ERROR),
-    OTP_REQUIRED(39008, "OTP is required for this operation", HttpStatus.UNAUTHORIZED),
-
-    // MfaSettings related errors
-    MFA_SETTINGS_NOT_FOUND(40001, "MFA settings not found", HttpStatus.NOT_FOUND),
-    MFA_SETTINGS_UNABLE_TO_SAVE(40002, "Unable to save MFA settings", HttpStatus.INTERNAL_SERVER_ERROR),
-    MFA_SETTINGS_UNABLE_TO_UPDATE(40003, "Unable to update MFA settings", HttpStatus.INTERNAL_SERVER_ERROR),
-    MFA_SETTINGS_UNABLE_TO_DELETE(40004, "Unable to delete MFA settings", HttpStatus.INTERNAL_SERVER_ERROR),
-    MFA_SETTINGS_INVALID(40005, "Invalid MFA settings", HttpStatus.BAD_REQUEST),
-    MFA_SETTINGS_ALREADY_EXISTS(40006, "MFA settings already exist", HttpStatus.CONFLICT),
-    MFA_METHOD_NOT_SUPPORTED(40007, "MFA method not supported", HttpStatus.BAD_REQUEST),
-
-    //Trust Device
-    TRUST_DEVICE_NOT_FOUND(1100, "Trust device not found", HttpStatus.NOT_FOUND),
-
-    // Totp related errors
-    TOTP_SECRET_KEY_NOT_FOUND(41001, "TOTP secret key not found", HttpStatus.NOT_FOUND),
-    TOTP_REGISTRATION_FAILED(41002, "TOTP registration failed", HttpStatus.INTERNAL_SERVER_ERROR),
-    TOTP_VERIFICATION_FAILED(41003, "TOTP verification failed", HttpStatus.UNAUTHORIZED),
     ;
 
     private final int code;
