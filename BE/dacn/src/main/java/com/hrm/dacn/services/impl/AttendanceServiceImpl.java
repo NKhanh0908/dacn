@@ -28,6 +28,7 @@ import com.hrm.dacn.repositories.EmployeeRepository;
 import com.hrm.dacn.repositories.WorkScheduleRepository;
 import com.hrm.dacn.services.AccountService;
 import com.hrm.dacn.services.AttendanceService;
+import com.hrm.dacn.services.WorkCalendarService;
 import com.hrm.dacn.exceptions.Error;
 
 import java.time.Duration;
@@ -48,6 +49,7 @@ public class AttendanceServiceImpl implements AttendanceService {
     private final WorkScheduleRepository workScheduleRepository;
     private final AccountService accountService;
     private final AttendanceMapper attendanceMapper;
+    private final WorkCalendarService workCalendarService;
 
     @Override
     public AttendanceResponse checkIn(CheckInRequest request) {
@@ -59,10 +61,10 @@ public class AttendanceServiceImpl implements AttendanceService {
             throw new CustomException(Error.EMPLOYEE_NOT_FOUND);
         }
 
-        // Kiểm tra hợp đồng còn hiệu lực
-        // validateEmployeeContract(employee);
-
         LocalDate today = LocalDate.now();
+
+        // Kiểm tra ngày làm việc
+        boolean isWorkingDay = workCalendarService.isWorkingDay(today);
 
         // Kiểm tra đã check-in hôm nay chưa
         boolean alreadyCheckedIn = attendanceRepository
@@ -89,9 +91,11 @@ public class AttendanceServiceImpl implements AttendanceService {
                 .isManualEntry(false)
                 .isApproved(false)
                 .build();
+        attendance.setIsWorkingDay(isWorkingDay);
+        attendance.setIsWeekendOrHoliday(!isWorkingDay);
 
         // Tính toán trạng thái check-in
-        calculateCheckInStatus(attendance, schedule);
+        calculateCheckInStatus(attendance, schedule, isWorkingDay);
 
         attendance = attendanceRepository.save(attendance);
 
@@ -335,14 +339,6 @@ public class AttendanceServiceImpl implements AttendanceService {
         attendanceRepository.deleteById(id);
     }
 
-    // ============= Private Helper Methods =============
-
-    private void validateEmployeeContract(Employee employee) {
-        // Kiểm tra nhân viên có hợp đồng hiệu lực không
-        // Logic này phụ thuộc vào cách quản lý hợp đồng của bạn
-        // Có thể check qua ContractService
-    }
-
     private WorkSchedule getEmployeeWorkSchedule(Employee employee) {
         // Lấy ca làm việc của nhân viên
         // Nếu nhân viên có ca riêng thì lấy ca riêng
@@ -351,9 +347,17 @@ public class AttendanceServiceImpl implements AttendanceService {
                 .orElseThrow(() -> new CustomException(Error.WORK_SCHEDULE_NOT_FOUND));
     }
 
-    private void calculateCheckInStatus(Attendance attendance, WorkSchedule schedule) {
+    private void calculateCheckInStatus(Attendance attendance, WorkSchedule schedule, boolean isWorkingDay) {
         LocalTime checkInTime = attendance.getCheckInTime().toLocalTime();
         LocalTime scheduledStartTime = schedule.getStartTime();
+
+        // Nếu là ngày nghỉ -> coi là làm thêm giờ
+        if (!isWorkingDay) {
+            attendance.setStatus(AttendanceStatus.OVERTIME);
+            attendance.setLateMinutes(0);
+            attendance.setIsWeekendOrHoliday(true);
+            return;
+        }
 
         int lateMinutes = (int) Duration.between(scheduledStartTime, checkInTime).toMinutes();
 
@@ -372,33 +376,32 @@ public class AttendanceServiceImpl implements AttendanceService {
         }
     }
 
-    private void calculateCheckOutStatus(Attendance attendance, WorkSchedule schedule) {
+    private void calculateCheckOutStatus(Attendance attendance, WorkSchedule schedule, boolean isWorkingDay) {
+        if (attendance.getCheckOutTime() == null)
+            return;
+
         LocalTime checkOutTime = attendance.getCheckOutTime().toLocalTime();
         LocalTime scheduledEndTime = schedule.getEndTime();
+
+        // Reset các giá trị
+        attendance.setEarlyLeaveMinutes(0);
+        attendance.setOvertimeMinutes(0);
+
+        // Nếu là ngày nghỉ -> toàn bộ là overtime, không tính về sớm
+        if (!isWorkingDay) {
+            // Overtime sẽ được tính trong calculateWorkHours
+            return;
+        }
 
         int earlyMinutes = (int) Duration.between(checkOutTime, scheduledEndTime).toMinutes();
         int overtimeMinutes = (int) Duration.between(scheduledEndTime, checkOutTime).toMinutes();
 
         if (earlyMinutes > schedule.getEarlyLeaveToleranceMinutes()) {
-            // Về sớm
-            if (attendance.getStatus() == AttendanceStatus.LATE) {
-                // Vừa trễ vừa về sớm - giữ trạng thái LATE
-            } else {
-                attendance.setStatus(AttendanceStatus.EARLY_LEAVE);
-            }
+            // Về sớm quá mức cho phép
             attendance.setEarlyLeaveMinutes(earlyMinutes - schedule.getEarlyLeaveToleranceMinutes());
         } else if (overtimeMinutes > 0) {
-            // Làm thêm giờ
+            // Làm thêm giờ (chỉ tính sau giờ kết thúc)
             attendance.setOvertimeMinutes(overtimeMinutes);
-            if (attendance.getStatus() != AttendanceStatus.LATE &&
-                    attendance.getStatus() != AttendanceStatus.EARLY_LEAVE) {
-                attendance.setStatus(AttendanceStatus.OVERTIME);
-            }
-        } else {
-            // Về đúng giờ
-            if (attendance.getStatus() == AttendanceStatus.PENDING) {
-                attendance.setStatus(AttendanceStatus.ON_TIME);
-            }
         }
     }
 
