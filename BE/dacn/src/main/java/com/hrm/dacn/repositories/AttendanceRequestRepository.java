@@ -1,10 +1,10 @@
 package com.hrm.dacn.repositories;
 
+import com.hrm.dacn.entities.AttendanceRequest;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 
-import com.hrm.dacn.dtos.Attendance.request.AttendanceRequest;
 import com.hrm.dacn.entities.Employee;
 import com.hrm.dacn.enums.Attendance.RequestStatus;
 

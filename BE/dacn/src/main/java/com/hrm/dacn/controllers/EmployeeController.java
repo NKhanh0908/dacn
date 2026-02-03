@@ -102,7 +102,51 @@ public class EmployeeController {
                                                 httpRequest.getRequestURI()));
         }
 
-        // =========================
+    @GetMapping("/me")
+    @Operation(
+            summary = "Get current authenticated employee",
+            description = "Retrieve information of the currently authenticated employee",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Employee retrieved successfully",
+                            content = @Content(
+                                    schema = @Schema(implementation = EmployeeResponse.class)
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "401",
+                            description = "Unauthorized"
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "Employee not found"
+                    ),
+                    @ApiResponse(
+                            responseCode = "500",
+                            description = "Internal server error"
+                    )
+            }
+    )
+    public ResponseEntity<APIResponse<EmployeeResponse>> getCurrentEmployee(
+            HttpServletRequest httpRequest
+    ) {
+
+        EmployeeResponse response = employeeService.getCurrentUser();
+
+        return ResponseEntity.ok(
+                new APIResponse<>(
+                        true,
+                        "Current employee retrieved successfully",
+                        response,
+                        null,
+                        httpRequest.getRequestURI()
+                )
+        );
+    }
+
+
+    // =========================
         // UPDATE EMPLOYEE
         // =========================
         @PutMapping("/{id}")

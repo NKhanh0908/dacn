@@ -12,8 +12,6 @@ import java.util.Optional;
 @Repository
 public interface ContractRepository extends JpaRepository<Contracts, Long>, JpaSpecificationExecutor<Contracts> {
 
-    boolean existsByEmployIdAndStatus(Long employId, ContractStatus status);
-
     @Query(value = "SELECT c from Contracts  c where c.status = 'ACTIVE' ")
     Optional<Contracts> findActiveContract(Long employId);
 
