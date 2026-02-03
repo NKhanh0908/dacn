@@ -32,7 +32,6 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-@Transactional
 public class AttendanceRequestServiceImpl implements AttendanceRequestService {
 
     private final AttendanceRequestRepository requestRepository;
@@ -41,6 +40,7 @@ public class AttendanceRequestServiceImpl implements AttendanceRequestService {
     private final AttendanceRequestMapper requestMapper;
 
     @Override
+    @Transactional
     public AttendanceRequestResponse createRequest(AttendanceRequestCreateRequest request) {
 
         Account account = accountService.getAccountAuth();

@@ -5,7 +5,9 @@ import java.util.stream.Collectors;
 
 import com.hrm.dacn.dtos.Attendance.request.AttendanceRequest;
 import com.hrm.dacn.dtos.Attendance.request.AttendanceRequestResponse;
+import org.springframework.stereotype.Component;
 
+@Component
 public class AttendanceRequestMapper {
 
     private AttendanceRequestMapper() {

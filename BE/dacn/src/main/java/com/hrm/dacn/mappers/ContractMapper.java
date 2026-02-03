@@ -8,10 +8,11 @@ import com.hrm.dacn.entities.Company;
 import com.hrm.dacn.entities.Contracts;
 import com.hrm.dacn.entities.Employee;
 import org.springframework.data.domain.Page;
+import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 
-
+@Component
 public class ContractMapper {
 
     private ContractMapper() {
