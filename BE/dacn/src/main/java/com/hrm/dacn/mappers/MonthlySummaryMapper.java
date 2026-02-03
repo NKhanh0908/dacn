@@ -5,7 +5,9 @@ import java.util.stream.Collectors;
 
 import com.hrm.dacn.dtos.Attendance.response.MonthlySummaryResponse;
 import com.hrm.dacn.entities.MonthlySummary;
+import org.springframework.stereotype.Component;
 
+@Component
 public class MonthlySummaryMapper {
 
     private MonthlySummaryMapper() {
