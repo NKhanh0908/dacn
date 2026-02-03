@@ -59,11 +59,11 @@ public class HolidayServiceImpl implements HolidayService {
             throw new CustomException(Error.HOLIDAY_ALREADY_EXISTS);
         }
 
-        // 3. Kiểm tra nhân viên tạo ngày lễ có tồn tại không
-        Employee createdBy = employeeRepository.findById(createdByEmployeeId)
-                .orElseThrow(() -> new CustomException(Error.EMPLOYEE_NOT_FOUND));
+//        // 3. Kiểm tra nhân viên tạo ngày lễ có tồn tại không
+//        Employee createdBy = employeeRepository.findById(createdByEmployeeId)
+//                .orElseThrow(() -> new CustomException(Error.EMPLOYEE_NOT_FOUND));
 
-        Holiday holiday = holidayMapper.toEntity(requestDTO, createdBy);
+        Holiday holiday = holidayMapper.toEntity(requestDTO, null);
 
         Holiday savedHoliday = holidayRepository.save(holiday);
 

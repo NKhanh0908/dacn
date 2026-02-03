@@ -40,7 +40,6 @@ public class WorkScheduleController {
             @ApiResponse(responseCode = "409", description = "Xung đột dữ liệu")
     })
     @PostMapping
-    @PreAuthorize("hasRole('ADMIN') or hasRole('HR')")
     public ResponseEntity<WorkScheduleResponse> create(
             @Valid @RequestBody WorkScheduleRequest request) {
 
@@ -59,7 +58,6 @@ public class WorkScheduleController {
             @ApiResponse(responseCode = "404", description = "Không tìm thấy ca làm việc")
     })
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('HR')")
     public ResponseEntity<WorkScheduleResponse> update(
             @PathVariable Long id,
             @Valid @RequestBody WorkScheduleRequest request) {
@@ -109,7 +107,6 @@ public class WorkScheduleController {
             @ApiResponse(responseCode = "404", description = "Không tìm thấy ca")
     })
     @PutMapping("/{id}/default")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('HR')")
     public ResponseEntity<WorkScheduleResponse> setAsDefault(@PathVariable Long id) {
         return ResponseEntity.ok(workScheduleService.setAsDefault(id));
     }
@@ -143,7 +140,6 @@ public class WorkScheduleController {
      */
     @Operation(summary = "Kích hoạt ca làm việc")
     @PutMapping("/{id}/activate")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('HR')")
     public ResponseEntity<WorkScheduleResponse> activate(@PathVariable Long id) {
         return ResponseEntity.ok(workScheduleService.activate(id));
     }
@@ -155,7 +151,6 @@ public class WorkScheduleController {
      */
     @Operation(summary = "Vô hiệu hóa ca làm việc", description = "Không thể vô hiệu hóa ca mặc định")
     @PutMapping("/{id}/deactivate")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('HR')")
     public ResponseEntity<Void> deactivate(@PathVariable Long id) {
         workScheduleService.deactivate(id);
         return ResponseEntity.noContent().build();
@@ -173,7 +168,6 @@ public class WorkScheduleController {
             @ApiResponse(responseCode = "404", description = "Không tìm thấy ca")
     })
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         workScheduleService.delete(id);
         return ResponseEntity.noContent().build();

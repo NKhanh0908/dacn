@@ -41,7 +41,7 @@ public class HolidayMapper {
                 .isPaid(isPaid)
                 .salaryMultiplier(salaryMultiplier)
                 .description(request.getDescription())
-                .createdBy(createdBy)
+                .createdBy(null)
                 .createdAt(LocalDateTime.now())
                 .build();
     }

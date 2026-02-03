@@ -27,7 +27,6 @@ public class HolidayController {
     private final HolidayService holidayService;
 
     @PostMapping
-    @PreAuthorize("hasRole('ADMIN') or hasRole('HR_MANAGER')")
     @Operation(summary = "Create a new holiday")
     public ResponseEntity<HolidayResponse> createHoliday(
             @Valid @RequestBody HolidayRequest requestDTO,
@@ -39,7 +38,6 @@ public class HolidayController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('HR_MANAGER')")
     @Operation(summary = "Update an existing holiday")
     public ResponseEntity<HolidayResponse> updateHoliday(
             @PathVariable Long id,
@@ -70,7 +68,6 @@ public class HolidayController {
     // }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Delete a holiday")
     public ResponseEntity<Void> deleteHoliday(@PathVariable Long id) {
         holidayService.deleteHoliday(id);
