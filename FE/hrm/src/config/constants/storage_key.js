@@ -1,0 +1,8 @@
+///Token
+const ACCESS_TOKEN = "access_token";
+const REFRESH_TOKEN = "refresh_token";
+///Account
+const SESSION_ACCOUNT = "SESSION_ACCOUNT";
+const SESSION_LOGGED_IN = "SESSION_LOGGED_IN";
+
+export { ACCESS_TOKEN, REFRESH_TOKEN, SESSION_ACCOUNT, SESSION_LOGGED_IN }

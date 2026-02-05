@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { authApi } from "../../api/auth.api";
+import { authLogin, getCurrentEmployee } from "../../services";
 import { loginSuccess } from "../../store/authStore";
 import BackgroundWaves from "../../components/BackgroundWaves";
 
@@ -7,18 +7,28 @@ import BackgroundWaves from "../../components/BackgroundWaves";
 export default function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    setError("");
+
     try {
       setLoading(true);
-      const res = await authApi.login({ username, password });
-      loginSuccess(res.data.token, res.data.user);
-      window.location.href = "/";
+
+      await authLogin({ username, password });
+      const profile = await getCurrentEmployee();
+
+      loginSuccess(profile.data);
+
+      // CHUYỂN ROUTE ĐÚNG CÁCH
+      window.location.replace("/");
     } catch (err) {
       console.error(err);
-      alert("Đăng nhập thất bại");
+      setError(
+        err?.response?.data?.message || "Sai tài khoản hoặc mật khẩu"
+      );
     } finally {
       setLoading(false);
     }
@@ -85,6 +95,12 @@ export default function Login() {
                 Quên mật khẩu?
               </a>
             </div>
+
+            {error && (
+              <div className="bg-red-500/10 border border-red-500/30 text-red-400 text-sm px-4 py-3 rounded-lg">
+                {error}
+              </div>
+            )}
 
             <button
               type="submit"

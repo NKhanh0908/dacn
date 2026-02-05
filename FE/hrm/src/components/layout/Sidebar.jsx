@@ -6,7 +6,7 @@ const Sidebar = () => {
   // const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
   return (
     <div className="glass-container bg-white/5 backdrop-blur-sm">
-      Sidebar Component
+      <h2>HRM</h2>
     </div>
   )
 }
