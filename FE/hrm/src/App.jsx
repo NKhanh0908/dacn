@@ -1,35 +1,40 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import Login from "./pages/auth/Login";
+import DashboardLayout from "./pages/dashboard/Dashboard";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+
+const router = createBrowserRouter([
+  {
+    path: '/',
+    // element: <Login />,
+    element: <DashboardLayout />,
+    errorElement: <Error />,
+    // children: [
+    //   // { index: true, element: <Home /> },
+    //   { path: '/department', element: <Department /> },
+    //   {
+    //     path: '/employee',
+    //     element: <Employee />,
+    //     children: [
+    //       { index: true, element: <EmployeeIndex /> },
+    //       { path: '/employee/management', element: <EmployeeManagement /> }
+    //     ]
+    //   },
+    //   { path: '/payroll', element: <Payroll /> },
+    //   { path: '/recruitment', element: <Recruitment /> },
+    //   { path: '/statistic', element: <Statistic /> },
+    //   { path: '/error', element: <Error /> },
+    // ],
+  },
+  { path: '/login', element: <Login />, errorElement: <Error /> },
+  // { path: '/reset_password', element: <ResetPassword />, errorElement: <Error /> },
+  // { path: '/verify', element: <Verify />, errorElement: <Error /> },
+  // { path: '/account', element: <AccountInfo />, errorElement: <Error /> },
+]);
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <RouterProvider router={router} />
+  );
 }
 
-export default App
+export default App;
