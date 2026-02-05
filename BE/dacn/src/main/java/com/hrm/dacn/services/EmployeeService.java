@@ -15,6 +15,8 @@ import org.springframework.stereotype.Service;
 @Service
 public interface EmployeeService {
 
+    EmployeeResponse getCurrentUser();
+
     EmployeeResponse create(EmployeeCreateRequest request);
 
     EmployeeResponse update(Long id, EmployeeUpdateRequest request);

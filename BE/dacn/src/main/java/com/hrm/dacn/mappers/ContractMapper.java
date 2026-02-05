@@ -1,15 +1,18 @@
 package com.hrm.dacn.mappers;
 
+import com.hrm.dacn.dtos.PageDTO;
 import com.hrm.dacn.dtos.contracts.request.ContractCreateRequest;
 import com.hrm.dacn.dtos.contracts.request.ContractUpdateRequest;
 import com.hrm.dacn.dtos.contracts.response.ContractResponse;
 import com.hrm.dacn.entities.Company;
 import com.hrm.dacn.entities.Contracts;
 import com.hrm.dacn.entities.Employee;
+import org.springframework.data.domain.Page;
+import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 
-
+@Component
 public class ContractMapper {
 
     private ContractMapper() {
@@ -218,6 +221,19 @@ public class ContractMapper {
                 // audit
                 .createdAt(contract.getCreatedAt())
                 .updatedAt(contract.getUpdatedAt())
+                .build();
+    }
+
+    public static PageDTO<ContractResponse> toContractPageDTO(Page<Contracts> page) {
+        return PageDTO.<ContractResponse>builder()
+                .content(page.getContent()
+                        .stream()
+                        .map(ContractMapper::toResponse)
+                        .toList())
+                .page(page.getNumber())
+                .size(page.getSize())
+                .totalElements(page.getTotalElements())
+                .totalPages(page.getTotalPages())
                 .build();
     }
 

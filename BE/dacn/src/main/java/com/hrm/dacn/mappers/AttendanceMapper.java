@@ -5,7 +5,9 @@ import java.util.stream.Collectors;
 
 import com.hrm.dacn.dtos.Attendance.response.AttendanceResponse;
 import com.hrm.dacn.entities.Attendance;
+import org.springframework.stereotype.Component;
 
+@Component
 public class AttendanceMapper {
 
     private AttendanceMapper() {

@@ -3,9 +3,10 @@ package com.hrm.dacn.mappers;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.hrm.dacn.dtos.Attendance.request.AttendanceRequest;
 import com.hrm.dacn.dtos.Attendance.request.AttendanceRequestResponse;
+import org.springframework.stereotype.Component;
 
+@Component
 public class AttendanceRequestMapper {
 
     private AttendanceRequestMapper() {
@@ -15,7 +16,7 @@ public class AttendanceRequestMapper {
     // =========================
     // RESPONSE
     // =========================
-    public static AttendanceRequestResponse toResponse(AttendanceRequest request) {
+    public static AttendanceRequestResponse toResponse(com.hrm.dacn.entities.AttendanceRequest request) {
         if (request == null) {
             return null;
         }
@@ -43,7 +44,7 @@ public class AttendanceRequestMapper {
     // =========================
     // LIST RESPONSE
     // =========================
-    public static List<AttendanceRequestResponse> toResponseList(List<AttendanceRequest> requests) {
+    public static List<AttendanceRequestResponse> toResponseList(List<com.hrm.dacn.entities.AttendanceRequest> requests) {
         if (requests == null) {
             return List.of();
         }

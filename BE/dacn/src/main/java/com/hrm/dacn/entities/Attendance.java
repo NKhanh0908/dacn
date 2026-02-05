@@ -69,6 +69,12 @@ public class Attendance {
     @Column(name = "approved_at")
     private LocalDateTime approvedAt;
 
+    @Column(name = "is_working_day")
+    private Boolean isWorkingDay;
+
+    @Column(name = "is_weekend_or_holiday")
+    private Boolean isWeekendOrHoliday;
+
     @Column(name = "note", length = 500)
     private String note;
 

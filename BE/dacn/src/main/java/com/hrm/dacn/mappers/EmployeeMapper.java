@@ -5,11 +5,12 @@ import com.hrm.dacn.dtos.Employee.Request.EmployeeUpdateRequest;
 import com.hrm.dacn.dtos.Employee.Response.EmployeeResponse;
 import com.hrm.dacn.entities.Employee;
 import com.hrm.dacn.enums.Employee.EmployeeStatus;
+import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
-
+@Component
 public class EmployeeMapper {
 
     private EmployeeMapper() {
