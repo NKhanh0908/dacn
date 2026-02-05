@@ -1,9 +1,7 @@
 package com.hrm.dacn.services.impl;
 
-import com.hrm.dacn.dtos.contracts.request.ContractCreateRequest;
-import com.hrm.dacn.dtos.contracts.request.ContractSignRequest;
-import com.hrm.dacn.dtos.contracts.request.ContractTerminateRequest;
-import com.hrm.dacn.dtos.contracts.request.ContractUpdateRequest;
+import com.hrm.dacn.dtos.PageDTO;
+import com.hrm.dacn.dtos.contracts.request.*;
 import com.hrm.dacn.dtos.contracts.response.ContractResponse;
 import com.hrm.dacn.entities.Company;
 import com.hrm.dacn.entities.Contracts;
@@ -18,7 +16,11 @@ import com.hrm.dacn.repositories.ContractRepository;
 import com.hrm.dacn.repositories.EmployeeRepository;
 import com.hrm.dacn.services.ContractService;
 import com.hrm.dacn.services.EmployeeService;
-import io.micrometer.common.lang.internal.Contract;
+import com.hrm.dacn.specifications.ContractSpecification;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -145,8 +147,12 @@ public class ContractServiceImpl implements ContractService {
     }
 
     @Override
-    public List<Contract> findAll() {
-        return List.of();
+    public PageDTO<ContractResponse> filter(ContractFilter filter, int page, int size) {
+        Specification<Contracts> spec = ContractSpecification.filter(filter);
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Contracts> contractsPage = contractRepository.findAll(spec, pageable);
+
+        return ContractMapper.toContractPageDTO(contractsPage);
     }
 
     @Override

@@ -2,10 +2,15 @@ package com.hrm.dacn.services.impl;
 
 import java.util.List;
 
+import com.hrm.dacn.entities.Account;
+import com.hrm.dacn.exceptions.CustomException;
+import com.hrm.dacn.exceptions.Error;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.query.Meta;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import com.hrm.dacn.dtos.ResultPagination;
@@ -26,6 +31,18 @@ public class EmployeeServiceImpl implements EmployeeService {
     public EmployeeServiceImpl(EmployeeRepository employeeRepository, EmployeeMapper employeeMapper) {
         this.employeeRepository = employeeRepository;
         this.employeeMapper = employeeMapper;
+    }
+
+    @Override
+    public EmployeeResponse getCurrentUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new CustomException(Error.UNAUTHORIZED);
+        }
+
+        Account account = (Account) authentication.getPrincipal();
+
+        return EmployeeMapper.toResponse(account.getEmployees());
     }
 
     @Override

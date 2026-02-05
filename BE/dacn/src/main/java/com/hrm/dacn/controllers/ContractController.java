@@ -1,14 +1,12 @@
 package com.hrm.dacn.controllers;
 
 import com.hrm.dacn.dtos.APIResponse;
-import com.hrm.dacn.dtos.contracts.request.ContractCreateRequest;
-import com.hrm.dacn.dtos.contracts.request.ContractSignRequest;
-import com.hrm.dacn.dtos.contracts.request.ContractTerminateRequest;
-import com.hrm.dacn.dtos.contracts.request.ContractUpdateRequest;
+import com.hrm.dacn.dtos.PageDTO;
+import com.hrm.dacn.dtos.contracts.request.*;
 import com.hrm.dacn.dtos.contracts.response.ContractResponse;
 import com.hrm.dacn.services.ContractService;
-import io.micrometer.common.lang.internal.Contract;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -183,28 +181,29 @@ public class ContractController {
     // =========================
     // FIND ALL
     // =========================
-    @GetMapping
+    @GetMapping("/filter")
     @Operation(
-            summary = "Get All Contracts",
-            description = "Retrieve all contracts in the system",
+            summary = "Filter Contracts",
+            description = "Filters contracts by criteria such as employee, department, role, title, signing date, and date range",
+            parameters = {
+                    @Parameter(name = "page", description = "Page number (0-based)", example = "0"),
+                    @Parameter(name = "size", description = "Page size", example = "10")
+            },
             responses = {
                     @ApiResponse(
                             responseCode = "200",
-                            description = "Contracts retrieved successfully",
-                            content = @Content(
-                                    array = @ArraySchema(
-                                            schema = @Schema(implementation = ContractResponse.class)
-                                    )
-                            )
-                    ),
-                    @ApiResponse(responseCode = "401", description = "Unauthorized access"),
-                    @ApiResponse(responseCode = "500", description = "Internal server error")
+                            description = "Contracts filtered successfully",
+                            content = @Content(schema = @Schema(implementation = PageDTO.class))
+                    )
             }
     )
-    public ResponseEntity<APIResponse<List<Contract>>> getAllContracts(
+    public ResponseEntity<APIResponse<PageDTO<ContractResponse>>> getAllContracts(
+            @ModelAttribute ContractFilter filter,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
             HttpServletRequest httpRequest
     ) {
-        List<Contract> contracts = contractService.findAll();
+        PageDTO<ContractResponse> contracts = contractService.filter(filter, page, size);
 
         return ResponseEntity.ok(
                 new APIResponse<>(

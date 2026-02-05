@@ -4,6 +4,7 @@ import java.time.LocalTime;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -13,27 +14,31 @@ import lombok.*;
 @AllArgsConstructor
 public class WorkScheduleRequest {
 
-    @NotNull(message = "Schedule name is required")
+    @NotNull
     private String scheduleName;
 
-    @NotNull(message = "Start time is required")
-    @JsonFormat(pattern = "HH:mm:ss")
+    @NotNull
+    @Schema(type = "string", format = "time", example = "08:30")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm")
     private LocalTime startTime;
 
-    @NotNull(message = "End time is required")
-    @JsonFormat(pattern = "HH:mm:ss")
+    @NotNull
+    @Schema(type = "string", format = "time", example = "17:30")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm")
     private LocalTime endTime;
 
-    @JsonFormat(pattern = "HH:mm:ss")
+    @Schema(type = "string", format = "time", example = "12:00")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm")
     private LocalTime breakStartTime;
 
-    @JsonFormat(pattern = "HH:mm:ss")
+    @Schema(type = "string", format = "time", example = "13:00")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm")
     private LocalTime breakEndTime;
 
-    @Min(value = 0, message = "Late tolerance must be >= 0")
+    @Min(0)
     private Integer lateToleranceMinutes = 0;
 
-    @Min(value = 0, message = "Early leave tolerance must be >= 0")
+    @Min(0)
     private Integer earlyLeaveToleranceMinutes = 0;
 
     private Boolean isDefault = false;
