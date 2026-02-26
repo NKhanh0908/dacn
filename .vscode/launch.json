@@ -1,0 +1,14 @@
+{
+  "configurations": [
+    {
+      "type": "java",
+      "name": "Spring Boot-DacnApplication<dacn>",
+      "request": "launch",
+      "cwd": "${workspaceFolder}",
+      "mainClass": "com.hrm.dacn.DacnApplication",
+      "projectName": "dacn",
+      "args": "",
+      "envFile": "${workspaceFolder}/.env"
+    }
+  ]
+}
