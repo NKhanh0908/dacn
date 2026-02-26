@@ -1,5 +1,7 @@
 package com.hrm.dacn.dtos.Employee.Request;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 import jakarta.validation.constraints.*;
 import java.time.LocalDate;
@@ -12,64 +14,86 @@ import com.hrm.dacn.enums.Employee.Gender;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Schema(description = "Request object for creating a new employee")
 public class EmployeeCreateRequest {
 
     @NotBlank(message = "Full name must not be blank")
-    @Size(min = 2, max = 100, message = "Full name must be between 2 and 100 characters")
+    @Size(min = 2, max = 100)
+    @Schema(example = "Nguyen Van A")
     private String fullName;
 
-    @Past(message = "Date of birth must be in the past")
+    @Past
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    @Schema(type = "string", format = "date", example = "1995-08-20")
     private LocalDate dateOfBirth;
 
+    @Schema(example = "MALE")
     private Gender gender;
 
-    @Pattern(regexp = "^[0-9]{9}$|^[0-9]{12}$", message = "ID card number must be 9 or 12 digits")
+    @Pattern(regexp = "^[0-9]{9}$|^[0-9]{12}$")
+    @Schema(example = "012345678901")
     private String idCard;
 
-    @Pattern(regexp = "^(0|\\+84)[0-9]{9,10}$", message = "Invalid phone number format")
+    @Pattern(regexp = "^(0|\\+84)[0-9]{9,10}$")
+    @Schema(example = "0912345678")
     private String phone;
 
-    @Email(message = "Invalid email address")
+    @Email
+    @Schema(example = "nguyenvana@gmail.com")
     private String email;
 
-    @Size(max = 255, message = "Address must not exceed 255 characters")
+    @Size(max = 255)
+    @Schema(example = "123 Nguyen Trai, District 1, Ho Chi Minh City")
     private String address;
 
-    @NotBlank(message = "Department must not be blank")
+    @NotBlank
+    @Schema(example = "IT Department")
     private String department;
 
-    @NotBlank(message = "Position must not be blank")
+    @NotBlank
+    @Schema(example = "Backend Developer")
     private String position;
 
+    @Schema(example = "1")
     private Long roleId;
 
-    @NotNull(message = "Start date must not be null")
-    @PastOrPresent(message = "Start date cannot be in the future")
+    @NotNull
+    @PastOrPresent
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    @Schema(type = "string", format = "date", example = "2024-01-15")
     private LocalDate startDate;
 
+    @Schema(example = "ACTIVE")
     private EmployeeStatus status;
 
-    @Pattern(regexp = "^[0-9]{9,20}$", message = "Bank account number must contain 9 to 20 digits")
+    @Pattern(regexp = "^[0-9]{9,20}$")
+    @Schema(example = "1234567890123")
     private String bankAccount;
 
-    @Size(max = 100, message = "Bank name must not exceed 100 characters")
+    @Size(max = 100)
+    @Schema(example = "Vietcombank")
     private String bankName;
 
-    @Pattern(regexp = "^[0-9]{10}$|^[0-9]{13}$", message = "Tax code must be 10 or 13 digits")
+    @Pattern(regexp = "^[0-9]{10}$|^[0-9]{13}$")
+    @Schema(example = "1234567890")
     private String taxCode;
 
-    @Pattern(regexp = "^[0-9]{10}$", message = "Social insurance number must be exactly 10 digits")
+    @Pattern(regexp = "^[0-9]{10}$")
+    @Schema(example = "0123456789")
     private String socialInsuranceNumber;
 
+    @Schema(example = "https://example.com/avatar.jpg")
     private String avatarUrl;
 
-    // Emergency contact information
-    @Size(max = 100, message = "Emergency contact name must not exceed 100 characters")
+    @Size(max = 100)
+    @Schema(example = "Tran Thi B")
     private String emergencyContactName;
 
-    @Pattern(regexp = "^(0|\\+84)[0-9]{9,10}$", message = "Invalid emergency contact phone number")
+    @Pattern(regexp = "^(0|\\+84)[0-9]{9,10}$")
+    @Schema(example = "0987654321")
     private String emergencyContactPhone;
 
-    @Size(max = 50, message = "Emergency contact relationship must not exceed 50 characters")
+    @Size(max = 50)
+    @Schema(example = "Mother")
     private String emergencyContactRelationship;
 }
