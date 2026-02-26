@@ -104,7 +104,7 @@ public class Employee {
     // @Column(name = "updated_at")
     // private LocalDateTime updatedAt;
 
-     @ManyToOne(fetch = FetchType.LAZY)
+     @ManyToOne
      @JoinColumn
      private Role role;
 
