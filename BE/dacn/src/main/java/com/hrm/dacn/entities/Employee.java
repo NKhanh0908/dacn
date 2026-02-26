@@ -57,8 +57,6 @@ public class Employee {
     @Column(name = "position", length = 100)
     private String position;
 
-    @Column(name = "role_id")
-    private Long roleId;
 
     @Column(name = "start_date", nullable = false)
     @NotNull(message = "Ngày bắt đầu làm việc không được để trống")
@@ -106,10 +104,9 @@ public class Employee {
     // @Column(name = "updated_at")
     // private LocalDateTime updatedAt;
 
-    // Relationship với Role (nếu có)
-    // @ManyToOne(fetch = FetchType.LAZY)
-    // @JoinColumn(name = "role_id", insertable = false, updatable = false)
-    // private Role role;
+     @ManyToOne
+     @JoinColumn
+     private Role role;
 
     // Tính tuổi
     @Transient

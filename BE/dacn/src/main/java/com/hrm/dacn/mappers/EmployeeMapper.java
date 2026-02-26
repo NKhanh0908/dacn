@@ -35,7 +35,6 @@ public class EmployeeMapper {
                 .address(request.getAddress())
                 .department(request.getDepartment())
                 .position(request.getPosition())
-                .roleId(request.getRoleId())
                 .startDate(
                         request.getStartDate() != null
                                 ? request.getStartDate()
@@ -81,8 +80,6 @@ public class EmployeeMapper {
             employee.setDepartment(request.getDepartment());
         if (request.getPosition() != null)
             employee.setPosition(request.getPosition());
-        if (request.getRoleId() != null)
-            employee.setRoleId(request.getRoleId());
         if (request.getStartDate() != null)
             employee.setStartDate(request.getStartDate());
         if (request.getStatus() != null)
@@ -129,7 +126,8 @@ public class EmployeeMapper {
                 .address(employee.getAddress())
                 .department(employee.getDepartment())
                 .position(employee.getPosition())
-                .roleId(employee.getRoleId())
+                .roleId(employee.getRole().getId())
+                .roleName(employee.getRole().getName())
                 .startDate(employee.getStartDate())
                 .yearsOfService(employee.getYearsOfService())
                 .status(employee.getStatus())

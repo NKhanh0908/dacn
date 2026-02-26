@@ -3,8 +3,10 @@ package com.hrm.dacn.services.impl;
 import java.util.List;
 
 import com.hrm.dacn.entities.Account;
+import com.hrm.dacn.entities.Role;
 import com.hrm.dacn.exceptions.CustomException;
 import com.hrm.dacn.exceptions.Error;
+import com.hrm.dacn.repositories.RoleRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -27,10 +29,12 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     private final EmployeeRepository employeeRepository;
     private final EmployeeMapper employeeMapper;
+    private final RoleRepository roleRepository;
 
-    public EmployeeServiceImpl(EmployeeRepository employeeRepository, EmployeeMapper employeeMapper) {
+    public EmployeeServiceImpl(EmployeeRepository employeeRepository, EmployeeMapper employeeMapper, RoleRepository roleRepository) {
         this.employeeRepository = employeeRepository;
         this.employeeMapper = employeeMapper;
+        this.roleRepository = roleRepository;
     }
 
     @Override
@@ -48,6 +52,9 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public EmployeeResponse create(EmployeeCreateRequest request) {
         Employee employee = employeeMapper.toEntity(request);
+        Role role = roleRepository.findById(request.getRoleId())
+                .orElseThrow();
+        employee.setRole(role);
         employeeRepository.save(employee);
         return employeeMapper.toResponse(employee);
     }
