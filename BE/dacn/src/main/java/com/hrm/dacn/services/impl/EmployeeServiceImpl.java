@@ -31,7 +31,8 @@ public class EmployeeServiceImpl implements EmployeeService {
     private final EmployeeMapper employeeMapper;
     private final RoleRepository roleRepository;
 
-    public EmployeeServiceImpl(EmployeeRepository employeeRepository, EmployeeMapper employeeMapper, RoleRepository roleRepository) {
+    public EmployeeServiceImpl(EmployeeRepository employeeRepository, EmployeeMapper employeeMapper,
+            RoleRepository roleRepository) {
         this.employeeRepository = employeeRepository;
         this.employeeMapper = employeeMapper;
         this.roleRepository = roleRepository;
@@ -99,6 +100,22 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public void delete(Long id) {
         employeeRepository.deleteById(id);
+    }
+
+    @Override
+    public Employee getCurrentEntity() {
+
+        Authentication authentication = SecurityContextHolder
+                .getContext()
+                .getAuthentication();
+
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new CustomException(Error.UNAUTHORIZED);
+        }
+
+        Account account = (Account) authentication.getPrincipal();
+
+        return account.getEmployees();
     }
 
 }

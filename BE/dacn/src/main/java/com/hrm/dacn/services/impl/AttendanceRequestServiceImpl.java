@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.hrm.dacn.dtos.Attendance.request.AttendanceRequestCreateRequest;
 import com.hrm.dacn.dtos.Attendance.request.AttendanceRequestResponse;
 import com.hrm.dacn.dtos.Attendance.request.AttendanceRequestReviewRequest;
+import com.hrm.dacn.dtos.Attendance.request.AttendanceUpdateRequest;
 import com.hrm.dacn.entities.Account;
 import com.hrm.dacn.entities.Attendance;
 import com.hrm.dacn.entities.Employee;
@@ -24,6 +25,7 @@ import com.hrm.dacn.repositories.AttendanceRepository;
 import com.hrm.dacn.repositories.AttendanceRequestRepository;
 import com.hrm.dacn.services.AccountService;
 import com.hrm.dacn.services.AttendanceRequestService;
+import com.hrm.dacn.services.AttendanceService;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -38,6 +40,7 @@ public class AttendanceRequestServiceImpl implements AttendanceRequestService {
     private final AttendanceRepository attendanceRepository;
     private final AccountService accountService;
     private final AttendanceRequestMapper requestMapper;
+    private final AttendanceService attendanceService;
 
     @Override
     @Transactional
@@ -225,27 +228,45 @@ public class AttendanceRequestServiceImpl implements AttendanceRequestService {
 
     private void createAttendanceFromRequest(
             AttendanceRequest request,
-            Employee createdBy) {
+            Employee reviewer) {
 
-        Attendance attendance = Attendance.builder()
-                .employee(request.getEmployee())
-                .attendanceDate(request.getRequestDate())
-                .checkInTime(request.getCheckInTime())
-                .checkOutTime(request.getCheckOutTime())
-                .checkInMethod(CheckMethod.MANUAL)
-                .checkOutMethod(CheckMethod.MANUAL)
-                .status(AttendanceStatus.PENDING)
-                .note("Created from request: " + request.getReason())
-                .isManualEntry(true)
-                .createdBy(createdBy)
-                .isApproved(true)
-                .approvedBy(createdBy)
-                .approvedAt(LocalDateTime.now())
-                .build();
+        Attendance attendance = attendanceRepository
+                .findByEmployeeAndAttendanceDate(
+                        request.getEmployee(),
+                        request.getRequestDate())
+                .orElse(new Attendance());
 
-        attendanceRepository.save(attendance);
+        attendance.setEmployee(request.getEmployee());
+        attendance.setAttendanceDate(request.getRequestDate());
 
-        log.info("Attendance created from approved request for employee {}",
-                request.getEmployee().getFullName());
+        if (request.getCheckInTime() != null) {
+            attendance.setCheckInTime(request.getCheckInTime());
+            attendance.setCheckInMethod(CheckMethod.MANUAL);
+        }
+
+        if (request.getCheckOutTime() != null) {
+            attendance.setCheckOutTime(request.getCheckOutTime());
+            attendance.setCheckOutMethod(CheckMethod.MANUAL);
+        }
+
+        attendance.setIsManualEntry(true);
+        attendance.setIsApproved(true);
+        attendance.setApprovedBy(reviewer);
+        attendance.setApprovedAt(LocalDateTime.now());
+
+        // set status tạm thời để không bị null
+        attendance.setStatus(AttendanceStatus.PENDING);
+
+        attendance = attendanceRepository.save(attendance);
+
+        // Sau đó mới tính lại cho đúng
+        attendanceService.update(
+                attendance.getId(),
+                new AttendanceUpdateRequest(
+                        attendance.getCheckInTime(),
+                        attendance.getCheckOutTime(),
+                        null,
+                        null,
+                        true));
     }
 }

@@ -2,6 +2,7 @@ package com.hrm.dacn.dtos.Attendance.request;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.hrm.dacn.enums.Attendance.RequestType;
@@ -20,11 +21,11 @@ public class AttendanceRequestCreateRequest {
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate requestDate;
 
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime checkInTime;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm")
+    private LocalTime checkInTime;
 
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime checkOutTime;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm")
+    private LocalTime checkOutTime;
 
     @NotNull(message = "Request type is required")
     private RequestType requestType;
