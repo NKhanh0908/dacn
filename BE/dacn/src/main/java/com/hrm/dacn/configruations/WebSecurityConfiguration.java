@@ -40,7 +40,7 @@ public class WebSecurityConfiguration {
     private static final String USER_SUPERVISOR = AccountRole.SUPERVISOR.name();
 
     public WebSecurityConfiguration(OurUserDetailsService ourUserDetailsService,
-                                    JwtAuthenticationFilter jwtAuthenticationFilter) {
+            JwtAuthenticationFilter jwtAuthenticationFilter) {
         this.ourUserDetailsService = ourUserDetailsService;
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
     }
@@ -59,8 +59,8 @@ public class WebSecurityConfiguration {
                                 "/accounts",
                                 "/accounts/sign-in",
 
-                                "/**"
-                        ).permitAll()
+                                "/**")
+                        .permitAll()
                         .anyRequest()
                         .authenticated())
                 .httpBasic(withDefaults())
@@ -89,6 +89,5 @@ public class WebSecurityConfiguration {
         daoAuthenticationProvider.setPasswordEncoder(passwordEncoder());
         return daoAuthenticationProvider;
     }
-
 
 }

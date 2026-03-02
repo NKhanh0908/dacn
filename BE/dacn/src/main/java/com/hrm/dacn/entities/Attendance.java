@@ -30,10 +30,10 @@ public class Attendance {
     private LocalDate attendanceDate;
 
     @Column(name = "check_in_time")
-    private LocalDateTime checkInTime;
+    private LocalTime checkInTime;
 
     @Column(name = "check_out_time")
-    private LocalDateTime checkOutTime;
+    private LocalTime checkOutTime;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "check_in_method")
@@ -90,6 +90,10 @@ public class Attendance {
 
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+
+    @ManyToOne
+    @JoinColumn(name = "work_schedule_id")
+    private WorkSchedule workSchedule;
 
     @PrePersist
     protected void onCreate() {

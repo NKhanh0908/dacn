@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 import com.hrm.dacn.entities.Employee;
 import com.hrm.dacn.enums.Attendance.RequestStatus;
@@ -22,9 +23,9 @@ public class AttendanceRequest {
 
     private LocalDate requestDate;
 
-    private LocalDateTime checkInTime;
+    private LocalTime checkInTime;
 
-    private LocalDateTime checkOutTime;
+    private LocalTime checkOutTime;
 
     private RequestType requestType;
 
