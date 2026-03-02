@@ -17,6 +17,8 @@ public interface EmployeeService {
 
     EmployeeResponse getCurrentUser();
 
+    Employee getCurrentEntity();
+
     EmployeeResponse create(EmployeeCreateRequest request);
 
     EmployeeResponse update(Long id, EmployeeUpdateRequest request);
