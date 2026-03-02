@@ -20,7 +20,10 @@ export default function Login() {
       await authLogin({ username, password });
       const profile = await getCurrentEmployee();
 
-      loginSuccess(profile.data);
+      loginSuccess({
+        profile: profile.data,
+        role: localStorage.getItem("role"),
+      });
 
       // CHUYỂN ROUTE ĐÚNG CÁCH
       window.location.replace("/");

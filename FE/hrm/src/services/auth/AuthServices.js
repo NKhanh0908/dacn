@@ -2,6 +2,7 @@ import { api } from "../../config/axios";
 import {
   ACCESS_TOKEN,
   REFRESH_TOKEN,
+  ROLE,
   SESSION_ACCOUNT,
   SESSION_LOGGED_IN
 } from "../../config/constants";
@@ -16,9 +17,11 @@ const authLogin = async (formData, config = {}) => {
 
     const accessToken = response.data.data.token;
     const refreshToken = response.data.data.refreshToken;
+    const role = response.data.data.role;
 
     localStorage.setItem(ACCESS_TOKEN, accessToken);
     localStorage.setItem(REFRESH_TOKEN, refreshToken);
+    localStorage.setItem(ROLE, role);
   }
 
   return response.data;
@@ -28,6 +31,7 @@ const authLogin = async (formData, config = {}) => {
 const authLogout = () => {
   localStorage.removeItem(ACCESS_TOKEN);
   localStorage.removeItem(REFRESH_TOKEN);
+  localStorage.removeItem(ROLE);
   sessionStorage.removeItem(SESSION_ACCOUNT);
   sessionStorage.removeItem(SESSION_LOGGED_IN);
 };

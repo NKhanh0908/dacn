@@ -58,15 +58,14 @@ export default function Header({onOpenProfile}) {
             >
               <FiRefreshCw size={20} />
             </button>
-            <button
-              onClick={() => setOpen(!open)}
+            <img src={employee.avatarUrl} 
+              alt="Avatar" 
+              onClick={() => setOpen(!open)} 
               className="w-9 h-9 rounded-full flex items-center justify-center
                         bg-white/10 border border-white/20
                         text-white cursor-pointer
-                        hover:ring-2 hover:ring-blue-400 transition"
-            >
-              <FiUser size={18} />
-            </button>
+                        hover:ring-2 hover:ring-blue-400 transition" 
+            />
           </div>
         </div>
       </div>
