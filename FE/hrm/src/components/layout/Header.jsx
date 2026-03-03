@@ -1,25 +1,34 @@
 import { useEffect, useState } from "react";
 import { FiBell, FiUser, FiRefreshCw } from "react-icons/fi";
 import { useEmployeeContext } from "../../context/EmployeeContext";
+import { FiLogOut } from "react-icons/fi";
+import { useNavigate } from "react-router-dom";
+import { authLogout } from "../../services/auth/AuthServices";
 
-export default function Header({onOpenProfile}) {
+function useDateTime() {
+  const [now, setNow] = useState(new Date());
+
+  useEffect(() => {
+    const timer = setInterval(() => setNow(new Date()), 1000);
+    return () => clearInterval(timer);
+  }, []);
+
+  return now;
+}
+
+export default function Header() {
   const { employee, loading } = useEmployeeContext();
   const [open, setOpen] = useState(false);
+  const navigate = useNavigate();
+
+  const now = useDateTime();
 
   if (loading || !employee) return null;
 
-  const useDateTime = () => {
-    const [now, setNow] = useState(new Date());
-
-    useEffect(() => {
-      const timer = setInterval(() => setNow(new Date()), 1000);
-      return () => clearInterval(timer);
-    }, []);
-
-    return now;
+  const handleLogout = () => {
+    authLogout();
+    navigate("/login", { replace: true });
   };
-
-  const now = useDateTime(); 
 
   const formattedDate = now.toLocaleDateString("vi-VN", {
     weekday: "long",
@@ -41,7 +50,7 @@ export default function Header({onOpenProfile}) {
         <span className="w-0.5 h-8 bg-white"></span>
         <div className="flex items-center justify-between w-full">
           <h1 className="text-2xl pl-6 font-bold text-white">
-            Welcome, {employee.fullName}
+            {/* Welcome, {employee.fullName} */}
           </h1>
           <div className="flex items-center gap-5 text-white">
             <div className="text-right leading-tight">
@@ -77,19 +86,26 @@ export default function Header({onOpenProfile}) {
       </div>
 
       {open && (
-        <div className="absolute top-16 right-6 w-64 bg-white rounded-xl shadow-lg p-4">
-          <p className="font-semibold">{employee.fullName}</p>
-          <p className="text-sm text-gray-500">{employee.email}</p>
+        <div className="absolute top-16 right-6 w-64 bg-white rounded-xl shadow-lg p-4 z-50 border border-gray-600">
+          <p className="font-semibold text-center">{employee.fullName}</p>
+          <p className="text-sm text-gray-500 text-center">{employee.email}</p>
+          
+          <hr className="h-px my-2 bg-gray-200 border-0 dark:bg-gray-700"/>
 
-          <button
-            className="mt-3 text-blue-600 text-sm"
-            onClick={() => {
-              setOpen(false);
-              onOpenProfile?.();
-            }}
-          >
-            Xem thêm
-          </button>
+          <div className="mt-4 space-y-2 flex flex-col items-center">
+            <button
+              onClick={handleLogout}
+              className=" border border-red-500
+                w-[50%] flex items-center gap-2
+                text-red-500 text-sm
+                hover:bg-red-50 px-2 py-2 rounded-lg
+                transition
+              "
+            >
+              <FiLogOut size={16} />
+              Đăng xuất
+            </button>
+          </div>
         </div>
       )}
     </div>

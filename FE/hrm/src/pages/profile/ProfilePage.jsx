@@ -1,118 +1,182 @@
 import { useEmployeeContext } from "../../context/EmployeeContext";
-import { FiX } from "react-icons/fi";
+import { FiUser } from "react-icons/fi";
 
-const ProfilePage = ({ show, onClose }) => {
+
+const ProfilePage = () => {
   const { employee, loading } = useEmployeeContext();
 
-  if (!show || loading || !employee) return null;
+  if (loading || !employee) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm" onClick={onClose}>
-      <div
-        onClick={(e) => e.stopPropagation()}
-        className="relative w-[720px] rounded-2xl bg-[#162F47] text-white pl-6 pr-6 pb-6 shadow-2xl animate-scaleIn"
-      >
-        
-        {/* Avatar */}
-        <div className="absolute top-[-70px] left-1/2 -translate-x-1/2">
-          <img
-            src={employee.avatarUrl}
-            alt="Avatar"
-            className="w-40 h-40 rounded-full object-cover border-4 border-[#162F47]"
-          />
+    <div className="overflow-y-auto h-[calc(100vh-100px)]">
+      <div className="w-full mx-auto">
+
+        <div className="flex items-center justify-between mt-2 mb-6 mr-4">
+          <h1 className="text-2xl  font-bold">
+            Welcome, {employee.fullName}
+          </h1>
+          <button>
+            <span className="text-l font-bold text-[#162F47] border border-[#162F47] rounded-lg p-2 hover:bg-[#162F47] hover:text-white">Cập nhật</span>
+          </button>
+        </div>
+
+        <div className="border-2 border-[#162F47] rounded-2xl p-3 shadow-2xl">
+          <div className="flex items-center gap-2 border-b border-[#162F47] pb-2">
+            <FiUser size={22} className="text-[#162F47]" />
+            <span className="text-[#162F47] font-semibold text-lg">Thông tin cá nhân</span>
+          </div>
+
+          <div className="flex items-center justify-center gap-20">
+            <div className="flex gap-4 mt-4 items-center w-1/2">
+              <img
+                src={employee.avatarUrl}
+                alt="Avatar"
+                className="w-40 h-40"
+              />
+
+              <div className="flex flex-col gap-2 text-l w-full">
+                <p className="flex justify-between">
+                  <span className="font-semibold">Mã nhân viên:</span>{" "}
+                  <span className="font-bold">{employee.employeeId}</span>
+                </p>
+                <p className="flex justify-between">
+                  <span className="font-semibold">Họ tên:</span>{" "}
+                  <span className="font-bold">{employee.fullName}</span>
+                </p>
+                <p className="flex justify-between">
+                  <span className="font-semibold">Ngày sinh:</span>{" "}
+                  <span className="font-bold">{employee.dateOfBirth}</span>
+                </p>
+                <p className="flex justify-between">
+                  <span className="font-semibold">Giới tính:</span>{" "}
+                  <span className="font-bold">{employee.genderDisplay}</span>
+                </p>
+              </div>
+            </div>
+
+            <div className="h-40 w-[1px] border border-[#162F47]"></div>
+
+            <div className="flex gap-4 mt-4 items-center w-1/2">
+              <div className="flex flex-col gap-2 text-l w-full"> 
+                <p className="flex justify-between">
+                  <span className="font-semibold">Số điện thoại:</span>{" "}
+                  <span className="font-bold">{employee.phone}</span>
+                </p>
+                <p className="flex justify-between">
+                  <span className="font-semibold">Địa chỉ:</span>{" "}
+                  <span className="font-bold w-[400px] text-right">{employee.address}</span>
+                </p>
+                <p className="flex justify-between">
+                  <span className="font-semibold">Email:</span>{" "}
+                  <span className="font-bold">{employee.email}</span>
+                </p>
+                <p className="flex justify-between">
+                  <span className="font-semibold">Trạng thái:</span>{" "}
+                  <span className="font-bold">{employee.statusDisplay}</span>
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="border-2 border-[#162F47] rounded-2xl p-3 shadow-2xl mt-6">
+          <div className="flex items-center gap-2 border-b border-[#162F47] pb-2">
+            <FiUser size={22} className="text-[#162F47]" />
+            <span className="text-[#162F47] font-semibold text-lg">Thông tin làm việc</span>
+          </div>
+
+          <div className="flex items-center justify-center mt-4 gap-20">
+            <div className="flex gap-20 items-center justify-center w-full">
+              <div className="flex flex-col gap-2 text-l w-1/3">
+                <p className="flex justify-between">
+                  <span className="font-semibold">Phòng ban:</span>{" "}
+                  <span className="font-bold">{employee.department}</span>
+                </p>
+                <p className="flex justify-between">
+                  <span className="font-semibold">Chức vụ:</span>{" "}
+                  <span className="font-bold">{employee.position}</span>
+                </p>
+              </div>
+
+              <div className="h-20 w-[1px] border border-[#162F47]"></div>
+
+              <div className="flex flex-col gap-2 text-l w-1/3">
+                <p className="flex justify-between">
+                  <span className="font-semibold">Vai trò:</span>{" "}
+                  <span className="font-bold">{employee.roleName}</span>
+                </p>
+                <p className="flex justify-between">
+                  <span className="font-semibold">Ngày vào làm:</span>{" "}
+                  <span className="font-bold">{employee.startDate}</span>
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="border-2 border-[#162F47] rounded-2xl p-3 shadow-2xl mt-6">
+          <div className="flex items-center gap-2 border-b border-[#162F47] pb-2">
+            <FiUser size={22} className="text-[#162F47]" />
+            <span className="text-[#162F47] font-semibold text-lg">Thông tin xã hội</span>
+          </div>
+
+          <div className="flex items-center justify-center mt-4 gap-20">
+            <div className="flex gap-20 items-center justify-center w-full">
+              <div className="flex flex-col gap-2 text-l w-1/3">
+                <p className="flex justify-between">
+                  <span className="font-semibold">Tên người liên hệ:</span>{" "}
+                  <span className="font-bold">{employee.emergencyContactName}</span>
+                </p>
+                <p className="flex justify-between">
+                  <span className="font-semibold">SĐT người liên hệ:</span>{" "}
+                  <span className="font-bold">{employee.emergencyContactPhone}</span>
+                </p>
+                <p className="flex justify-between">
+                  <span className="font-semibold">Mối quan hệ:</span>{" "}
+                  <span className="font-bold">{employee.emergencyContactRelationship}</span>
+                </p>
+                <p className="flex justify-between">
+                  <span className="font-semibold">Số bảo hiểm xã hội:</span>{" "}
+                  <span className="font-bold">{employee.socialInsuranceNumber}</span>
+                </p>
+              </div>
+
+              <div className="h-[120px] w-[1px] border border-[#162F47]"></div>
+
+              <div className="flex flex-col gap-2 text-l w-1/3">
+                <p className="flex justify-between">
+                  <span className="font-semibold">Mã card:</span>{" "}
+                  <span className="font-bold">{employee.idCard}</span>
+                </p>
+                <p className="flex justify-between">
+                  <span className="font-semibold">Tài khoản ngân hàng:</span>{" "}
+                  <span className="font-bold">{employee.bankAccount}</span>
+                </p>
+                <p className="flex justify-between">
+                  <span className="font-semibold">Ngân hàng:</span>{" "}
+                  <span className="font-bold">{employee.bankName}</span>
+                </p>
+                <p className="flex justify-between">
+                  <span className="font-semibold">Mã tax:</span>{" "}
+                  <span className="font-bold">{employee.taxCode}</span>
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* Content */}
-        <div className="flex flex-row gap-6 mt-20">
-          <div className="space-y-3 text-sm w-1/2 pr-4 border-r border-white/20">
-            <p>
-              <span className="opacity-70">Họ tên:</span>{" "}
-              {employee.fullName}
-            </p>
-            <p>
-              <span className="opacity-70">Ngày sinh:</span>{" "}
-              {employee.dateOfBirth}
-            </p>
-            <p>
-              <span className="opacity-70">Giới tính:</span>{" "}
-              {employee.genderDisplay}
-            </p>
-            <p>
-              <span className="opacity-70">Email:</span>{" "}
-              {employee.email}
-            </p>
-            <p>
-              <span className="opacity-70">Số điện thoại:</span>{" "}
-              {employee.phone}
-            </p>
-            <p>
-              <span className="opacity-70">Địa chỉ:</span>{" "}
-              {employee.address}
-            </p>
-            <p>
-              <span className="opacity-70">Tên người liên hệ:</span>{" "}
-              {employee.emergencyContactName}
-            </p>
-            <p>
-              <span className="opacity-70">SĐT người liên hệ:</span>{" "}
-              {employee.emergencyContactPhone}
-            </p>
-            <p>
-              <span className="opacity-70">Mối quan hệ:</span>{" "}
-              {employee.emergencyContactRelationship}
-            </p>
-            <p>
-              <span className="opacity-70">Ngày vào làm:</span>{" "}
-              {employee.startDate}
-            </p>
-            <p>
-              <span className="opacity-70">Trạng thái:</span>{" "}
-              {employee.statusDisplay}
-            </p>
-          </div>
+        {/* <div className="flex flex-row gap-6">
 
           <div className="space-y-3 text-sm w-1/2 pl-4">
             <p>
-              <span className="opacity-70">Vai trò:</span>{" "}
-              {employee.roleName}
-            </p>
+
             <p>
-              <span className="opacity-70">Phòng ban:</span>{" "}
-              {employee.department}
-            </p>
-            <p>
-              <span className="opacity-70">Chức vụ:</span>{" "}
-              {employee.position}
-            </p>
-            <p>
-              <span className="opacity-70">Mã card:</span>{" "}
-              {employee.idCard}
-            </p>
-            <p>
-              <span className="opacity-70">Tài khoản ngân hàng:</span>{" "}
-              {employee.bankAccount}
-            </p>
-            <p>
-              <span className="opacity-70">Ngân hàng:</span>{" "}
-              {employee.bankName}
-            </p>
-            <p>
-              <span className="opacity-70">Mã tax:</span>{" "}
-              {employee.taxCode}
-            </p>
-            <p>
-              <span className="opacity-70">Số bảo hiểm xã hội:</span>{" "}
+              <span className="opacity-70"></span>{" "}
               {employee.socialInsuranceNumber}
             </p>
           </div>
-        </div>
-
-        {/* Footer */}
-        <div className="mt-6 text-right">
-          <button onClick={onClose} className="px-4 py-2 rounded-lg text-sm bg-blue-500 hover:bg-blue-600 transition">
-            Đóng
-          </button>
-        </div>
+        </div> */}
       </div>
     </div>
   );

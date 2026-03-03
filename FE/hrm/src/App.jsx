@@ -1,6 +1,7 @@
 import { createBrowserRouter, RouterProvider, Navigate } from "react-router-dom";
 import Login from "./pages/auth/Login";
 import DashboardLayout from "./pages/dashboard/Dashboard";
+import ProfilePage from "./pages/profile/ProfilePage";
 
 const isAuthenticated = () => {
   return !!localStorage.getItem("access_token");
@@ -14,9 +15,18 @@ const router = createBrowserRouter([
   {
     path: "/",
     element: isAuthenticated() ? <DashboardLayout /> : <Navigate to="/login" />,
-    // children: [
-    //   // sau này thêm employee, department...
-    // ],
+    children: [
+      // {
+      //   index: true,
+      //   element: <HomePage />,
+      // },
+      {
+        path: "profile",
+        element: <ProfilePage />,
+      },
+      // sau này thêm:
+      // employee, department, attendance...
+    ],
   },
 ]);
 

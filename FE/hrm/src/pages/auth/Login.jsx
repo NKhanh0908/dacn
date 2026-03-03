@@ -25,7 +25,6 @@ export default function Login() {
         role: localStorage.getItem("role"),
       });
 
-      // CHUYỂN ROUTE ĐÚNG CÁCH
       window.location.replace("/");
     } catch (err) {
       console.error(err);
