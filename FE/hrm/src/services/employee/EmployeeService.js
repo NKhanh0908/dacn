@@ -20,8 +20,8 @@ export const createEmployee = async (formData, config = {}) => {
 };
 
 /* Cập nhật employee */
-export const updateEmployee = async (formData, config = {}) => {
-  const response = await apiFile.put(EMPLOYEE, formData, config);
+export const updateEmployee = async (employeeId, data, config = {}) => {
+  const response = await api.put(`${EMPLOYEE}/${employeeId}`, data, config);
   return response.data;
 };
 

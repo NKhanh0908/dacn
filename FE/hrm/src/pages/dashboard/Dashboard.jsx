@@ -2,11 +2,12 @@ import { useEffect, useState } from "react";
 import { Outlet } from "react-router-dom";
 import Sidebar from "../../components/layout/Sidebar";
 import Header from "../../components/layout/Header";
-import ProfilePage from "../profile/ProfilePage";
+import EditProfile from "../profile/EditProfile";
 
 const DashboardLayout = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [setShowProfile] = useState(false);
+  const [showEditProfile, setShowEditProfile] = useState(false);
 
   useEffect(() => {
     const timerId = setTimeout(() => {
@@ -19,12 +20,18 @@ const DashboardLayout = () => {
       {/* <BackgroundWaves /> */}
       <div className="flex min-h-screen bg-[#ffffff] relative">
         <Sidebar />
-        <div className="w-[82%]">
+        <div className="w-[84%]">
           <Header onOpenProfile={() => setShowProfile(true)} />
           <main className="pl-7 h-[calc(100vh-100px)] overflow-y-auto">
-            <Outlet />
+            <Outlet context={{ openEditProfile: () => setShowEditProfile(true) }} />
           </main>
         </div>
+
+        <EditProfile
+          show={showEditProfile}
+          onClose={() => setShowEditProfile(false)}
+        />
+
         {isLoading && (
           <div className="
             fixed inset-0 z-[999]

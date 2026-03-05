@@ -1,9 +1,10 @@
 import { useEmployeeContext } from "../../context/EmployeeContext";
 import { FiUser } from "react-icons/fi";
-
+import { useOutletContext } from "react-router-dom";
 
 const ProfilePage = () => {
   const { employee, loading } = useEmployeeContext();
+  const { openEditProfile } = useOutletContext();
 
   if (loading || !employee) return null;
 
@@ -15,7 +16,7 @@ const ProfilePage = () => {
           <h1 className="text-2xl  font-bold">
             Welcome, {employee.fullName}
           </h1>
-          <button>
+          <button onClick={openEditProfile}>
             <span className="text-l font-bold text-[#162F47] border border-[#162F47] rounded-lg p-2 hover:bg-[#162F47] hover:text-white">Cập nhật</span>
           </button>
         </div>
@@ -26,7 +27,7 @@ const ProfilePage = () => {
             <span className="text-[#162F47] font-semibold text-lg">Thông tin cá nhân</span>
           </div>
 
-          <div className="flex items-center justify-center gap-20">
+          <div className="flex items-center justify-center gap-5">
             <div className="flex gap-4 mt-4 items-center w-1/2">
               <img
                 src={employee.avatarUrl}
@@ -64,7 +65,7 @@ const ProfilePage = () => {
                 </p>
                 <p className="flex justify-between">
                   <span className="font-semibold">Địa chỉ:</span>{" "}
-                  <span className="font-bold w-[400px] text-right">{employee.address}</span>
+                  <span className="font-bold w-[380px] text-right">{employee.address}</span>
                 </p>
                 <p className="flex justify-between">
                   <span className="font-semibold">Email:</span>{" "}
@@ -164,19 +165,6 @@ const ProfilePage = () => {
             </div>
           </div>
         </div>
-
-        {/* Content */}
-        {/* <div className="flex flex-row gap-6">
-
-          <div className="space-y-3 text-sm w-1/2 pl-4">
-            <p>
-
-            <p>
-              <span className="opacity-70"></span>{" "}
-              {employee.socialInsuranceNumber}
-            </p>
-          </div>
-        </div> */}
       </div>
     </div>
   );

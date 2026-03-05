@@ -15,7 +15,7 @@ const Sidebar = () => {
       : "";
 
   return (
-    <div className="w-[18%] h-screen text-white bg-[#162F47] rounded-br-[10px] flex flex-col">
+    <div className="w-[19%] h-screen text-white bg-[#162F47] rounded-br-[10px] flex flex-col">
       <h2
         className="
           mt-2 mb-5

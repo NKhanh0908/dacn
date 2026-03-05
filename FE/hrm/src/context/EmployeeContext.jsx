@@ -24,7 +24,7 @@ export const EmployeeProvider = ({ children }) => {
   }, []);
 
   return (
-    <EmployeeContext.Provider value={{ employee, loading }}>
+    <EmployeeContext.Provider value={{ employee, setEmployee, loading }}>
       {children}
     </EmployeeContext.Provider>
   );
