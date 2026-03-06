@@ -23,8 +23,8 @@ public class ContractUpdateRequest {
     private LocalDate signedDate;
 
     private String jobTitle;
-    private String department;
     private String jobDescription;
+    private String department;
 
     private BigDecimal basicSalary;
     private BigDecimal allowances;
@@ -32,6 +32,8 @@ public class ContractUpdateRequest {
 
     private BigDecimal workingHoursPerDay;
     private Integer workingDaysPerWeek;
+    private String overtimePolicy;
+    private Integer annualLeaveDays;
 
     private Integer probationPeriod;
     private Integer probationSalaryPercentage;
@@ -45,12 +47,12 @@ public class ContractUpdateRequest {
     private String employerRepresentative;
     private String employerPosition;
 
-    private String confidentialityClause;
-    private String technologyConfidentiality;
-    private String nonCompeteClause;
-    private Integer confidentialityPeriodMonths;
-
+    private LocalDate terminationDate;
+    private String terminationReason;
     private Integer noticePeriodDays;
+
+    private String fileUrl;
+    private String draftFileUrl;
+
     private String notes;
 }
-
