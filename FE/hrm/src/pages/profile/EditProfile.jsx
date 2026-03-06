@@ -7,22 +7,40 @@ const EditProfile = ({ show, onClose }) => {
   const { employee, loading, setEmployee } = useEmployeeContext();
   const [form, setForm] = useState({});
   const [saving, setSaving] = useState(false);
+  const [banks, setBanks] = useState([]);
+  const [openBank, setOpenBank] = useState(false);
+
+  useEffect(() => {
+    const fetchBanks = async () => {
+      const res = await fetch("https://api.vietqr.io/v2/banks");
+      const data = await res.json();
+      setBanks(data.data);
+    };
+
+    fetchBanks();
+  }, []);
 
   // Khi mở modal → đổ data vào form
   useEffect(() => {
-  if (employee && show) {
-    setForm({
-    phone: employee.phone || "",
-    address: employee.address || "",
-    email: employee.email || "",
-    emergencyContactName: employee.emergencyContactName || "",
-    emergencyContactPhone: employee.emergencyContactPhone || "",
-    relationship: employee.relationship || "",
-    bankAccount: employee.bankAccount || "",
-    bankName: employee.bankName || "",
-    });
-  }
-  }, [employee, show]);
+    if (employee && show) {
+      const bank = banks.find(
+        (b) => b.shortName === employee.bankName
+      );
+
+      setForm({
+        phone: employee.phone || "",
+        address: employee.address || "",
+        email: employee.email || "",
+        emergencyContactName: employee.emergencyContactName || "",
+        emergencyContactPhone: employee.emergencyContactPhone || "",
+        emergencyContactRelationship:
+          employee.emergencyContactRelationship || "",
+        bankAccount: employee.bankAccount || "",
+        bankName: employee.bankName || "",
+        bankLogo: bank?.logo || ""
+      });
+    }
+  }, [employee, show, banks]);
 
   if (!show || loading || !employee) return null;
 
@@ -62,93 +80,143 @@ const EditProfile = ({ show, onClose }) => {
           </button>
         </div>
 
-        <div className="flex items-center gap-3 justify-center">
-          <div className="flex flex-col gap-2 text-l w-1/2">
-            <p className="flex justify-between items-center">
-              <span className="font-semibold">Số điện thoại:</span>
-              <input
-                name="phone"
-                value={form.phone}
-                onChange={handleChange}
-                placeholder="Số điện thoại"
-                className="w-full border-[1px] border-[#162F47] p-2 rounded w-[269px]"
-              />
-            </p>
-            <p className="flex justify-between items-center">
-              <span className="font-semibold">Email:</span>
-              <input
-                name="email"
-                value={form.email}
-                onChange={handleChange}
-                placeholder="Email"
-                className="w-full border-[1px] border-[#162F47] p-2 rounded w-[269px]"
-              />
-            </p>
-            <p className="flex justify-between items-center">
-              <span className="font-semibold">Địa chỉ:</span>
+        <div className="border-[1px] border-[#162F47] rounded-2xl p-2 shadow-2xl">
+          <p className="text-[#162F47] font-semibold text-lg">Thông tin cá nhân</p>
+          <div className="flex flex-col gap-1 mt-2 mb-2">
+            <div className="flex items-center gap-3">
+              <p className="flex items-center w-1/2">
+                <span className="font-semibold w-2/4">Số điện thoại:</span>
+                <input
+                  name="phone"
+                  value={form.phone}
+                  onChange={handleChange}
+                  placeholder="Số điện thoại"
+                  className="w-full border-[1px] border-[#162F47] p-2 rounded"
+                />
+              </p>
+              <p className="flex items-center w-1/2">
+                <span className="font-semibold w-2/4">Email:</span>
+                <input
+                  name="email"
+                  value={form.email}
+                  onChange={handleChange}
+                  placeholder="Email"
+                  className="w-full border-[1px] border-[#162F47] p-2 rounded"
+                />
+              </p>
+            </div>
+            <p className="flex items-center">
+              <span className="font-semibold w-[165px]">Địa chỉ:</span>
               <textarea
                 name="address"
                 value={form.address}
                 onChange={handleChange}
                 placeholder="Địa chỉ"
-                className="w-full border-[1px] border-[#162F47] p-2 rounded w-[269px] h-24 resize-none"
+                className="w-full border-[1px] border-[#162F47] p-2 rounded resize-none"
               />
             </p>
           </div>
+        </div>
+        
+        <div className="border-[1px] border-[#162F47] rounded-2xl p-2 mt-2 shadow-2xl">
+          <p className="text-[#162F47] font-semibold text-lg">Thông tin xã hội</p>
+          <div className="flex items-center justify-center gap-3">
+            <div className="w-1/2 flex flex-col gap-1">
+              <p className="flex items-center">
+                <span className="font-semibold w-2/3">Người liên hệ:</span>
+                <input
+                  name="emergencyContactName"
+                  value={form.emergencyContactName}
+                  onChange={handleChange}
+                  placeholder="Tên người liên hệ"
+                  className="w-full border-[1px] border-[#162F47] p-2 rounded w-[269px]"
+                />
+              </p>
+              <p className="flex items-center">
+                <span className="font-semibold w-2/3">SĐT người liên hệ:</span>
+                <input
+                  name="emergencyContactPhone"
+                  value={form.emergencyContactPhone}
+                  onChange={handleChange}
+                  placeholder="SĐT người liên hệ"
+                  className="w-full border-[1px] border-[#162F47] p-2 rounded w-[269px]"
+                />
+              </p>
+              <p className="flex items-center">
+                <span className="font-semibold w-2/3">Mối quan hệ:</span>
+                <input
+                  name="relationship"
+                  value={form.relationship}
+                  onChange={handleChange}
+                  placeholder="Mối quan hệ"
+                  className="w-full border-[1px] border-[#162F47] p-2 rounded w-[269px]"
+                />
+              </p>
+            </div>
 
-          <div className="h-60 w-[1px] border border-[#162F47]"></div>
+            <div className="h-40 w-[1px] border border-[#162F47]"></div>
 
-          <div className="flex flex-col gap-2 text-l w-1/2">
-            <p className="flex justify-between items-center">
-              <span className="font-semibold">Người liên hệ:</span>
-              <input
-                name="emergencyContactName"
-                value={form.emergencyContactName}
-                onChange={handleChange}
-                placeholder="Tên người liên hệ"
-                className="w-full border-[1px] border-[#162F47] p-2 rounded w-[269px]"
-              />
-            </p>
-            <p className="flex justify-between items-center">
-              <span className="font-semibold">SĐT người liên hệ:</span>
-              <input
-                name="emergencyContactPhone"
-                value={form.emergencyContactPhone}
-                onChange={handleChange}
-                placeholder="SĐT người liên hệ"
-                className="w-full border-[1px] border-[#162F47] p-2 rounded w-[269px]"
-              />
-            </p>
-            <p className="flex justify-between items-center">
-              <span className="font-semibold">Mối quan hệ:</span>
-              <input
-                name="relationship"
-                value={form.relationship}
-                onChange={handleChange}
-                placeholder="Mối quan hệ"
-                className="w-full border-[1px] border-[#162F47] p-2 rounded w-[269px]"
-              />
-            </p>
-            <p className="flex justify-between items-center">
-              <span className="font-semibold">Tài khoản ngân hàng:</span>
-              <input
-                name="bankAccount"
-                value={form.bankAccount}
-                onChange={handleChange}
-                placeholder="Tài khoản ngân hàng"
-                className="w-full border-[1px] border-[#162F47] p-2 rounded w-[269px]"
-              />
-            </p>
-            <p className="flex justify-between items-center">
-              <span className="font-semibold">Tên ngân hàng:</span>
-              <input
-                name="bankName"
-                value={form.bankName}
-                onChange={handleChange}
-                placeholder="Ngân hàng"
-                className="w-full border-[1px] border-[#162F47] p-2 rounded w-[269px]"
-              />
-            </p>
+            <div className="w-1/2 flex flex-col gap-1">
+              <p className="flex items-center">
+                <span className="font-semibold w-5/6">Tài khoản ngân hàng:</span>
+                <input
+                  name="bankAccount"
+                  value={form.bankAccount}
+                  onChange={handleChange}
+                  placeholder="Tài khoản ngân hàng"
+                  className="w-full border-[1px] border-[#162F47] p-2 rounded w-[269px]"
+                />
+              </p>
+              <p className="flex items-center">
+                <span className="font-semibold w-[220px]">Tên ngân hàng:</span>
+                <div className="relative w-[269px]">
+                  <div
+                    onClick={() => setOpenBank(!openBank)}
+                    className="border border-[#162F47] p-2 rounded cursor-pointer flex items-center justify-between"
+                  >
+                    <div className="flex items-center gap-2">
+                      {form.bankLogo ? (
+                        <img
+                          src={form.bankLogo}
+                          alt="bank"
+                          className="w-6 h-6 object-contain"
+                        />
+                      ) : (
+                        <div className="w-6 h-6 bg-gray-200 rounded"></div>
+                      )}
+
+                      <span>{form.bankName || "Chọn ngân hàng"}</span>
+                    </div>
+                  </div>
+
+                  {openBank && (
+                    <div className="absolute z-50 mt-1 w-full max-h-60 overflow-y-auto bg-white border rounded shadow">
+                      {banks.map((bank) => (
+                        <div
+                          key={bank.id}
+                          onClick={() => {
+                            setForm((prev) => ({
+                              ...prev,
+                              bankName: bank.shortName,
+                              bankLogo: bank.logo
+                            }));
+                            setOpenBank(false);
+                          }}
+                          className="flex items-center gap-3 p-2 hover:bg-gray-100 cursor-pointer"
+                        >
+                          <img
+                            src={bank.logo}
+                            alt={bank.shortName}
+                            className="w-6 h-6 object-contain"
+                          />
+                          <span>{bank.shortName}</span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </p>
+            </div>
           </div>
         </div>
         
@@ -156,7 +224,7 @@ const EditProfile = ({ show, onClose }) => {
           <button
             type="submit"
             disabled={saving}
-            className="w-1/2 bg-[#162F47] text-white py-2 rounded hover:opacity-90 disabled:opacity-50"
+            className="w-1/2 bg-[#162F47] text-white py-2 rounded-xl hover:opacity-90 disabled:opacity-50"
           >
             {saving ? "Đang lưu..." : "Lưu thay đổi"}
           </button>
