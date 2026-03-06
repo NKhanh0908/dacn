@@ -22,22 +22,20 @@ public class ContractMapper {
     // =========================
     // CREATE
     // =========================
-    public static Contracts toEntity(
-            ContractCreateRequest r
-    ) {
+    public static Contracts toEntity(ContractCreateRequest r) {
+
         if (r == null) return null;
 
         return Contracts.builder()
                 .contractNumber(r.getContractNumber())
-
                 .contractType(r.getContractType())
                 .startDate(r.getStartDate())
                 .endDate(r.getEndDate())
                 .signedDate(r.getSignedDate())
 
                 .jobTitle(r.getJobTitle())
-                .department(r.getDepartment())
                 .jobDescription(r.getJobDescription())
+                .department(r.getDepartment())
 
                 .basicSalary(r.getBasicSalary())
                 .allowances(r.getAllowances() != null ? r.getAllowances() : BigDecimal.ZERO)
@@ -53,8 +51,12 @@ public class ContractMapper {
                                 ? r.getWorkingDaysPerWeek()
                                 : 5
                 )
-
-                .probationPeriod(r.getProbationPeriod())
+                .overtimePolicy(r.getOvertimePolicy())
+                .annualLeaveDays(
+                        r.getAnnualLeaveDays() != null
+                                ? r.getAnnualLeaveDays()
+                                : 12
+                )
 
                 .salaryPaymentMethod(r.getSalaryPaymentMethod())
                 .salaryPaymentDate(r.getSalaryPaymentDate())
@@ -66,16 +68,25 @@ public class ContractMapper {
                 )
                 .insuranceSalary(r.getInsuranceSalary())
 
+                .probationPeriod(r.getProbationPeriod())
+                .probationSalaryPercentage(
+                        r.getProbationSalaryPercentage() != null
+                                ? r.getProbationSalaryPercentage()
+                                : 85
+                )
+
+                .terminationDate(r.getTerminationDate())
+                .terminationReason(r.getTerminationReason())
+                .noticePeriodDays(r.getNoticePeriodDays())
+
+                .fileUrl(r.getFileUrl())
+                .draftFileUrl(r.getDraftFileUrl())
+
                 .employerRepresentative(r.getEmployerRepresentative())
                 .employerPosition(r.getEmployerPosition())
 
-                .confidentialityClause(r.getConfidentialityClause())
-                .technologyConfidentiality(r.getTechnologyConfidentiality())
-                .nonCompeteClause(r.getNonCompeteClause())
-                .confidentialityPeriodMonths(r.getConfidentialityPeriodMonths())
-
-                .noticePeriodDays(r.getNoticePeriodDays())
                 .notes(r.getNotes())
+
                 .build();
     }
 
@@ -86,54 +97,71 @@ public class ContractMapper {
     public static void updateEntity(Contracts c, ContractUpdateRequest r) {
         if (c == null || r == null) return;
 
+        // ===== BASIC =====
         if (r.getContractType() != null) c.setContractType(r.getContractType());
         if (r.getStatus() != null) c.setStatus(r.getStatus());
-
         if (r.getStartDate() != null) c.setStartDate(r.getStartDate());
         if (r.getEndDate() != null) c.setEndDate(r.getEndDate());
         if (r.getSignedDate() != null) c.setSignedDate(r.getSignedDate());
 
+        // ===== JOB =====
         if (r.getJobTitle() != null) c.setJobTitle(r.getJobTitle());
-        if (r.getDepartment() != null) c.setDepartment(r.getDepartment());
         if (r.getJobDescription() != null) c.setJobDescription(r.getJobDescription());
+        if (r.getDepartment() != null) c.setDepartment(r.getDepartment());
 
+        // ===== SALARY =====
         if (r.getBasicSalary() != null) c.setBasicSalary(r.getBasicSalary());
         if (r.getAllowances() != null) c.setAllowances(r.getAllowances());
         if (r.getAllowanceDetails() != null) c.setAllowanceDetails(r.getAllowanceDetails());
-
-        if (r.getWorkingHoursPerDay() != null) c.setWorkingHoursPerDay(r.getWorkingHoursPerDay());
-        if (r.getWorkingDaysPerWeek() != null) c.setWorkingDaysPerWeek(r.getWorkingDaysPerWeek());
-
-        if (r.getProbationPeriod() != null) c.setProbationPeriod(r.getProbationPeriod());
-        if (r.getProbationSalaryPercentage() != null)
-            c.setProbationSalaryPercentage(r.getProbationSalaryPercentage());
 
         if (r.getSalaryPaymentMethod() != null)
             c.setSalaryPaymentMethod(r.getSalaryPaymentMethod());
         if (r.getSalaryPaymentDate() != null)
             c.setSalaryPaymentDate(r.getSalaryPaymentDate());
 
+        // ===== WORKING =====
+        if (r.getWorkingHoursPerDay() != null)
+            c.setWorkingHoursPerDay(r.getWorkingHoursPerDay());
+        if (r.getWorkingDaysPerWeek() != null)
+            c.setWorkingDaysPerWeek(r.getWorkingDaysPerWeek());
+        if (r.getOvertimePolicy() != null)
+            c.setOvertimePolicy(r.getOvertimePolicy());
+        if (r.getAnnualLeaveDays() != null)
+            c.setAnnualLeaveDays(r.getAnnualLeaveDays());
+
+        // ===== PROBATION =====
+        if (r.getProbationPeriod() != null)
+            c.setProbationPeriod(r.getProbationPeriod());
+        if (r.getProbationSalaryPercentage() != null)
+            c.setProbationSalaryPercentage(r.getProbationSalaryPercentage());
+
+        // ===== INSURANCE =====
         if (r.getSocialInsurance() != null)
             c.setSocialInsurance(r.getSocialInsurance());
         if (r.getInsuranceSalary() != null)
             c.setInsuranceSalary(r.getInsuranceSalary());
 
+        // ===== EMPLOYER =====
         if (r.getEmployerRepresentative() != null)
             c.setEmployerRepresentative(r.getEmployerRepresentative());
         if (r.getEmployerPosition() != null)
             c.setEmployerPosition(r.getEmployerPosition());
 
-        if (r.getConfidentialityClause() != null)
-            c.setConfidentialityClause(r.getConfidentialityClause());
-        if (r.getTechnologyConfidentiality() != null)
-            c.setTechnologyConfidentiality(r.getTechnologyConfidentiality());
-        if (r.getNonCompeteClause() != null)
-            c.setNonCompeteClause(r.getNonCompeteClause());
-        if (r.getConfidentialityPeriodMonths() != null)
-            c.setConfidentialityPeriodMonths(r.getConfidentialityPeriodMonths());
-
+        // ===== TERMINATION =====
+        if (r.getTerminationDate() != null)
+            c.setTerminationDate(r.getTerminationDate());
+        if (r.getTerminationReason() != null)
+            c.setTerminationReason(r.getTerminationReason());
         if (r.getNoticePeriodDays() != null)
             c.setNoticePeriodDays(r.getNoticePeriodDays());
+
+        // ===== FILE =====
+        if (r.getFileUrl() != null)
+            c.setFileUrl(r.getFileUrl());
+        if (r.getDraftFileUrl() != null)
+            c.setDraftFileUrl(r.getDraftFileUrl());
+
+        // ===== NOTE =====
         if (r.getNotes() != null)
             c.setNotes(r.getNotes());
     }
@@ -141,86 +169,82 @@ public class ContractMapper {
     // =========================
     // RESPONSE
     // =========================
-    public static ContractResponse toResponse(Contracts contract) {
-        if (contract == null) {
-            return null;
-        }
+    public static ContractResponse toResponse(Contracts c) {
+        if (c == null) return null;
 
         return ContractResponse.builder()
-                // basic
-                .contractId(contract.getContractId())
-                .contractNumber(contract.getContractNumber())
 
-                // company
-                .companyId(
-                        contract.getCompany() != null
-                                ? contract.getCompany().getCompanyId()
-                                : null
-                )
-                .companyName(
-                        contract.getCompany() != null
-                                ? contract.getCompany().getCompanyName()
-                                : null
-                )
+                // BASIC
+                .contractId(c.getContractId())
+                .contractNumber(c.getContractNumber())
 
-                // employee
-                .employeeId(
-                        contract.getEmployee() != null
-                                ? contract.getEmployee().getEmployeeId()
-                                : null
-                )
-                .employeeName(
-                        contract.getEmployee() != null
-                                ? contract.getEmployee().getFullName()
-                                : null
-                )
+                // COMPANY
+                .companyId(c.getCompany() != null ? c.getCompany().getCompanyId() : null)
+                .companyName(c.getCompany() != null ? c.getCompany().getCompanyName() : null)
 
-                // contract info
-                .contractType(contract.getContractType())
-                .contractTypeDisplay(
-                        contract.getContractType() != null
-                                ? contract.getContractType().name()
-                                : null
-                )
+                // EMPLOYEE
+                .employeeId(c.getEmployee() != null ? c.getEmployee().getEmployeeId() : null)
+                .employeeName(c.getEmployee() != null ? c.getEmployee().getFullName() : null)
 
-                .startDate(contract.getStartDate())
-                .endDate(contract.getEndDate())
-                .signedDate(contract.getSignedDate())
+                // CONTRACT INFO
+                .contractType(c.getContractType())
+                .contractTypeDisplay(c.getContractType() != null ? c.getContractType().name() : null)
 
-                .jobTitle(contract.getJobTitle())
-                .department(contract.getDepartment())
-                .jobDescription(contract.getJobDescription())
+                .status(c.getStatus())
+                .statusDisplay(c.getStatus() != null ? c.getStatus().name() : null)
 
-                // salary
-                .basicSalary(contract.getBasicSalary())
-                .allowances(contract.getAllowances())
-                .totalCompensation(contract.getTotalCompensation())
+                .startDate(c.getStartDate())
+                .endDate(c.getEndDate())
+                .signedDate(c.getSignedDate())
 
-                .salaryPaymentMethod(contract.getSalaryPaymentMethod())
-                .salaryPaymentDate(contract.getSalaryPaymentDate())
+                // JOB
+                .jobTitle(c.getJobTitle())
+                .jobDescription(c.getJobDescription())
+                .department(c.getDepartment())
 
-                // working
-                .workingHoursPerDay(contract.getWorkingHoursPerDay())
-                .workingDaysPerWeek(contract.getWorkingDaysPerWeek())
-                .probationPeriod(contract.getProbationPeriod())
-                .probationSalaryPercentage(contract.getProbationSalaryPercentage())
+                // WORKING
+                .workingHoursPerDay(c.getWorkingHoursPerDay())
+                .workingDaysPerWeek(c.getWorkingDaysPerWeek())
+                .overtimePolicy(c.getOvertimePolicy())
+                .annualLeaveDays(c.getAnnualLeaveDays())
 
-                // insurance
-                .socialInsurance(contract.getSocialInsurance())
-                .insuranceSalary(contract.getInsuranceSalary())
+                // SALARY
+                .basicSalary(c.getBasicSalary())
+                .allowances(c.getAllowances())
+                .totalCompensation(c.getTotalCompensation())
+                .allowanceDetails(c.getAllowanceDetails())
+                .salaryPaymentMethod(c.getSalaryPaymentMethod())
+                .salaryPaymentDate(c.getSalaryPaymentDate())
 
-                // status
-                .status(contract.getStatus())
-                .statusDisplay(
-                        contract.getStatus() != null
-                                ? contract.getStatus().name()
-                                : null
-                )
-                .active(contract.isActive())
+                // INSURANCE
+                .socialInsurance(c.getSocialInsurance())
+                .insuranceSalary(c.getInsuranceSalary())
 
-                // audit
-                .createdAt(contract.getCreatedAt())
-                .updatedAt(contract.getUpdatedAt())
+                // PROBATION
+                .probationPeriod(c.getProbationPeriod())
+                .probationSalaryPercentage(c.getProbationSalaryPercentage())
+                .probationEndDate(c.getProbationEndDate())
+
+                // TERMINATION
+                .terminationDate(c.getTerminationDate())
+                .terminationReason(c.getTerminationReason())
+                .noticePeriodDays(c.getNoticePeriodDays())
+
+                // FILE
+                .fileUrl(c.getFileUrl())
+                .draftFileUrl(c.getDraftFileUrl())
+
+                // BUSINESS FLAGS
+                .active(c.isActive())
+                .expired(c.isExpired())
+                .inProbation(c.isInProbation())
+
+                // AUDIT
+                .createdAt(c.getCreatedAt())
+                .updatedAt(c.getUpdatedAt())
+                .createdBy(c.getCreatedBy())
+                .updatedBy(c.getUpdatedBy())
+
                 .build();
     }
 

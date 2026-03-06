@@ -3,6 +3,7 @@ package com.hrm.dacn.services.impl;
 import com.hrm.dacn.dtos.PageDTO;
 import com.hrm.dacn.dtos.contracts.request.*;
 import com.hrm.dacn.dtos.contracts.response.ContractResponse;
+import com.hrm.dacn.entities.Account;
 import com.hrm.dacn.entities.Company;
 import com.hrm.dacn.entities.Contracts;
 import com.hrm.dacn.entities.Employee;
@@ -14,6 +15,7 @@ import com.hrm.dacn.mappers.ContractMapper;
 import com.hrm.dacn.repositories.CompanyRepository;
 import com.hrm.dacn.repositories.ContractRepository;
 import com.hrm.dacn.repositories.EmployeeRepository;
+import com.hrm.dacn.services.AccountService;
 import com.hrm.dacn.services.ContractService;
 import com.hrm.dacn.services.EmployeeService;
 import com.hrm.dacn.specifications.ContractSpecification;
@@ -34,11 +36,14 @@ public class ContractServiceImpl implements ContractService {
     private final ContractRepository contractRepository;
     private final EmployeeRepository employeeRepository;
     private final CompanyRepository companyRepository;
+    private final AccountService accountService;
 
-    public ContractServiceImpl(ContractRepository contractRepository, EmployeeRepository employeeRepository, CompanyRepository companyRepository) {
+    public ContractServiceImpl(ContractRepository contractRepository, EmployeeRepository employeeRepository, CompanyRepository companyRepository
+    , AccountService accountService) {
         this.contractRepository = contractRepository;
         this.employeeRepository = employeeRepository;
         this.companyRepository = companyRepository;
+        this.accountService = accountService;
     }
 
     @Override
@@ -67,9 +72,9 @@ public class ContractServiceImpl implements ContractService {
         Contracts foundContract = contractRepository.findById(Id)
                 .orElseThrow(() -> new CustomException(Error.CONTRACT_NOT_FOUND));
 
-        if (!foundContract.isEditable()) {
-            throw new CustomException(Error.CONTRACT_ALREADY_SIGNED_CANNOT_EDIT);
-        }
+//        if (!foundContract.isEditable()) {
+//            throw new CustomException(Error.CONTRACT_ALREADY_SIGNED_CANNOT_EDIT);
+//        }
 
         validateUpdateContract(foundContract, contract);
 
@@ -93,24 +98,24 @@ public class ContractServiceImpl implements ContractService {
 
         LocalDateTime now = LocalDateTime.now();
 
-        // Ký bởi nhân viên
-        if ("EMPLOYEE".equals(request.getSignedBy())) {
-            contract.setSignedByEmployee(true);
-            contract.setEmployeeSignedDate(now);
-        }
-        // Ký bởi nhà tuyển dụng
-        else if ("EMPLOYER".equals(request.getSignedBy())) {
-            contract.setSignedByEmployer(true);
-            contract.setEmployerSignedDate(now);
-        }
-
-        // Nếu cả hai bên đã ký
-        if (contract.isFullySigned()) {
-            contract.setStatus(ContractStatus.ACTIVE);
-            contract.setSignedDate(LocalDate.now());
-        } else {
-            contract.setStatus(ContractStatus.PENDING_SIGNATURE);
-        }
+//        // Ký bởi nhân viên
+//        if ("EMPLOYEE".equals(request.getSignedBy())) {
+//            contract.setSignedByEmployee(true);
+//            contract.setEmployeeSignedDate(now);
+//        }
+//        // Ký bởi nhà tuyển dụng
+//        else if ("EMPLOYER".equals(request.getSignedBy())) {
+//            contract.setSignedByEmployer(true);
+//            contract.setEmployerSignedDate(now);
+//        }
+//
+//        // Nếu cả hai bên đã ký
+//        if (contract.isFullySigned()) {
+//            contract.setStatus(ContractStatus.ACTIVE);
+//            contract.setSignedDate(LocalDate.now());
+//        } else {
+//            contract.setStatus(ContractStatus.PENDING_SIGNATURE);
+//        }
 
         Contracts signedContract = contractRepository.save(contract);
         return ContractMapper.toResponse(signedContract);
@@ -148,6 +153,13 @@ public class ContractServiceImpl implements ContractService {
 
     @Override
     public PageDTO<ContractResponse> filter(ContractFilter filter, int page, int size) {
+        Account account = accountService.getAccountAuth();
+        Long employeeId = 0L;
+        if(account.getRole().name().equals("EMPLOYEE")){
+            employeeId = account.getEmployees().getEmployeeId();
+        }
+        filter.setEmployeeId(employeeId);
+
         Specification<Contracts> spec = ContractSpecification.filter(filter);
         Pageable pageable = PageRequest.of(page, size);
         Page<Contracts> contractsPage = contractRepository.findAll(spec, pageable);
@@ -160,9 +172,9 @@ public class ContractServiceImpl implements ContractService {
         Contracts contract = contractRepository.findById(contractId)
                 .orElseThrow(() -> new CustomException(Error.CONTRACT_NOT_FOUND));
 
-        if (contract.getStatus() != ContractStatus.DRAFT && contract.isFullySigned()) {
-            throw new CustomException(Error.CONTRACT_CANNOT_DELETE);
-        }
+//        if (contract.getStatus() != ContractStatus.DRAFT && contract.isFullySigned()) {
+//            throw new CustomException(Error.CONTRACT_CANNOT_DELETE);
+//        }
 
         contractRepository.deleteById(contractId);
     }

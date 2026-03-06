@@ -143,6 +143,8 @@ public class EmployeeMapper {
                 .emergencyContactName(employee.getEmergencyContactName())
                 .emergencyContactPhone(employee.getEmergencyContactPhone())
                 .emergencyContactRelationship(employee.getEmergencyContactRelationship())
+                .createdAt(employee.getCreatedAt())
+                .updatedAt(employee.getUpdatedAt())
                 .build();
     }
 
