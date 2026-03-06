@@ -22,7 +22,7 @@ const DashboardLayout = () => {
         <Sidebar />
         <div className="w-[84%]">
           <Header onOpenProfile={() => setShowProfile(true)} />
-          <main className="pl-7 h-[calc(100vh-100px)] overflow-y-auto">
+          <main className="pl-7 overflow-y-auto">
             <Outlet context={{ openEditProfile: () => setShowEditProfile(true) }} />
           </main>
         </div>

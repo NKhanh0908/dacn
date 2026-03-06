@@ -2,6 +2,8 @@ import { createBrowserRouter, RouterProvider, Navigate } from "react-router-dom"
 import Login from "./pages/auth/Login";
 import DashboardLayout from "./pages/dashboard/Dashboard";
 import ProfilePage from "./pages/profile/ProfilePage";
+import ContractPage from "./pages/contract/ContractPage";
+import ContractDetail from "./pages/contract/ContractDetail";
 
 const isAuthenticated = () => {
   return !!localStorage.getItem("access_token");
@@ -24,8 +26,14 @@ const router = createBrowserRouter([
         path: "profile",
         element: <ProfilePage />,
       },
-      // sau này thêm:
-      // employee, department, attendance...
+      {
+        path: "contracts",
+        element: <ContractPage />,
+      },
+      {
+        path: "contracts/:id",
+        element: <ContractDetail />,
+      }
     ],
   },
 ]);
