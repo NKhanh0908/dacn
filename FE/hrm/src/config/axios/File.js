@@ -7,6 +7,7 @@ const apiFile = axios.create({
         "Content-Type": "multipart/form-data"
     },
 })
+
 apiFile.defaults.timeout = DEFAULT_TIMEOUT;
 apiFile.interceptors.request.use(config => {
     const token = localStorage.getItem("access_token");

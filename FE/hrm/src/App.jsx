@@ -4,6 +4,8 @@ import DashboardLayout from "./pages/dashboard/Dashboard";
 import ProfilePage from "./pages/profile/ProfilePage";
 import ContractPage from "./pages/contract/ContractPage";
 import ContractDetail from "./pages/contract/ContractDetail";
+import AttendancePage from "./pages/attendance/AttendancePage";
+import AttendanceRequestPage from "./pages/attendance_requests/AttendanceRequestsPage";
 
 const isAuthenticated = () => {
   return !!localStorage.getItem("access_token");
@@ -18,13 +20,17 @@ const router = createBrowserRouter([
     path: "/",
     element: isAuthenticated() ? <DashboardLayout /> : <Navigate to="/login" />,
     children: [
-      // {
-      //   index: true,
-      //   element: <HomePage />,
-      // },
       {
         path: "profile",
         element: <ProfilePage />,
+      },
+      {
+        path: "attendance",
+        element: <AttendancePage />,
+      },
+      {
+        path: "attendance-requests",
+        element: <AttendanceRequestPage />,
       },
       {
         path: "contracts",

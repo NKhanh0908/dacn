@@ -1,5 +1,5 @@
-import { useEffect, useState, useRef } from "react";
 import html2pdf from "html2pdf.js";
+import { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { getContractById } from "../../services/contract/ContractService";
 
@@ -9,17 +9,8 @@ const ContractDetail = () => {
   const [contract, setContract] = useState(null);
   const contractRef = useRef();
 
-  useEffect(() => {
-    const fetchContract = async () => {
-      try {
-        const res = await getContractById(id);
-        setContract(res.data);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-    fetchContract();
-  }, [id]);
+  const formatDate = (date) => (date ? new Date(date).toLocaleDateString("vi-VN") : "...");
+  const formatMoney = (money) => (money ? Number(money).toLocaleString("vi-VN") + " VNĐ" : "0 VNĐ");
 
   const exportPDF = () => {
     const element = contractRef.current;
@@ -34,8 +25,17 @@ const ContractDetail = () => {
     html2pdf().set(opt).from(element).save();
   };
 
-  const formatDate = (date) => (date ? new Date(date).toLocaleDateString("vi-VN") : "...");
-  const formatMoney = (money) => (money ? Number(money).toLocaleString("vi-VN") + " VNĐ" : "0 VNĐ");
+  useEffect(() => {
+    const fetchContract = async () => {
+      try {
+        const res = await getContractById(id);
+        setContract(res.data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    fetchContract();
+  }, [id]);
 
   if (!contract) return <div className="p-10 text-center">Đang tải hợp đồng...</div>;
 
@@ -49,6 +49,7 @@ const ContractDetail = () => {
         >
           ← Quay lại
         </button>
+        
         <button 
           onClick={exportPDF} 
           className="bg-blue-700 text-white px-6 py-2 rounded shadow hover:bg-blue-800 transition font-sans"

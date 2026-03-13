@@ -21,7 +21,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/work-schedules")
+@RequestMapping("/work-schedules")
 @RequiredArgsConstructor
 @Tag(name = "Work Schedule", description = "Quản lý ca làm việc")
 public class WorkScheduleController {

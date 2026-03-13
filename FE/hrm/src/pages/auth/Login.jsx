@@ -1,8 +1,7 @@
 import { useState } from "react";
-import { authLogin, getCurrentEmployee } from "../../services";
 import { loginSuccess } from "../../store/authStore";
+import { authLogin, getCurrentEmployee } from "../../services";
 import BackgroundWaves from "../../components/BackgroundWaves";
-
 
 export default function Login() {
   const [username, setUsername] = useState("");
@@ -114,18 +113,6 @@ export default function Login() {
               {loading ? "Signing in..." : "Sign In →"}
             </button>
           </form>
-
-          {/* TRUST ICONS */}
-          {/* <div className="flex gap-10 border-t border-white/5 mt-12 pt-8">
-            {["AES-256", "TRUSTED", "GLOBAL CDN"].map((item) => (
-              <div key={item} className="text-center text-xs text-gray-400">
-                <div className="w-12 h-12 mx-auto mb-2 rounded-full border border-white/10 flex items-center justify-center">
-                  ✓
-                </div>
-                {item}
-              </div>
-            ))}
-          </div> */}
         </div>
 
         {/* RIGHT – IMAGE */}
@@ -142,7 +129,6 @@ export default function Login() {
             </h3>
           </div>
         </div>
-
       </div>
     </div>
     </>

@@ -7,11 +7,12 @@ export const EmployeeProvider = ({ children }) => {
   const [employee, setEmployee] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  /*Khi app load lần đầu -> gọi API lấy thông tin nhân viên hiện tại*/
   useEffect(() => {
     const fetchEmployee = async () => {
       try {
         const res = await getCurrentEmployee();
-        setEmployee(res.data); // chú ý data
+        setEmployee(res.data);
       } catch (err) {
         console.error("Fetch employee failed", err);
         setEmployee(null);
@@ -19,7 +20,6 @@ export const EmployeeProvider = ({ children }) => {
         setLoading(false);
       }
     };
-
     fetchEmployee();
   }, []);
 
