@@ -1,5 +1,10 @@
 import { api } from "../../config/axios";
-import { CONTRACT, CONTRACT_FILTER, CONTRACT_TERMINATE, CONTRACT_SIGN } from "../../config/constants";
+import { 
+  CONTRACT, 
+  CONTRACT_FILTER, 
+  CONTRACT_TERMINATE, 
+  CONTRACT_SIGN 
+} from "../../config/constants";
 
 /* Tạo hợp đồng */
 export const createContract = async (data, config = {}) => {

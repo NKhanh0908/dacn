@@ -1,9 +1,9 @@
 /* eslint-disable react-hooks/set-state-in-effect */
-import { useEffect, useState } from "react";
 import { FiGrid } from "react-icons/fi";
-import { filterContracts } from "../../services/contract/ContractService";
-import { useEmployeeContext } from "../../context/EmployeeContext";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useEmployeeContext } from "../../context/EmployeeContext";
+import { filterContracts } from "../../services/contract/ContractService";
 
 const ContractPage = () => {
   const { employee } = useEmployeeContext();
@@ -28,12 +28,6 @@ const ContractPage = () => {
     }
   };
 
-  useEffect(() => {
-    if (employee) {
-      fetchContracts();
-    }
-  }, [page, employee]);
-
   const formatDate = (date) => {
     if (!date) return "-";
     return new Date(date).toLocaleDateString("vi-VN");
@@ -52,8 +46,14 @@ const ContractPage = () => {
     }
   };
 
+  useEffect(() => {
+    if (employee) {
+      fetchContracts();
+    }
+  }, [page, employee]);
+
   return (
-    <div className="overflow-y-auto h-[calc(100vh-100px)]">
+    <div className="overflow-y-auto h-[calc(100vh-100px)] pr-4 pb-4">
       <div className="bg-white border-2 border-[#162F47] rounded-2xl p-3 shadow-2xl">
 
         {/* Header */}
@@ -91,21 +91,17 @@ const ContractPage = () => {
                     <td className="p-3 font-medium text-gray-700">
                       {c.contractId}
                     </td>
-
                     <td className="p-3">
                       <span className="px-3 py-1 text-xs rounded-full bg-blue-100 text-blue-700">
                         {contractType(c.contractType)}
                       </span>
                     </td>
-
                     <td className="p-3">
                       {contractType(c.jobTitle)}
                     </td>
-
                     <td className="p-3 text-gray-600">
                       {formatDate(c.signedDate)}
                     </td>
-
                     <td className="p-3 text-gray-600">
                       {formatDate(c.endDate)}
                     </td>

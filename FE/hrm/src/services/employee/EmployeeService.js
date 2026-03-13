@@ -1,5 +1,9 @@
 import { api, apiFile } from "../../config/axios";
-import { EMPLOYEE, EMPLOYEE_GET_CURRENT, EMPLOYEE_CHECK_EXIST } from "../../config/constants";
+import { 
+  EMPLOYEE, 
+  EMPLOYEE_GET_CURRENT, 
+  EMPLOYEE_CHECK_EXIST 
+} from "../../config/constants";
 
 /* Lấy employee hiện tại */
 export const getCurrentEmployee = async (config = {}) => {

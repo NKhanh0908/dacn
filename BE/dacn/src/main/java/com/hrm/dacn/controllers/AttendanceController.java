@@ -29,7 +29,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/attendances")
+@RequestMapping("/attendances")
 @RequiredArgsConstructor
 @Tag(name = "Attendance", description = "Attendance management APIs: check-in, check-out, manual entry, statistics")
 public class AttendanceController {
