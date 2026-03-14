@@ -1,5 +1,7 @@
 package com.hrm.dacn.services;
 
+import com.hrm.dacn.entities.Company;
+import com.hrm.dacn.entities.Contracts;
 import com.hrm.dacn.entities.Employee;
 import com.hrm.dacn.entities.Payroll;
 import org.springframework.data.jpa.domain.Specification;
@@ -38,6 +40,37 @@ public class PayrollSpecification {
             return cb.equal(root.get("year"), year);
         };
     }
+    // ===============================
+    // Filter theo Company
+    // ===============================
+    public static Specification<Payroll> hasCompany(Long companyId) {
+        return (root, query, cb) -> {
+            if (companyId == null) return null;
+
+            Join<Payroll, Employee> employeeJoin = root.join("employee");
+            Join<Employee, Contracts> contractJoin = employeeJoin.join("contracts");
+            Join<Contracts, Company> companyJoin = contractJoin.join("company");
+
+            return cb.equal(companyJoin.get("companyId"), companyId);
+        };
+    }
+
+    // ===============================
+    // Filter theo Department
+    // ===============================
+    public static Specification<Payroll> hasDepartment(String department) {
+        return (root, query, cb) -> {
+            if (department == null || department.isBlank()) return null;
+
+            Join<Payroll, Employee> employeeJoin = root.join("employee");
+            Join<Employee, Contracts> contractJoin = employeeJoin.join("contracts");
+
+            return cb.like(
+                    cb.lower(contractJoin.get("department")),
+                    "%" + department.toLowerCase() + "%"
+            );
+        };
+    }
 
     // ===============================
     // Sort theo tháng gần nhất
@@ -59,12 +92,16 @@ public class PayrollSpecification {
     public static Specification<Payroll> filter(
             Long employeeId,
             Integer month,
-            Integer year
+            Integer year,
+            Long companyId,
+            String department
     ) {
         return Specification
                 .where(hasEmployee(employeeId))
                 .and(hasMonth(month))
                 .and(hasYear(year))
+                .and(hasCompany(companyId))
+                .and(hasDepartment(department))
                 .and(sortNewest());
     }
 }

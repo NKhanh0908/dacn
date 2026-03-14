@@ -36,27 +36,46 @@ public class PayrollController {
         PayrollResponseDTO response = payrollService.calculateAutoPayroll(requestDTO.getEmployId());
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
-    @Operation(summary = "Tìm kiếm payroll theo employee, month, year")
+
+    @Operation(
+            summary = "Tìm kiếm payroll",
+            description = "Cho phép tìm kiếm bảng lương theo employee, company, department, month và year"
+    )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Lấy danh sách payroll thành công"),
             @ApiResponse(responseCode = "400", description = "Request không hợp lệ")
     })
     @GetMapping("/search")
     public ResponseEntity<List<PayrollResponseDTO>> searchPayroll(
+
             @Parameter(description = "ID nhân viên")
             @RequestParam(required = false) Long employeeId,
+
+            @Parameter(description = "ID công ty")
+            @RequestParam(required = false) Long companyId,
+
+            @Parameter(description = "Phòng ban")
+            @RequestParam(required = false) String department,
 
             @Parameter(description = "Tháng")
             @RequestParam(required = false) Integer month,
 
             @Parameter(description = "Năm")
-            @RequestParam(required = false) Integer year) {
+            @RequestParam(required = false) Integer year
+    ) {
 
         List<PayrollResponseDTO> result =
-                payrollService.search(employeeId, month, year);
+                payrollService.search(
+                        employeeId,
+                        month,
+                        year,
+                        companyId,
+                        department
+                );
 
         return ResponseEntity.ok(result);
     }
+
     @Operation(
             summary = "Lấy danh sách payroll",
             description = "Lấy tất cả bảng lương"
