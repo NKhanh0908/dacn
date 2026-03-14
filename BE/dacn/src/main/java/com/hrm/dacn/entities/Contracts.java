@@ -87,13 +87,6 @@ public class Contracts {
     @Column(name = "department", length = 100)
     private String department;
 
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "work_location_id", nullable = false)
-//    private WorkLocation workLocation;
-//
-//    @Column(name = "specific_work_place", length = 500)
-//    private String specificWorkPlace; // Vị trí cụ thể (phòng, tầng...)
-
     // =========================
     // THỜI GIỜ LÀM VIỆC VÀ NGHỈ NGƠI
     // =========================
@@ -106,10 +99,6 @@ public class Contracts {
     @Min(value = 1, message = "Số ngày làm việc/tuần ít nhất là 1")
     @Max(value = 7, message = "Số ngày làm việc/tuần không quá 7")
     private Integer workingDaysPerWeek = 5;
-
-    @Column(name = "work_schedule", length = 500)
-    private String workSchedule;
-    // Lịch làm việc cụ thể: Ca làm việc, giờ vào/ra...
 
     @Column(name = "overtime_policy", length = 1000)
     private String overtimePolicy; // Quy định làm thêm giờ
@@ -151,23 +140,6 @@ public class Contracts {
     @Column(name = "insurance_salary", precision = 15, scale = 2)
     private BigDecimal insuranceSalary; // Mức lương đóng BH
 
-    // =========================
-    // BẢO MẬT
-    // =========================
-    @Column(name = "confidentiality_clause", columnDefinition = "TEXT")
-    private String confidentialityClause;
-    // Điều khoản bảo vệ bí mật kinh doanh
-
-    @Column(name = "technology_confidentiality", columnDefinition = "TEXT")
-    private String technologyConfidentiality;
-    // Điều khoản bảo vệ bí mật công nghệ
-
-    @Column(name = "non_compete_clause", columnDefinition = "TEXT")
-    private String nonCompeteClause; // Điều khoản cạnh tranh (nếu có)
-
-    @Column(name = "confidentiality_period_months")
-    private Integer confidentialityPeriodMonths;
-    // Thời hạn bảo mật sau khi chấm dứt HĐ
 
     // =========================
     // THỬ VIỆC
@@ -207,21 +179,6 @@ public class Contracts {
     @Column(name = "draft_file_url")
     private String draftFileUrl; // Link file bản nháp
 
-    // =========================
-    // KÝ KẾT
-    // =========================
-
-    @Column(name = "signed_by_employee")
-    private Boolean signedByEmployee = false;
-
-    @Column(name = "employee_signed_date")
-    private LocalDateTime employeeSignedDate;
-
-    @Column(name = "signed_by_employer")
-    private Boolean signedByEmployer = false;
-
-    @Column(name = "employer_signed_date")
-    private LocalDateTime employerSignedDate;
 
     // =========================
     // GHI CHÚ
@@ -324,19 +281,19 @@ public class Contracts {
     /**
      * Kiểm tra hợp đồng đã được ký đầy đủ chưa
      */
-    @Transient
-    public boolean isFullySigned() {
-        return Boolean.TRUE.equals(signedByEmployee) &&
-                Boolean.TRUE.equals(signedByEmployer);
-    }
+//    @Transient
+//    public boolean isFullySigned() {
+//        return Boolean.TRUE.equals(signedByEmployee) &&
+//                Boolean.TRUE.equals(signedByEmployer);
+//    }
 
     /**
      * Kiểm tra có thể sửa hợp đồng không (chỉ sửa được khi chưa ký)
      */
-    @Transient
-    public boolean isEditable() {
-        return status == ContractStatus.DRAFT || !isFullySigned();
-    }
+//    @Transient
+//    public boolean isEditable() {
+//        return status == ContractStatus.DRAFT || !isFullySigned();
+//    }
 
     /**
      * Kiểm tra đang trong thời gian thử việc

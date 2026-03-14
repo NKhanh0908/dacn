@@ -27,7 +27,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/attendance-requests")
+@RequestMapping("/attendance-requests")
 @RequiredArgsConstructor
 @Tag(name = "Attendance Requests", description = "Attendance request management APIs")
 public class AttendanceRequestController {

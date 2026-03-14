@@ -19,70 +19,74 @@ import lombok.NoArgsConstructor;
 @Builder
 public class ContractResponse {
 
-    // =========================
-    // BASIC
-    // =========================
+    // ===== BASIC =====
     private Long contractId;
     private String contractNumber;
 
-    // =========================
-    // COMPANY / EMPLOYEE
-    // =========================
+    // ===== COMPANY / EMPLOYEE =====
     private Long companyId;
     private String companyName;
 
     private Long employeeId;
     private String employeeName;
 
-    // =========================
-    // CONTRACT INFO
-    // =========================
+    // ===== CONTRACT INFO =====
     private ContractType contractType;
     private String contractTypeDisplay;
+
+    private ContractStatus status;
+    private String statusDisplay;
 
     private LocalDate startDate;
     private LocalDate endDate;
     private LocalDate signedDate;
 
+    // ===== JOB =====
     private String jobTitle;
-    private String department;
     private String jobDescription;
+    private String department;
 
-    // =========================
-    // SALARY
-    // =========================
+    // ===== WORKING =====
+    private BigDecimal workingHoursPerDay;
+    private Integer workingDaysPerWeek;
+    private String overtimePolicy;
+    private Integer annualLeaveDays;
+
+    // ===== SALARY =====
     private BigDecimal basicSalary;
     private BigDecimal allowances;
     private BigDecimal totalCompensation;
+    private String allowanceDetails;
 
     private String salaryPaymentMethod;
     private Integer salaryPaymentDate;
 
-    // =========================
-    // WORKING
-    // =========================
-    private BigDecimal workingHoursPerDay;
-    private Integer workingDaysPerWeek;
-
-    private Integer probationPeriod;
-    private Integer probationSalaryPercentage;
-
-    // =========================
-    // INSURANCE
-    // =========================
+    // ===== INSURANCE =====
     private Boolean socialInsurance;
     private BigDecimal insuranceSalary;
 
-    // =========================
-    // STATUS
-    // =========================
-    private ContractStatus status;
-    private String statusDisplay;
-    private Boolean active;
+    // ===== PROBATION =====
+    private Integer probationPeriod;
+    private Integer probationSalaryPercentage;
+    private LocalDate probationEndDate;
 
-    // =========================
-    // AUDIT
-    // =========================
+    // ===== TERMINATION =====
+    private LocalDate terminationDate;
+    private String terminationReason;
+    private Integer noticePeriodDays;
+
+    // ===== FILE =====
+    private String fileUrl;
+    private String draftFileUrl;
+
+    // ===== BUSINESS FLAGS =====
+    private Boolean active;
+    private Boolean expired;
+    private Boolean inProbation;
+
+    // ===== AUDIT =====
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private Long createdBy;
+    private Long updatedBy;
 }
