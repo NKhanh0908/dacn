@@ -1,32 +1,18 @@
-/* eslint-disable react-hooks/set-state-in-effect */
 import { FiGrid } from "react-icons/fi";
-import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useEmployeeContext } from "../../context/EmployeeContext";
-import { filterContracts } from "../../services/contract/ContractService";
+import { useContractContext } from "../../context/ContractContext";
 
 const ContractPage = () => {
-  const { employee } = useEmployeeContext();
+
   const navigate = useNavigate();
-  const [contracts, setContracts] = useState([]);
-  const [page, setPage] = useState(0);
-  const [size] = useState(10);
-  const [totalPages, setTotalPages] = useState(0);
 
-  const fetchContracts = async () => {
-    try {
-      const res = await filterContracts({
-        employeeId: employee.employeeId,
-        page,
-        size,
-      });
-
-      setContracts(res.data.content);
-      setTotalPages(res.data.totalPages);
-    } catch (error) {
-      console.error(error);
-    }
-  };
+  const {
+    contracts,
+    page,
+    setPage,
+    totalPages,
+    loading
+  } = useContractContext();
 
   const formatDate = (date) => {
     if (!date) return "-";
@@ -46,28 +32,27 @@ const ContractPage = () => {
     }
   };
 
-  useEffect(() => {
-    if (employee) {
-      fetchContracts();
-    }
-  }, [page, employee]);
+  if (loading) {
+    return <div className="p-6 text-gray-500">Đang tải hợp đồng...</div>;
+  }
 
   return (
     <div className="overflow-y-auto h-[calc(100vh-100px)] pr-4 pb-4">
       <div className="bg-white border-2 border-[#162F47] rounded-2xl p-3 shadow-2xl">
 
-        {/* Header */}
         <div className="flex justify-between items-center mb-6 border-b border-[#162F47] pb-2">
           <div className="flex items-center gap-2">
             <FiGrid size={20} className="text-[#162F47]" />
-            <span className="text-[#162F47] font-semibold text-lg">Danh sách hợp đồng</span>
+            <span className="text-[#162F47] font-semibold text-lg">
+              Danh sách hợp đồng
+            </span>
           </div>
+
           <span className="text-sm text-gray-500">
             Tổng: {contracts.length} hợp đồng
           </span>
         </div>
 
-        {/* Table */}
         <div className="overflow-x-auto">
           <table className="w-full border-collapse">
             <thead>
@@ -91,17 +76,19 @@ const ContractPage = () => {
                     <td className="p-3 font-medium text-gray-700">
                       {c.contractId}
                     </td>
+
                     <td className="p-3">
                       <span className="px-3 py-1 text-xs rounded-full bg-blue-100 text-blue-700">
                         {contractType(c.contractType)}
                       </span>
                     </td>
-                    <td className="p-3">
-                      {contractType(c.jobTitle)}
-                    </td>
+
+                    <td className="p-3">{c.jobTitle}</td>
+
                     <td className="p-3 text-gray-600">
                       {formatDate(c.signedDate)}
                     </td>
+
                     <td className="p-3 text-gray-600">
                       {formatDate(c.endDate)}
                     </td>
@@ -109,10 +96,7 @@ const ContractPage = () => {
                 ))
               ) : (
                 <tr>
-                  <td
-                    colSpan="4"
-                    className="text-center p-6 text-gray-400"
-                  >
+                  <td colSpan="5" className="text-center p-6 text-gray-400">
                     Không có hợp đồng
                   </td>
                 </tr>

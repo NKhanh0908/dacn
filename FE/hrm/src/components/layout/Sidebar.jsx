@@ -143,8 +143,8 @@ const Sidebar = () => {
 
             {/* Lương */}
             <button
-              onClick={() => handleNavigate("/salary")}
-              className={`${menuClass} ${isActive("/salary")}`}
+              onClick={() => handleNavigate("/payrolls")}
+              className={`${menuClass} ${isActive("/payrolls")}`}
             >
               <FiDollarSign size={18} />
               Lương

@@ -6,6 +6,8 @@ import ContractPage from "./pages/contract/ContractPage";
 import ContractDetail from "./pages/contract/ContractDetail";
 import AttendancePage from "./pages/attendance/AttendancePage";
 import AttendanceRequestPage from "./pages/attendance_requests/AttendanceRequestsPage";
+import MyPayrollPage from "./pages/payroll/PayrollPage";
+import PayrollDetailPage from "./pages/payroll/PayrollDetail";
 
 const isAuthenticated = () => {
   return !!localStorage.getItem("access_token");
@@ -39,8 +41,16 @@ const router = createBrowserRouter([
       {
         path: "contracts/:id",
         element: <ContractDetail />,
+      },
+      {
+        path: "payrolls",
+        element: <MyPayrollPage />,
+      },
+      {
+        path: "payrolls/:id",
+        element: <PayrollDetailPage />
       }
-    ],
+          ],
   },
 ]);
 

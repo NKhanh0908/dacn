@@ -83,7 +83,7 @@ const AttendancePage = () => {
     const year = currentDate.getFullYear();
     const month = currentDate.getMonth() + 1;
     fetchMonthlyAttendance(employee.employeeId, year, month);
-  }, [currentDate, employee]);
+  }, [currentDate, employee, fetchMonthlyAttendance]);
 
   useEffect(() => {
     const interval = setInterval(() => {

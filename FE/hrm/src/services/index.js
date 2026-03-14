@@ -1,4 +1,5 @@
 export * from './attendance/AttendanceService'
+export * from './attendance_requests/AttendanceRequestsService'
 export * from './auth/AuthServices'
 export * from './contract/ContractService'
 export * from './employee/EmployeeService'
