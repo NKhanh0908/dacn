@@ -19,7 +19,7 @@ import java.util.List;
         @Transactional
         List<PayrollResponseDTO> calculateAllPayroll();
 
-        List<PayrollResponseDTO> search(Long employeeId, Integer month, Integer year);
+        List<PayrollResponseDTO> search(Long employeeId, Integer month, Integer year,Long companyId,String department);
 
 
     }

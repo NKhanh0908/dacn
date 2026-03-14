@@ -150,9 +150,21 @@ public class PayrollServiceImpl implements PayrollService {
         return payrolls;
     }
     @Override
-    public List<PayrollResponseDTO> search(Long employeeId, Integer month, Integer year) {
+    public List<PayrollResponseDTO> search(
+            Long employeeId,
+            Integer month,
+            Integer year,
+            Long companyId,
+            String department
+    ) {
         return repository.findAll(
-                        PayrollSpecification.filter(employeeId, month, year)
+                        PayrollSpecification.filter(
+                                employeeId,
+                                month,
+                                year,
+                                companyId,
+                                department
+                        )
                 ).stream()
                 .map(mapper::toDto)
                 .toList();
