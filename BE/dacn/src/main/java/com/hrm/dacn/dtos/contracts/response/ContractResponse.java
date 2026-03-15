@@ -48,7 +48,7 @@ public class ContractResponse {
 
     // ===== WORKING =====
     private BigDecimal workingHoursPerDay;
-    private Integer workingDaysPerWeek;
+    private Integer workingDaysPerMonth;
     private String overtimePolicy;
     private Integer annualLeaveDays;
 
@@ -60,6 +60,10 @@ public class ContractResponse {
 
     private String salaryPaymentMethod;
     private Integer salaryPaymentDate;
+
+    private BigDecimal paidLeaveDeductionRate;
+    private BigDecimal unpaidLeaveDeductionRate;
+    private BigDecimal lateDeductionRate;
 
     // ===== INSURANCE =====
     private Boolean socialInsurance;
