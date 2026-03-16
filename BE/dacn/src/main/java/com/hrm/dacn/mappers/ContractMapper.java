@@ -46,9 +46,9 @@ public class ContractMapper {
                                 ? r.getWorkingHoursPerDay()
                                 : BigDecimal.valueOf(8)
                 )
-                .workingDaysPerWeek(
-                        r.getWorkingDaysPerWeek() != null
-                                ? r.getWorkingDaysPerWeek()
+                .workingDaysPerMonth(
+                        r.getWorkingDaysPerMonth() != null
+                                ? r.getWorkingDaysPerMonth()
                                 : 5
                 )
                 .overtimePolicy(r.getOvertimePolicy())
@@ -60,6 +60,10 @@ public class ContractMapper {
 
                 .salaryPaymentMethod(r.getSalaryPaymentMethod())
                 .salaryPaymentDate(r.getSalaryPaymentDate())
+
+                .paidLeaveDeductionRate(r.getPaidLeaveDeductionRate())
+                .unpaidLeaveDeductionRate(r.getUnpaidLeaveDeductionRate())
+                .lateDeductionRate(r.getLateDeductionRate())
 
                 .socialInsurance(
                         r.getSocialInsurance() != null
@@ -122,12 +126,21 @@ public class ContractMapper {
         // ===== WORKING =====
         if (r.getWorkingHoursPerDay() != null)
             c.setWorkingHoursPerDay(r.getWorkingHoursPerDay());
-        if (r.getWorkingDaysPerWeek() != null)
-            c.setWorkingDaysPerWeek(r.getWorkingDaysPerWeek());
+        if (r.getWorkingDaysPerMonth() != null)
+            c.setWorkingDaysPerMonth(r.getWorkingDaysPerMonth());
         if (r.getOvertimePolicy() != null)
             c.setOvertimePolicy(r.getOvertimePolicy());
         if (r.getAnnualLeaveDays() != null)
             c.setAnnualLeaveDays(r.getAnnualLeaveDays());
+        if(r.getPaidLeaveDeductionRate() != null){
+            c.setPaidLeaveDeductionRate(r.getPaidLeaveDeductionRate());
+        }
+        if (r.getLateDeductionRate() != null){
+            c.setLateDeductionRate(r.getLateDeductionRate());
+        }
+        if(r.getUnpaidLeaveDeductionRate() != null){
+            c.setUnpaidLeaveDeductionRate(r.getUnpaidLeaveDeductionRate());
+        }
 
         // ===== PROBATION =====
         if (r.getProbationPeriod() != null)
@@ -204,9 +217,12 @@ public class ContractMapper {
 
                 // WORKING
                 .workingHoursPerDay(c.getWorkingHoursPerDay())
-                .workingDaysPerWeek(c.getWorkingDaysPerWeek())
+                .workingDaysPerMonth(c.getWorkingDaysPerMonth())
                 .overtimePolicy(c.getOvertimePolicy())
                 .annualLeaveDays(c.getAnnualLeaveDays())
+                .paidLeaveDeductionRate(c.getPaidLeaveDeductionRate())
+                .lateDeductionRate(c.getLateDeductionRate())
+                .unpaidLeaveDeductionRate(c.getUnpaidLeaveDeductionRate())
 
                 // SALARY
                 .basicSalary(c.getBasicSalary())

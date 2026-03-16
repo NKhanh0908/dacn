@@ -73,8 +73,8 @@ public class ContractCreateRequest {
     @Schema(example = "8")
     private BigDecimal workingHoursPerDay;
 
-    @Schema(example = "5")
-    private Integer workingDaysPerWeek;
+    @Schema(example = "26")
+    private Integer workingDaysPerMonth;
 
     @Schema(example = "Overtime paid 150% on weekdays, 200% on weekends")
     private String overtimePolicy;
@@ -100,6 +100,16 @@ public class ContractCreateRequest {
 
     @Schema(example = "Lunch allowance and transportation allowance")
     private String allowanceDetails;
+
+    @Schema(example = "50.00")
+    private BigDecimal paidLeaveDeductionRate;
+
+    @Schema(example = "100.00")
+    private BigDecimal unpaidLeaveDeductionRate;
+
+    @Schema(example = "0.50")
+    private BigDecimal lateDeductionRate;
+
 
     // =========================
     // INSURANCE
