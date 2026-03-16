@@ -1,5 +1,6 @@
 import { FiHome, FiSettings, FiUsers, FiUser, FiCalendar, FiFileText, FiDollarSign, FiClock } from "react-icons/fi";
 import { useState, useEffect } from "react";
+import { NavLink } from "react-router-dom";
 import { useNavigate, useLocation } from "react-router-dom";
 
 const Sidebar = () => {
@@ -52,13 +53,16 @@ const Sidebar = () => {
       {/* MENU */}
       <div className="flex flex-col gap-2 px-4">
         {/* Trang chủ */}
-        <button
-          onClick={() => handleNavigate("/")}
-          className={`${menuClass} ${isActive("/")}`}
+        <NavLink
+          to="/"
+          end
+          className={({ isActive }) =>
+            `${menuClass} ${isActive ? "bg-white/15 text-blue-400" : ""}`
+          }
         >
           <FiHome size={18} />
           Trang chủ
-        </button>
+        </NavLink>
 
         {/* Profile */}
         <button
@@ -133,22 +137,26 @@ const Sidebar = () => {
             </div>
 
             {/* Hợp đồng */}
-            <button
-              onClick={() => handleNavigate("/contracts")}
-              className={`${menuClass} ${isActive("/contracts")}`}
+            <NavLink
+              to="/contracts"
+              className={({ isActive }) =>
+                `${menuClass} ${isActive ? "bg-white/15 text-blue-400" : ""}`
+              }
             >
               <FiFileText size={18} />
               Hợp đồng
-            </button>
+            </NavLink>
 
             {/* Lương */}
-            <button
-              onClick={() => handleNavigate("/payrolls")}
-              className={`${menuClass} ${isActive("/payrolls")}`}
+            <NavLink
+              to="/payrolls"
+              className={({ isActive }) =>
+                `${menuClass} ${isActive ? "bg-white/15 text-blue-400" : ""}`
+              }
             >
               <FiDollarSign size={18} />
               Lương
-            </button>
+            </NavLink>
 
             {/* Ca làm */}
             <button
@@ -160,13 +168,13 @@ const Sidebar = () => {
             </button>
 
             {/* Nghỉ phép */}
-            <button
+            {/* <button
               onClick={() => handleNavigate("/leave-requests")}
               className={`${menuClass} ${isActive("/leave-requests")}`}
             >
               <FiFileText size={18} />
               Đơn xin nghỉ phép
-            </button>
+            </button> */}
           </>
         )}
       </div>

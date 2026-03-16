@@ -50,7 +50,7 @@ const router = createBrowserRouter([
         path: "payrolls/:id",
         element: <PayrollDetailPage />
       }
-          ],
+    ],
   },
 ]);
 

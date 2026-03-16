@@ -21,7 +21,7 @@ export const PayrollProvider = ({ children }) => {
       console.log("Employee ID:", employee?.employeeId);
 
       const myPayroll = data.filter(
-        p => Number(p.employId) === Number(employee?.employeeId)
+        p => p.employeeId === employee?.employeeId
       );
 
       console.log("My payroll:", myPayroll);
