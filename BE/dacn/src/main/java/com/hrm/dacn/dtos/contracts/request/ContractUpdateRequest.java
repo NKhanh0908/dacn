@@ -2,6 +2,7 @@ package com.hrm.dacn.dtos.contracts.request;
 
 import com.hrm.dacn.enums.contracts.ContractStatus;
 import com.hrm.dacn.enums.contracts.ContractType;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.*;
 import lombok.*;
 
@@ -23,15 +24,17 @@ public class ContractUpdateRequest {
     private LocalDate signedDate;
 
     private String jobTitle;
-    private String department;
     private String jobDescription;
+    private String department;
 
     private BigDecimal basicSalary;
     private BigDecimal allowances;
     private String allowanceDetails;
 
     private BigDecimal workingHoursPerDay;
-    private Integer workingDaysPerWeek;
+    private Integer workingDaysPerMonth;
+    private String overtimePolicy;
+    private Integer annualLeaveDays;
 
     private Integer probationPeriod;
     private Integer probationSalaryPercentage;
@@ -39,18 +42,22 @@ public class ContractUpdateRequest {
     private String salaryPaymentMethod;
     private Integer salaryPaymentDate;
 
+    private BigDecimal paidLeaveDeductionRate;
+    private BigDecimal unpaidLeaveDeductionRate;
+    private BigDecimal lateDeductionRate;
+
     private Boolean socialInsurance;
     private BigDecimal insuranceSalary;
 
     private String employerRepresentative;
     private String employerPosition;
 
-    private String confidentialityClause;
-    private String technologyConfidentiality;
-    private String nonCompeteClause;
-    private Integer confidentialityPeriodMonths;
-
+    private LocalDate terminationDate;
+    private String terminationReason;
     private Integer noticePeriodDays;
+
+    private String fileUrl;
+    private String draftFileUrl;
+
     private String notes;
 }
-

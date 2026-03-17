@@ -7,6 +7,7 @@ import jakarta.validation.constraints.*;
 import lombok.*;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Period;
@@ -87,13 +88,6 @@ public class Contracts {
     @Column(name = "department", length = 100)
     private String department;
 
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "work_location_id", nullable = false)
-//    private WorkLocation workLocation;
-//
-//    @Column(name = "specific_work_place", length = 500)
-//    private String specificWorkPlace; // Vị trí cụ thể (phòng, tầng...)
-
     // =========================
     // THỜI GIỜ LÀM VIỆC VÀ NGHỈ NGƠI
     // =========================
@@ -102,14 +96,10 @@ public class Contracts {
     @Positive(message = "Số giờ làm việc/ngày phải lớn hơn 0")
     private BigDecimal workingHoursPerDay = BigDecimal.valueOf(8);
 
-    @Column(name = "working_days_per_week")
-    @Min(value = 1, message = "Số ngày làm việc/tuần ít nhất là 1")
-    @Max(value = 7, message = "Số ngày làm việc/tuần không quá 7")
-    private Integer workingDaysPerWeek = 5;
-
-    @Column(name = "work_schedule", length = 500)
-    private String workSchedule;
-    // Lịch làm việc cụ thể: Ca làm việc, giờ vào/ra...
+    @Column(name = "working_days_per_month")
+    @Min(value = 1, message = "Số ngày làm việc/tháng ít nhất là 1")
+    @Max(value = 30, message = "Số ngày làm việc/tháng không quá 30")
+    private Integer workingDaysPerMonth = 26;
 
     @Column(name = "overtime_policy", length = 1000)
     private String overtimePolicy; // Quy định làm thêm giờ
@@ -142,6 +132,37 @@ public class Contracts {
     // Chi tiết các loại phụ cấp: ăn trưa, đi lại, điện thoại, nhà ở...
 
     // =========================
+    // CHÍNH SÁCH KHẤU TRỪ LƯƠNG
+    // =========================
+
+    /**
+     * % basicSalary bị trừ cho mỗi ngày nghỉ phép vượt quá hạn mức annualLeaveDays.
+     * Default: 100% (trừ nguyên 1 ngày lương).
+     */
+    @Column(name = "paid_leave_deduction_rate", precision = 5, scale = 2)
+    @DecimalMin(value = "0.0", message = "Tỷ lệ trừ nghỉ phép không âm")
+    @DecimalMax(value = "100.0", message = "Tỷ lệ trừ nghỉ phép không quá 100%")
+    private BigDecimal paidLeaveDeductionRate;
+
+    /**
+     * % basicSalary bị trừ cho mỗi ngày nghỉ không phép (vắng không lý do).
+     * Default: 100% (trừ nguyên 1 ngày lương).
+     */
+    @Column(name = "unpaid_leave_deduction_rate", precision = 5, scale = 2)
+    @DecimalMin(value = "0.0", message = "Tỷ lệ trừ nghỉ không phép không âm")
+    @DecimalMax(value = "100.0", message = "Tỷ lệ trừ nghỉ không phép không quá 100%")
+    private BigDecimal unpaidLeaveDeductionRate;
+
+    /**
+     * % basicSalary bị trừ cho mỗi lần đi trễ.
+     * Default: 0.5% basicSalary mỗi lần trễ.
+     */
+    @Column(name = "late_deduction_rate", precision = 5, scale = 2)
+    @DecimalMin(value = "0.0", message = "Tỷ lệ trừ đi trễ không âm")
+    @DecimalMax(value = "100.0", message = "Tỷ lệ trừ đi trễ không quá 100%")
+    private BigDecimal lateDeductionRate;
+
+    // =========================
     // BẢO HIỂM XÃ HỘI
     // =========================
 
@@ -151,23 +172,6 @@ public class Contracts {
     @Column(name = "insurance_salary", precision = 15, scale = 2)
     private BigDecimal insuranceSalary; // Mức lương đóng BH
 
-    // =========================
-    // BẢO MẬT
-    // =========================
-    @Column(name = "confidentiality_clause", columnDefinition = "TEXT")
-    private String confidentialityClause;
-    // Điều khoản bảo vệ bí mật kinh doanh
-
-    @Column(name = "technology_confidentiality", columnDefinition = "TEXT")
-    private String technologyConfidentiality;
-    // Điều khoản bảo vệ bí mật công nghệ
-
-    @Column(name = "non_compete_clause", columnDefinition = "TEXT")
-    private String nonCompeteClause; // Điều khoản cạnh tranh (nếu có)
-
-    @Column(name = "confidentiality_period_months")
-    private Integer confidentialityPeriodMonths;
-    // Thời hạn bảo mật sau khi chấm dứt HĐ
 
     // =========================
     // THỬ VIỆC
@@ -207,21 +211,6 @@ public class Contracts {
     @Column(name = "draft_file_url")
     private String draftFileUrl; // Link file bản nháp
 
-    // =========================
-    // KÝ KẾT
-    // =========================
-
-    @Column(name = "signed_by_employee")
-    private Boolean signedByEmployee = false;
-
-    @Column(name = "employee_signed_date")
-    private LocalDateTime employeeSignedDate;
-
-    @Column(name = "signed_by_employer")
-    private Boolean signedByEmployer = false;
-
-    @Column(name = "employer_signed_date")
-    private LocalDateTime employerSignedDate;
 
     // =========================
     // GHI CHÚ
@@ -255,11 +244,27 @@ public class Contracts {
         if (probationPeriod != null && probationPeriod > 0) {
             this.probationEndDate = startDate.plusMonths(probationPeriod);
         }
+
+        applyDeductionRateDefaults();
     }
 
     @PreUpdate
     protected void onUpdate() {
         this.updatedAt = LocalDateTime.now();
+
+        applyDeductionRateDefaults();
+    }
+
+    private void applyDeductionRateDefaults() {
+        if (paidLeaveDeductionRate == null) {
+            paidLeaveDeductionRate = new BigDecimal("100.00"); // trừ 100% lương ngày/ngày vượt phép
+        }
+        if (unpaidLeaveDeductionRate == null) {
+            unpaidLeaveDeductionRate = new BigDecimal("100.00"); // trừ 100% lương ngày/ngày vắng
+        }
+        if (lateDeductionRate == null) {
+            lateDeductionRate = new BigDecimal("0.50"); // trừ 0.5% basicSalary/lần trễ
+        }
     }
 
     // =========================
@@ -324,19 +329,19 @@ public class Contracts {
     /**
      * Kiểm tra hợp đồng đã được ký đầy đủ chưa
      */
-    @Transient
-    public boolean isFullySigned() {
-        return Boolean.TRUE.equals(signedByEmployee) &&
-                Boolean.TRUE.equals(signedByEmployer);
-    }
+//    @Transient
+//    public boolean isFullySigned() {
+//        return Boolean.TRUE.equals(signedByEmployee) &&
+//                Boolean.TRUE.equals(signedByEmployer);
+//    }
 
     /**
      * Kiểm tra có thể sửa hợp đồng không (chỉ sửa được khi chưa ký)
      */
-    @Transient
-    public boolean isEditable() {
-        return status == ContractStatus.DRAFT || !isFullySigned();
-    }
+//    @Transient
+//    public boolean isEditable() {
+//        return status == ContractStatus.DRAFT || !isFullySigned();
+//    }
 
     /**
      * Kiểm tra đang trong thời gian thử việc
@@ -360,5 +365,47 @@ public class Contracts {
         }
         return Period.between(LocalDate.now(), endDate).getDays();
     }
+
+    // =========================
+    // TÍNH LƯƠNG ĐƠN VỊ (Transient)
+    // =========================
+
+    /**
+     * Lương cơ bản 1 ngày công = basicSalary / totalWorkingDays.
+     */
+    private BigDecimal getDailyBasicSalary() {
+        if (workingDaysPerMonth <= 0) {
+            throw new IllegalArgumentException("Tổng ngày công phải lớn hơn 0");
+        }
+        return basicSalary.divide(BigDecimal.valueOf(this.workingDaysPerMonth), 2, RoundingMode.HALF_UP);
+    }
+
+    @Transient
+    public BigDecimal getPaidLeaveDeductionAmount(int excessLeaveDays) {
+        if (excessLeaveDays <= 0) return BigDecimal.ZERO;
+        return getDailyBasicSalary()
+                .multiply(paidLeaveDeductionRate.divide(BigDecimal.valueOf(100), 4, RoundingMode.HALF_UP))
+                .multiply(BigDecimal.valueOf(excessLeaveDays))
+                .setScale(2, RoundingMode.HALF_UP);
+    }
+
+    @Transient
+    public BigDecimal getUnpaidLeaveDeductionAmount(int unpaidLeaveDays) {
+        if (unpaidLeaveDays <= 0) return BigDecimal.ZERO;
+        return getDailyBasicSalary()
+                .multiply(unpaidLeaveDeductionRate.divide(BigDecimal.valueOf(100), 4, RoundingMode.HALF_UP))
+                .multiply(BigDecimal.valueOf(unpaidLeaveDays))
+                .setScale(2, RoundingMode.HALF_UP);
+    }
+
+    @Transient
+    public BigDecimal getLateDeductionAmount(int lateTimes) {
+        if (lateTimes <= 0) return BigDecimal.ZERO;
+        return basicSalary
+                .multiply(lateDeductionRate.divide(BigDecimal.valueOf(100), 4, RoundingMode.HALF_UP))
+                .multiply(BigDecimal.valueOf(lateTimes))
+                .setScale(2, RoundingMode.HALF_UP);
+    }
+
 
 }

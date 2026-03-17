@@ -6,6 +6,7 @@ import com.hrm.dacn.dtos.ResultPagination;
 import com.hrm.dacn.dtos.Employee.Request.EmployeeCreateRequest;
 import com.hrm.dacn.dtos.Employee.Request.EmployeeUpdateRequest;
 import com.hrm.dacn.dtos.Employee.Response.EmployeeResponse;
+import com.hrm.dacn.dtos.payroll.PayrollResponseDTO;
 import com.hrm.dacn.entities.Employee;
 
 import org.springframework.data.domain.Pageable;
@@ -28,5 +29,6 @@ public interface EmployeeService {
     ResultPagination getAll(Specification<Employee> spec, Pageable pageable);
 
     void delete(Long id);
+
 
 }

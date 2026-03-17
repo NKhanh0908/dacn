@@ -63,7 +63,7 @@ public class EmployeeCreateRequest {
     @Schema(type = "string", format = "date", example = "2024-01-15")
     private LocalDate startDate;
 
-    @Schema(example = "ACTIVE")
+    @Schema(example = "WORKING")
     private EmployeeStatus status;
 
     @Pattern(regexp = "^[0-9]{9,20}$")

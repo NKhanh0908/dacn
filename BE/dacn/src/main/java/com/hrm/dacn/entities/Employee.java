@@ -2,6 +2,7 @@ package com.hrm.dacn.entities;
 
 import java.beans.Transient;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 import com.hrm.dacn.enums.Employee.EmployeeStatus;
@@ -11,6 +12,8 @@ import com.hrm.dacn.enums.Employee.Gender;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 @Entity
 @Table(name = "employees")
@@ -95,13 +98,13 @@ public class Employee {
     // @Column(name = "work_end_time")
     // private LocalTime workEndTime = LocalTime.of(17, 30);
 
-    // @CreationTimestamp
-    // @Column(name = "created_at", updatable = false)
-    // private LocalDateTime createdAt;
+     @CreationTimestamp
+     @Column(name = "created_at", updatable = false)
+     private LocalDateTime createdAt;
 
-    // @UpdateTimestamp
-    // @Column(name = "updated_at")
-    // private LocalDateTime updatedAt;
+     @UpdateTimestamp
+     @Column(name = "updated_at")
+     private LocalDateTime updatedAt;
 
     @ManyToOne
     @JoinColumn
