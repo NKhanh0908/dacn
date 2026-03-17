@@ -37,9 +37,6 @@ public class ContractCreateRequest {
     // RELATION
     // =========================
 
-    @Schema(example = "1")
-    private Long companyId;
-
     @Schema(example = "1001")
     private Long employeeId;
 
