@@ -1,7 +1,7 @@
 import html2pdf from "html2pdf.js";
 import { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { getContractById } from "../../services/contract/ContractService";
+import { getContractById } from "../../services";
 
 const ContractDetail = () => {
   const { id } = useParams();
@@ -64,7 +64,7 @@ const ContractDetail = () => {
         ref={contractRef}
         style={{ 
             fontFamily: "'Times New Roman', Times, serif",
-            padding: "8mm 12mm", 
+            padding: "6mm 11mm", 
             fontSize: "11pt",      
             lineHeight: "1.25",    
             minHeight: "297mm",
@@ -72,13 +72,13 @@ const ContractDetail = () => {
         }}
       >
         {/* Quốc hiệu tiêu ngữ */}
-        <div className="flex flex-col items-center text-center mb-2">
+        <div className="flex flex-col items-center text-center">
           <h2 className="font-bold text-[13pt] uppercase tracking-tight">CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM</h2>
-          <h3 className="font-bold text-[12pt] border-b border-black pb-2 mb-1">Độc lập - Tự do - Hạnh phúc</h3>
+          <h3 className="font-bold text-[12pt] border-b border-black pb-2">Độc lập - Tự do - Hạnh phúc</h3>
         </div>
 
         {/* Dòng Ngày tháng năm (Góc phải dưới Quốc hiệu) */}
-        <div className="text-right italic text-[12pt] mb-4">
+        <div className="text-right italic text-[12pt]">
            {contract.workLocation || "TP. Hồ Chí Minh"}, ngày {new Date().getDate()} tháng {new Date().getMonth() + 1} năm {new Date().getFullYear()}
         </div>
 
@@ -130,7 +130,7 @@ const ContractDetail = () => {
               <span className="font-bold">Điều 2: Chế độ làm việc và lương thưởng.</span>
               <p><strong>1. Chế độ làm việc:</strong></p>
               <ul className="ml-5">
-                <li>- Thời gian: {contract.workingHoursPerDay}h/ngày ({contract.workingDaysPerWeek} ngày/tuần).</li>
+                <li>- Thời gian: {contract.workingHoursPerDay}h/ngày ({contract.workingDaysPerMonth} ngày/tháng).</li>
                 <li>- Chế độ nghỉ ngơi: Theo quy định của pháp luật và quy chế công ty.</li>
               </ul>
               <p><strong>2. Lương thưởng:</strong></p>
@@ -139,6 +139,13 @@ const ContractDetail = () => {
                 <li><p>- Phụ cấp: {formatMoney(contract.allowances)} ({contract.allowanceDetails})</p></li> 
                 <li>- Hình thức trả lương: {contract.salaryPaymentMethod} vào ngày {contract.salaryPaymentDate} hàng tháng.</li>
                 <li>- Chế độ bảo hiểm: {contract.socialInsurance ? "Được đóng BHXH, BHYT theo quy định" : "Theo thỏa thuận riêng"}.</li>
+                <li>- Chính sách khấu trừ lương:
+                <ul className="ml-5">
+                  <li>+ Nghỉ có phép: -{contract.paidLeaveDeductionRate}%.</li>
+                  <li>+ Nghỉ không phép: -{contract.unpaidLeaveDeductionRate}%.</li>
+                  <li>+ Đi trễ: -{contract.lateDeductionRate}%.</li>
+                </ul>
+              </li>
               </ul>
             </section>
 

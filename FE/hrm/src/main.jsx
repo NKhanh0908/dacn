@@ -1,28 +1,39 @@
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
+import { StrictMode } from "react";
+import { createRoot } from "react-dom/client";
+import {
+  EmployeeProvider,
+  AttendanceProvider,
+  WorkScheduleProvider,
+  AttendanceRequestProvider,
+  PayrollProvider,
+  ContractProvider,
+  HolidayProvider,
+  WorkCalendarProvider,
+  OvertimeRequestProvider,
+} from "./context";
 import "./styles/index.css";
-import { EmployeeProvider } from "./context/EmployeeContext";
-import { AttendanceProvider } from "./context/AttendanceContext";
-import { WorkScheduleProvider } from "./context/WorkScheduleContext";
-import { AttendanceRequestProvider } from "./context/AttendanceRequestContext";
-import { PayrollProvider } from "./context/PayrollContext";
-import { ContractProvider } from "./context/ContractContext";
-import App from './App.jsx'
+import App from "./App.jsx";
 
-createRoot(document.getElementById('root')).render(
+createRoot(document.getElementById("root")).render(
   <StrictMode>
     <EmployeeProvider>
       <ContractProvider>
         <PayrollProvider>
           <WorkScheduleProvider>
-            <AttendanceProvider>
-              <AttendanceRequestProvider>
-                <App />
-              </AttendanceRequestProvider>
-            </AttendanceProvider>
+            <HolidayProvider>
+              <WorkCalendarProvider>
+                <OvertimeRequestProvider>
+                  <AttendanceProvider>
+                    <AttendanceRequestProvider>
+                      <App />
+                    </AttendanceRequestProvider>
+                  </AttendanceProvider>
+                </OvertimeRequestProvider>
+              </WorkCalendarProvider>
+            </HolidayProvider>
           </WorkScheduleProvider>
         </PayrollProvider>
       </ContractProvider>
     </EmployeeProvider>
-  </StrictMode>,
-)
+  </StrictMode>
+);

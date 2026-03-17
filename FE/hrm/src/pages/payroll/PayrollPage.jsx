@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FiGrid, FiCalendar, FiDollarSign } from "react-icons/fi";
-import { usePayrollContext } from "../../context/PayrollContext";
+import { usePayrollContext } from "../../context";
 
 const MyPayrollPage = () => {
   const { payrolls, loading } = usePayrollContext();
@@ -9,11 +9,15 @@ const MyPayrollPage = () => {
 
   // pagination
   const [page, setPage] = useState(1);
-  const pageSize = 5;
+  const pageSize = 10;
 
   const totalPages = Math.ceil(payrolls.length / pageSize);
 
-  const paginatedPayrolls = payrolls.slice(
+  const sortedPayrolls = [...payrolls].sort(
+    (a, b) => b.payrollId - a.payrollId
+  );
+
+  const paginatedPayrolls = sortedPayrolls.slice(
     (page - 1) * pageSize,
     page * pageSize
   );
@@ -43,6 +47,7 @@ const MyPayrollPage = () => {
           <table className="w-full border-collapse">
             <thead>
               <tr className="bg-gray-200 text-gray-600 text-sm">
+                <th className="p-3 text-left">STT</th>
                 <th className="p-3 text-left">Tháng</th>
                 <th className="p-3 text-left">Tổng thu nhập</th>
                 <th className="p-3 text-left">Khấu trừ</th>
@@ -51,12 +56,13 @@ const MyPayrollPage = () => {
             </thead>
 
             <tbody>
-              {paginatedPayrolls.map((p) => (
+              {paginatedPayrolls.map((p, index) => (
                 <tr
                   key={p.payrollId}
                   onClick={() => navigate(`/payrolls/${p.payrollId}`)}
                   className="border-b hover:bg-blue-200 transition cursor-pointer"
                 >
+                  <td className="p-3">{(page - 1) * pageSize + index + 1}</td>
                   <td className="p-3 flex items-center gap-2">
                     <FiCalendar />
                     {p.period}

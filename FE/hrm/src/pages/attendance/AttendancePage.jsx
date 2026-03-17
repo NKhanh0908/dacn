@@ -1,7 +1,5 @@
 import { useEffect, useState } from "react";
-import { useEmployeeContext } from "../../context/EmployeeContext";
-import { useAttendanceContext } from "../../context/AttendanceContext";
-import { useWorkScheduleContext } from "../../context/WorkScheduleContext";
+import { useEmployeeContext, useAttendanceContext, useWorkScheduleContext } from "../../context";
 import { FiCalendar, FiClock, FiCheckCircle, FiAlertTriangle, FiPlusCircle } from "react-icons/fi";
 
 const AttendancePage = () => {
@@ -80,10 +78,13 @@ const AttendancePage = () => {
 
   useEffect(() => {
     if (!employee?.employeeId) return;
+
     const year = currentDate.getFullYear();
     const month = currentDate.getMonth() + 1;
+
     fetchMonthlyAttendance(employee.employeeId, year, month);
-  }, [currentDate, employee, fetchMonthlyAttendance]);
+
+  }, [currentDate, employee?.employeeId]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -183,16 +184,14 @@ const AttendancePage = () => {
                   <p className="text-gray-500 flex justify-between">
                     Ca làm việc:
                     <span className="font-semibold text-black">
-                      {defaultSchedule?.startTime || "--:--"} -
-                      {defaultSchedule?.endTime || "--:--"}
+                      {defaultSchedule?.startTime || "--:--"} - {defaultSchedule?.endTime || "--:--"}
                     </span>
                   </p>
 
                   <p className="text-gray-500 flex justify-between">
                     Nghỉ trưa:
                     <span className="font-semibold text-black">
-                      {defaultSchedule?.breakStartTime || "--:--"} -
-                      {defaultSchedule?.breakEndTime || "--:--"}
+                      {defaultSchedule?.breakStartTime || "--:--"} - {defaultSchedule?.breakEndTime || "--:--"}
                     </span>
                   </p>
 

@@ -1,6 +1,6 @@
 import html2pdf from "html2pdf.js";
 import { useParams, useNavigate } from "react-router-dom";
-import { usePayrollContext } from "../../context/PayrollContext";
+import { usePayrollContext } from "../../context";
 import { useRef } from "react";
 
 const PayrollDetailPage = () => {

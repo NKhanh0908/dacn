@@ -1,9 +1,8 @@
 import { FiGrid } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
-import { useContractContext } from "../../context/ContractContext";
+import { useContractContext } from "../../context";
 
 const ContractPage = () => {
-
   const navigate = useNavigate();
 
   const {

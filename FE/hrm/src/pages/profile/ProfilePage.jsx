@@ -1,6 +1,6 @@
 import { FiUser } from "react-icons/fi";
 import { useOutletContext } from "react-router-dom";
-import { useEmployeeContext } from "../../context/EmployeeContext";
+import { useEmployeeContext } from "../../context";
 
 const ProfilePage = () => {
   const { employee, loading } = useEmployeeContext();

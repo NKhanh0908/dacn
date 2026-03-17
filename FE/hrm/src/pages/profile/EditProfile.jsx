@@ -1,7 +1,7 @@
 import { FiX } from "react-icons/fi";
 import { useEffect, useState } from "react";
-import { useEmployeeContext } from "../../context/EmployeeContext";
-import { updateEmployee } from "../../services/employee/EmployeeService";
+import { useEmployeeContext } from "../../context";
+import { updateEmployee } from "../../services";
 
 const EditProfile = ({ show, onClose }) => {
   const { employee, loading, setEmployee } = useEmployeeContext();
