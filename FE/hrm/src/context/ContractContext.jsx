@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { filterContracts } from "../services/contract/ContractService";
+import { filterContracts } from "../services";
 import { useEmployeeContext } from "./EmployeeContext";
 
 const ContractContext = createContext();

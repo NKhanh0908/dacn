@@ -168,13 +168,13 @@ const Sidebar = () => {
             </button>
 
             {/* Nghỉ phép */}
-            {/* <button
+            <button
               onClick={() => handleNavigate("/leave-requests")}
               className={`${menuClass} ${isActive("/leave-requests")}`}
             >
               <FiFileText size={18} />
               Đơn xin nghỉ phép
-            </button> */}
+            </button>
           </>
         )}
       </div>

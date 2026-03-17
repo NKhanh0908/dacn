@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { checkIn, checkOut, getTodayAttendance, getMonthlyAttendance, getAttendanceStatistics } from "../services/attendance/AttendanceService";
+import { checkIn, checkOut, getTodayAttendance, getMonthlyAttendance, getAttendanceStatistics } from "../services";
 import { useEmployeeContext } from "./EmployeeContext";
 
 // Tạo context dùng chung cho module chấm công

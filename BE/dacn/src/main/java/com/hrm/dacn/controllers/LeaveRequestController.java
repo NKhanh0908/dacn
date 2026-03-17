@@ -28,7 +28,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/leave-requests")
+@RequestMapping("/leave-requests")
 @RequiredArgsConstructor
 @Tag(name = "Leave Request", description = "Leave request management APIs: create, review, cancel, query")
 public class LeaveRequestController {

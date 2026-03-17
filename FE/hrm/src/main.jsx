@@ -8,6 +8,7 @@ import {
   PayrollProvider,
   ContractProvider,
   HolidayProvider,
+  LeaveRequestProvider,
   WorkCalendarProvider,
   OvertimeRequestProvider,
 } from "./context";
@@ -21,15 +22,17 @@ createRoot(document.getElementById("root")).render(
         <PayrollProvider>
           <WorkScheduleProvider>
             <HolidayProvider>
-              <WorkCalendarProvider>
-                <OvertimeRequestProvider>
-                  <AttendanceProvider>
-                    <AttendanceRequestProvider>
-                      <App />
-                    </AttendanceRequestProvider>
-                  </AttendanceProvider>
-                </OvertimeRequestProvider>
-              </WorkCalendarProvider>
+              <LeaveRequestProvider>
+                <WorkCalendarProvider>
+                  <OvertimeRequestProvider>
+                    <AttendanceProvider>
+                      <AttendanceRequestProvider>
+                        <App />
+                      </AttendanceRequestProvider>
+                    </AttendanceProvider>
+                  </OvertimeRequestProvider>
+                </WorkCalendarProvider>
+              </LeaveRequestProvider>
             </HolidayProvider>
           </WorkScheduleProvider>
         </PayrollProvider>

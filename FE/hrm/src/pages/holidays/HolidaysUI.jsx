@@ -1,4 +1,4 @@
-import { FiCalendar, FiFlag } from "react-icons/fi";
+import { FiCalendar } from "react-icons/fi";
 import { useHolidayContext } from "../../context";
 
 const HolidayPage = () => {
