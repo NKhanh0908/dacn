@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { getWorkCalendarByYear, checkWorkingDay } from "../services/work_calendar/WorkCalendarService";
+import { getWorkCalendarByYear, checkWorkingDay } from "../services";
 
 // Tạo context dùng chung cho module lịch làm việc
 const WorkCalendarContext = createContext();

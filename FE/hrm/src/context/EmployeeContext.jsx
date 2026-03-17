@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { getCurrentEmployee } from "../services/employee/EmployeeService";
+import { getCurrentEmployee } from "../services";
 
 const EmployeeContext = createContext(null);
 

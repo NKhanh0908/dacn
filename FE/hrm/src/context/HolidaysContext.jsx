@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { getHolidaysByDateRange, checkHoliday } from "../services/holiday/HolidaysService";
+import { getHolidaysByDateRange, checkHoliday } from "../services";
 
 // Tạo context dùng chung cho module ngày nghỉ
 const HolidayContext = createContext();

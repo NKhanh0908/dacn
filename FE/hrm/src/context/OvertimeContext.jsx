@@ -1,5 +1,5 @@
 import { createContext, useContext, useState } from "react";
-import { createOvertimeRequest } from "../services/overtime/OvertimeRequestsService";
+import { createOvertimeRequest } from "../services";
 
 // Tạo context dùng chung cho module yêu cầu tăng ca
 const OvertimeRequestContext = createContext();

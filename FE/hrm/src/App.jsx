@@ -9,7 +9,8 @@ import {
   AttendanceRequestPage, 
   MyPayrollPage,
   PayrollDetailPage,
-  WorkSchedulePage
+  WorkSchedulePage,
+  LeaveRequestPage
 } from "./pages/index";
 
 const isAuthenticated = () => {
@@ -56,6 +57,10 @@ const router = createBrowserRouter([
       {
         path: "work-schedule",
         element: <WorkSchedulePage />
+      },
+      {
+        path: "leave-requests",
+        element: <LeaveRequestPage />
       }
     ],
   },

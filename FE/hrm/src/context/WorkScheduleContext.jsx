@@ -8,7 +8,7 @@ import {
   deactivateWorkSchedule,
   setDefaultWorkSchedule,
   getDefaultWorkSchedule 
-} from "../services/index";
+} from "../services";
 
 // Context dùng để quản lý ca làm việc trong toàn hệ thống
 const WorkScheduleContext = createContext();

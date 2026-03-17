@@ -52,18 +52,6 @@ const Sidebar = () => {
 
       {/* MENU */}
       <div className="flex flex-col gap-2 px-4">
-        {/* Trang chủ */}
-        <NavLink
-          to="/"
-          end
-          className={({ isActive }) =>
-            `${menuClass} ${isActive ? "bg-white/15 text-blue-400" : ""}`
-          }
-        >
-          <FiHome size={18} />
-          Trang chủ
-        </NavLink>
-
         {/* Profile */}
         <button
           onClick={() => handleNavigate("/profile")}
@@ -76,6 +64,18 @@ const Sidebar = () => {
         {/* ADMIN */}
         {role === "ADMIN" && (
           <>
+            {/* Trang chủ */}
+            <NavLink
+              to="/"
+              end
+              className={({ isActive }) =>
+                `${menuClass} ${isActive ? "bg-white/15 text-blue-400" : ""}`
+              }
+            >
+              <FiHome size={18} />
+              Trang chủ
+            </NavLink>  
+
             <button
               onClick={() => handleNavigate("/employees")}
               className={`${menuClass} ${isActive("/employees")}`}
@@ -168,13 +168,13 @@ const Sidebar = () => {
             </button>
 
             {/* Nghỉ phép */}
-            {/* <button
+            <button
               onClick={() => handleNavigate("/leave-requests")}
               className={`${menuClass} ${isActive("/leave-requests")}`}
             >
               <FiFileText size={18} />
               Đơn xin nghỉ phép
-            </button> */}
+            </button>
           </>
         )}
       </div>

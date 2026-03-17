@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { getPayrolls } from "../services/payroll/PayrollService";
+import { getPayrolls } from "../services";
 import { useEmployeeContext } from "./EmployeeContext";
 
 const PayrollContext = createContext();
