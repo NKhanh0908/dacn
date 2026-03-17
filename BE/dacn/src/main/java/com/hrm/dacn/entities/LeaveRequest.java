@@ -1,7 +1,7 @@
 package com.hrm.dacn.entities;
 
-import com.hrm.dacn.enums.Attendance.RequestStatus;
 import com.hrm.dacn.enums.Holiday.LeaveDuration;
+import com.hrm.dacn.enums.Holiday.LeaveStatus;
 import com.hrm.dacn.enums.Holiday.LeaveType;
 
 import jakarta.persistence.*;
@@ -52,7 +52,7 @@ public class LeaveRequest {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 50)
-    private RequestStatus status;
+    private LeaveStatus status; // dùng LeaveStatus
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "approved_by")
@@ -64,7 +64,7 @@ public class LeaveRequest {
     @Column(name = "reject_reason", length = 1000)
     private String rejectReason;
 
-    @Column(name = "created_at")
+    @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
     @Column(name = "attendance_generated", nullable = false)
@@ -72,17 +72,13 @@ public class LeaveRequest {
 
     @PrePersist
     protected void onCreate() {
-        if (status == null) {
-            status = RequestStatus.PENDING;
-        }
-        if (createdAt == null) {
+        if (status == null)
+            status = LeaveStatus.PENDING;
+        if (createdAt == null)
             createdAt = LocalDateTime.now();
-        }
-        if (attendanceGenerated == null) {
+        if (attendanceGenerated == null)
             attendanceGenerated = false;
-        }
-        if (totalDays == null) {
+        if (totalDays == null)
             totalDays = 0.0;
-        }
     }
 }
