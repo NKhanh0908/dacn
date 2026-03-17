@@ -57,7 +57,6 @@ public class Employee {
     @Column(name = "position", length = 100)
     private String position;
 
-
     @Column(name = "start_date", nullable = false)
     @NotNull(message = "Ngày bắt đầu làm việc không được để trống")
     private LocalDate startDate;
@@ -90,11 +89,11 @@ public class Employee {
     @Column(name = "emergency_contact_relationship", length = 50)
     private String emergencyContactRelationship;
 
-//    @Column(name = "work_start_time")
-//    private LocalTime workStartTime = LocalTime.of(8, 30);
-//
-//    @Column(name = "work_end_time")
-//    private LocalTime workEndTime = LocalTime.of(17, 30);
+    // @Column(name = "work_start_time")
+    // private LocalTime workStartTime = LocalTime.of(8, 30);
+    //
+    // @Column(name = "work_end_time")
+    // private LocalTime workEndTime = LocalTime.of(17, 30);
 
     // @CreationTimestamp
     // @Column(name = "created_at", updatable = false)
@@ -104,9 +103,9 @@ public class Employee {
     // @Column(name = "updated_at")
     // private LocalDateTime updatedAt;
 
-     @ManyToOne
-     @JoinColumn
-     private Role role;
+    @ManyToOne
+    @JoinColumn
+    private Role role;
 
     // Tính tuổi
     @Transient
@@ -122,5 +121,10 @@ public class Employee {
         if (startDate == null)
             return 0;
         return LocalDate.now().getYear() - startDate.getYear();
+    }
+
+    public Object getId() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getId'");
     }
 }

@@ -9,20 +9,20 @@ import java.time.LocalDate;
 import java.util.List;
 
 public interface HolidayService {
-    HolidayResponse createHoliday(HolidayRequest requestDTO,
-            Long createdByEmployeeId);
+        HolidayResponse createHoliday(HolidayRequest requestDTO,
+                        Long createdByEmployeeId);
 
-    HolidayResponse updateHoliday(Long id, HolidayRequest requestDTO);
+        HolidayResponse updateHoliday(Long id, HolidayRequest requestDTO);
 
-    HolidayResponse getHolidayById(Long id);
+        HolidayResponse getHolidayById(Long id);
 
-    // Page<HolidayResponse> searchHolidays(HolidaySearch searchDTO);
-    void deleteHoliday(Long id);
+        // Page<HolidayResponse> searchHolidays(HolidaySearch searchDTO);
+        void deleteHoliday(Long id);
 
-    List<HolidayResponse> getHolidaysByDateRange(LocalDate from,
-            LocalDate to);
+        List<HolidayResponse> getHolidaysByDateRange(LocalDate from,
+                        LocalDate to);
 
-    boolean isHoliday(LocalDate date);
+        boolean isHoliday(LocalDate date);
 
-    Double getSalaryMultiplier(LocalDate date);
+        Double getSalaryMultiplier(LocalDate date);
 }

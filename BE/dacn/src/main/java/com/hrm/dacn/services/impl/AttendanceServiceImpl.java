@@ -464,4 +464,34 @@ public class AttendanceServiceImpl implements AttendanceService {
                         .filter(a -> a.getWorkHours() != null).mapToDouble(Attendance::getWorkHours).sum())
                 .build();
     }
+
+    @Override
+    public void markLeave(Long employeeId, LocalDate date, Employee approvedBy) {
+        Employee employee = employeeRepository.findById(employeeId)
+                .orElseThrow(() -> new CustomException(Error.EMPLOYEE_NOT_FOUND));
+
+        // Bỏ qua nếu đã có bản ghi ngày này
+        if (attendanceRepository.existsByEmployeeAndAttendanceDate(employee, date)) {
+            log.info("Attendance already exists for employee {} on {}, skipping", employeeId, date);
+            return;
+        }
+
+        Attendance attendance = Attendance.builder()
+                .employee(employee)
+                .attendanceDate(date)
+                .status(AttendanceStatus.LEAVE)
+                .isManualEntry(true)
+                .isApproved(true)
+                .approvedBy(approvedBy)
+                .approvedAt(LocalDateTime.now())
+                .isWorkingDay(workCalendarService.isWorkingDay(date))
+                .workHours(0.0)
+                .lateMinutes(0)
+                .earlyLeaveMinutes(0)
+                .overtimeMinutes(0)
+                .build();
+
+        attendanceRepository.save(attendance);
+        log.info("Marked ON_LEAVE for employee {} on {}", employeeId, date);
+    }
 }
