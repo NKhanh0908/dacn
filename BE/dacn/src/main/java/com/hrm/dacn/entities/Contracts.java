@@ -57,10 +57,6 @@ public class Contracts {
     // THÔNG TIN BÊN THUÊ LAO ĐỘNG
     // =========================
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "company_id", nullable = false)
-    private Company company;
-
     @Column(name = "employer_representative", length = 100)
     private String employerRepresentative; // Người đại diện ký HĐ
 
@@ -348,11 +344,7 @@ public class Contracts {
      */
     @Transient
     public boolean isInProbation() {
-        if (probationEndDate == null) {
-            return false;
-        }
-        LocalDate now = LocalDate.now();
-        return !now.isBefore(startDate) && now.isBefore(probationEndDate);
+        return false;
     }
 
     /**
