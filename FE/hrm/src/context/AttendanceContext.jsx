@@ -86,20 +86,12 @@ export const AttendanceProvider = ({ children }) => {
 
   /*Khi employee thay đổi -> load lại toàn bộ dữ liệu chấm công*/
   useEffect(() => {
-    if (employee?.employeeId) {
-      fetchTodayAttendance(employee.employeeId);
+    if (!employee?.employeeId) return;
 
-      const now = new Date();
+    fetchTodayAttendance(employee.employeeId);
+    fetchStatistics(employee.employeeId);
 
-      fetchMonthlyAttendance(
-        employee.employeeId,
-        now.getFullYear(),
-        now.getMonth() + 1
-      );
-
-      fetchStatistics(employee.employeeId);
-    }
-  }, [employee]);
+  }, [employee?.employeeId]);
 
   return (
     <AttendanceContext.Provider

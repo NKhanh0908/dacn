@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useAttendanceRequestContext } from "../../context/AttendanceRequestContext";
+import { useAttendanceRequestContext } from "../../context";
 import { FiPlus, FiClock, FiCalendar, FiGrid } from "react-icons/fi";
 
 const AttendanceRequestPage = () => {
@@ -22,7 +22,7 @@ const AttendanceRequestPage = () => {
 
   // pagination
   const [page, setPage] = useState(1);
-  const pageSize = 5;
+  const pageSize = 10;
 
   const totalPages = Math.ceil(myRequests.length / pageSize);
 

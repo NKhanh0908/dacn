@@ -1,11 +1,16 @@
 import { createBrowserRouter, RouterProvider, Navigate } from "react-router-dom";
-import Login from "./pages/auth/Login";
-import DashboardLayout from "./pages/dashboard/Dashboard";
-import ProfilePage from "./pages/profile/ProfilePage";
-import ContractPage from "./pages/contract/ContractPage";
-import ContractDetail from "./pages/contract/ContractDetail";
-import AttendancePage from "./pages/attendance/AttendancePage";
-import AttendanceRequestPage from "./pages/attendance_requests/AttendanceRequestsPage";
+import {
+  Login, 
+  DashboardLayout, 
+  ProfilePage, 
+  ContractPage, 
+  ContractDetail, 
+  AttendancePage, 
+  AttendanceRequestPage, 
+  MyPayrollPage,
+  PayrollDetailPage,
+  WorkSchedulePage
+} from "./pages/index";
 
 const isAuthenticated = () => {
   return !!localStorage.getItem("access_token");
@@ -39,6 +44,18 @@ const router = createBrowserRouter([
       {
         path: "contracts/:id",
         element: <ContractDetail />,
+      },
+      {
+        path: "payrolls",
+        element: <MyPayrollPage />,
+      },
+      {
+        path: "payrolls/:id",
+        element: <PayrollDetailPage />
+      },
+      {
+        path: "work-schedule",
+        element: <WorkSchedulePage />
       }
     ],
   },
