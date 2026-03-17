@@ -198,6 +198,22 @@ public enum Error {
                         "Năm của lịch làm việc không hợp lệ",
                         HttpStatus.BAD_REQUEST),
 
+        // ===================== Leave Request Errors =====================
+        LEAVE_REQUEST_NOT_FOUND(44001, "Leave request not found", HttpStatus.NOT_FOUND),
+        LEAVE_REQUEST_ALREADY_PENDING(44002, "You already have a pending leave request for this date range",
+                        HttpStatus.CONFLICT),
+        LEAVE_REQUEST_ALREADY_REVIEWED(44003, "This leave request has already been reviewed", HttpStatus.BAD_REQUEST),
+        LEAVE_REQUEST_NOT_PENDING(44004, "Only pending requests can be modified or cancelled", HttpStatus.BAD_REQUEST),
+        LEAVE_REQUEST_NOT_OWNER(44005, "You can only operate on your own leave requests", HttpStatus.FORBIDDEN),
+        LEAVE_REQUEST_OVERLAP(44006, "Leave request overlaps with existing approved or pending request",
+                        HttpStatus.CONFLICT),
+        LEAVE_REQUEST_INVALID_DATES(44007, "Start date must be before or equal to end date", HttpStatus.BAD_REQUEST),
+        LEAVE_REQUEST_EXCEEDS_BALANCE(44008, "Requested days exceed remaining leave balance", HttpStatus.BAD_REQUEST),
+        LEAVE_REQUEST_ATTENDANCE_EXISTS(44009, "Attendance records already exist for some dates in this range",
+                        HttpStatus.CONFLICT),
+        LEAVE_REQUEST_REJECT_REASON_REQUIRED(
+                        44010, "Reject reason is required when rejecting a leave request", HttpStatus.BAD_REQUEST),
+
         // Business logic errors
         INSUFFICIENT_PRIVILEGES(34001, "Insufficient privileges to perform this action", HttpStatus.FORBIDDEN),
         OPERATION_NOT_PERMITTED(34002, "Operation not permitted in current state", HttpStatus.BAD_REQUEST),

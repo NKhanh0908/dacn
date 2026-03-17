@@ -12,6 +12,7 @@ import com.hrm.dacn.dtos.Attendance.request.CheckInRequest;
 import com.hrm.dacn.dtos.Attendance.request.CheckOutRequest;
 import com.hrm.dacn.dtos.Attendance.response.AttendanceResponse;
 import com.hrm.dacn.dtos.Attendance.response.AttendanceStatistics;
+import com.hrm.dacn.entities.Employee;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -73,4 +74,7 @@ public interface AttendanceService {
      * Xóa chấm công
      */
     void delete(Long id);
+
+    void markLeave(Long employeeId, LocalDate date, Employee approvedBy);
+
 }

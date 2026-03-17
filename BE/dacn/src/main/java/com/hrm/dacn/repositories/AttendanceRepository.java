@@ -84,4 +84,6 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Long>, J
 
         @Query("SELECT a FROM Attendance a WHERE a.attendanceDate = :date ORDER BY a.employee.id")
         List<Attendance> findAllByDate(@Param("date") LocalDate date);
+
+        boolean existsByEmployeeAndAttendanceDate(Employee employee, LocalDate date);
 }

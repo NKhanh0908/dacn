@@ -15,6 +15,5 @@ public enum AttendanceStatus {
     REMOTE_WORK, // Làm việc từ xa
     PENDING, // Chờ xử lý
     OT_PENDING_APPROVAL,
-    OT_REJECTED
-
+    OT_REJECTED,
 }
