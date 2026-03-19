@@ -6,9 +6,11 @@ import java.util.Map;
 import com.hrm.dacn.dtos.payroll.PayrollResponseDTO;
 import com.hrm.dacn.entities.Account;
 import com.hrm.dacn.entities.Role;
+import com.hrm.dacn.enums.Employee.EmployeeStatus;
 import com.hrm.dacn.exceptions.CustomException;
 import com.hrm.dacn.exceptions.Error;
 import com.hrm.dacn.repositories.RoleRepository;
+import com.hrm.dacn.services.AccountService;
 import com.hrm.dacn.utils.CloudinaryService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -35,13 +37,17 @@ public class EmployeeServiceImpl implements EmployeeService {
     private final RoleRepository roleRepository;
     private final CloudinaryService cloudinaryService;
 
+    private final AccountService accountService;
+
     public EmployeeServiceImpl(EmployeeRepository employeeRepository, EmployeeMapper employeeMapper,
             RoleRepository roleRepository,
-                               CloudinaryService cloudinaryService) {
+                               CloudinaryService cloudinaryService,
+                               AccountService accountService) {
         this.employeeRepository = employeeRepository;
         this.employeeMapper = employeeMapper;
         this.roleRepository = roleRepository;
         this.cloudinaryService = cloudinaryService;
+        this.accountService = accountService;
     }
 
     @Override
@@ -86,9 +92,11 @@ public class EmployeeServiceImpl implements EmployeeService {
         } else {
             employee.setAvatarUrl(null);
         }
-        employeeRepository.save(employee);
+        Employee saved = employeeRepository.save(employee);
+        if(employee.getStatus() == EmployeeStatus.WORKING) accountService.updateStatus(saved, Boolean.TRUE);
+        if(employee.getStatus() == EmployeeStatus.ON_LEAVE) accountService.updateStatus(saved, Boolean.FALSE);
 
-        return employeeMapper.toResponse(employee);
+        return employeeMapper.toResponse(saved);
     }
 
     @Override

@@ -138,6 +138,15 @@ public class AccountServiceImpl implements AccountService {
         return "";
     }
 
+    @Override
+    public void updateStatus(Employee employee, Boolean status) {
+        Account account = accountRepository.findAccountsByEmployees(employee)
+                .orElseThrow();
+
+        account.setStatus(status);
+        accountRepository.save(account);
+    }
+
     private boolean usernameExists(String username) {
         return accountRepository.findByUsername(username).isPresent();
     }
