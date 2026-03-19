@@ -6,6 +6,7 @@ import java.time.LocalDate;
 
 import com.hrm.dacn.enums.Employee.EmployeeStatus;
 import com.hrm.dacn.enums.Employee.Gender;
+import org.springframework.web.multipart.MultipartFile;
 
 @Getter
 @Setter
@@ -57,7 +58,8 @@ public class EmployeeUpdateRequest {
     @Pattern(regexp = "^[0-9]{10}$", message = "Social insurance number must be exactly 10 digits")
     private String socialInsuranceNumber;
 
-    private String avatarUrl;
+
+    private MultipartFile image;
 
     // Emergency contact information
     @Size(max = 100, message = "Emergency contact name must not exceed 100 characters")
