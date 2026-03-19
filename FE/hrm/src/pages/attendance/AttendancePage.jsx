@@ -100,7 +100,7 @@ const AttendancePage = () => {
   }, []);
 
   return (
-    <div className="overflow-y-auto h-[calc(100vh-100px)] pr-4">
+    <div className="overflow-y-auto h-[calc(100vh-100px)] pr-4 pb-4">
       <div className="w-full mx-auto">
 
         {/* ================= HEADER ================= */}

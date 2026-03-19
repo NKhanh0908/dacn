@@ -44,6 +44,7 @@ const EditProfile = ({ show, onClose }) => {
         emergencyContactName: employee.emergencyContactName || "",
         emergencyContactPhone: employee.emergencyContactPhone || "",
         emergencyContactRelationship: employee.emergencyContactRelationship || "",
+        idCard: employee.idCard || "",
         bankAccount: employee.bankAccount || "",
         bankName: employee.bankName || "",
         bankLogo: bank?.logo || ""
@@ -190,6 +191,18 @@ const EditProfile = ({ show, onClose }) => {
             <div className="h-40 w-[1px] border border-[#162F47]"></div>
 
             <div className="w-1/2 flex flex-col gap-1">
+              <p className="flex items-center">
+                <span className="font-semibold w-5/6">
+                  CMND/CCCD:
+                </span>
+                <input
+                  name="idCard"
+                  value={form.idCard || ""}
+                  onChange={handleChange}
+                  placeholder="CMND/CCCD"
+                  className="w-full border-[1px] border-[#162F47] p-2 rounded w-[269px]"
+                />
+              </p>
               <p className="flex items-center">
                 <span className="font-semibold w-5/6">
                   Tài khoản ngân hàng:

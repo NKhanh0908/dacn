@@ -11,6 +11,7 @@ import {
   LeaveRequestProvider,
   WorkCalendarProvider,
   OvertimeRequestProvider,
+  AccountProvider
 } from "./context";
 import "./styles/index.css";
 import App from "./App.jsx";
@@ -18,25 +19,27 @@ import App from "./App.jsx";
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <EmployeeProvider>
-      <ContractProvider>
-        <PayrollProvider>
-          <WorkScheduleProvider>
-            <HolidayProvider>
-              <LeaveRequestProvider>
-                <WorkCalendarProvider>
-                  <OvertimeRequestProvider>
-                    <AttendanceProvider>
-                      <AttendanceRequestProvider>
-                        <App />
-                      </AttendanceRequestProvider>
-                    </AttendanceProvider>
-                  </OvertimeRequestProvider>
-                </WorkCalendarProvider>
-              </LeaveRequestProvider>
-            </HolidayProvider>
-          </WorkScheduleProvider>
-        </PayrollProvider>
-      </ContractProvider>
+      <AccountProvider>
+        <ContractProvider>
+          <PayrollProvider>
+            <WorkScheduleProvider>
+              <HolidayProvider>
+                <LeaveRequestProvider>
+                  <WorkCalendarProvider>
+                    <OvertimeRequestProvider>
+                      <AttendanceProvider>
+                        <AttendanceRequestProvider>
+                          <App />
+                        </AttendanceRequestProvider>
+                      </AttendanceProvider>
+                    </OvertimeRequestProvider>
+                  </WorkCalendarProvider>
+                </LeaveRequestProvider>
+              </HolidayProvider>
+            </WorkScheduleProvider>
+          </PayrollProvider>
+        </ContractProvider>
+      </AccountProvider>
     </EmployeeProvider>
   </StrictMode>
 );

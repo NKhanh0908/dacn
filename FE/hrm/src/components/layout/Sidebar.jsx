@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 import { FiHome, FiSettings, FiUsers, FiUser, FiCalendar, FiFileText, FiDollarSign, FiClock } from "react-icons/fi";
 import { useState, useEffect } from "react";
 import { NavLink } from "react-router-dom";
@@ -22,7 +23,6 @@ const Sidebar = () => {
   // mở submenu khi đang ở trang attendance
   useEffect(() => {
     if (location.pathname.startsWith("/attendance")) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       setOpenAttendance(true);
     } else {
       setOpenAttendance(false);
@@ -52,6 +52,20 @@ const Sidebar = () => {
 
       {/* MENU */}
       <div className="flex flex-col gap-2 px-4">
+        {/* Trang chủ */}
+        {role !== "EMPLOYEE" && (
+          <NavLink
+            to="/"
+            end
+            className={({ isActive }) =>
+              `${menuClass} ${isActive ? "bg-white/15 text-blue-400" : ""}`
+            }
+          >
+            <FiHome size={18} />
+            Trang chủ
+          </NavLink>
+        )} 
+
         {/* Profile */}
         <button
           onClick={() => handleNavigate("/profile")}
@@ -62,35 +76,27 @@ const Sidebar = () => {
         </button>
 
         {/* ADMIN */}
-        {role === "ADMIN" && (
+        {(role === "HR" || role === "ADMIN") && (
           <>
-            {/* Trang chủ */}
             <NavLink
-              to="/"
-              end
+              to="/employees"
               className={({ isActive }) =>
                 `${menuClass} ${isActive ? "bg-white/15 text-blue-400" : ""}`
               }
             >
-              <FiHome size={18} />
-              Trang chủ
-            </NavLink>  
-
-            <button
-              onClick={() => handleNavigate("/employees")}
-              className={`${menuClass} ${isActive("/employees")}`}
-            >
               <FiUsers size={18} />
               Quản lý nhân viên
-            </button>
+            </NavLink>
 
-            <button
-              onClick={() => handleNavigate("/accounts")}
-              className={`${menuClass} ${isActive("/accounts")}`}
+            <NavLink
+              to="/contracts"
+              className={({ isActive }) =>
+                `${menuClass} ${isActive ? "bg-white/15 text-blue-400" : ""}`
+              }
             >
-              <FiSettings size={18} />
-              Quản lý tài khoản
-            </button>
+              <FiFileText size={18} />
+              Hợp đồng
+            </NavLink>
           </>
         )}
 
@@ -99,7 +105,6 @@ const Sidebar = () => {
           <>
             {/* CHẤM CÔNG */}
             <div>
-
               <button
                 onClick={() => {
                   setOpenAttendance(true);

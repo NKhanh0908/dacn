@@ -40,3 +40,9 @@ export const checkEmployeeExisted = async (employeeId, config = {}) => {
   const response = await api.get(`${EMPLOYEE}/${EMPLOYEE_CHECK_EXIST}/${employeeId}`, config);
   return response.data;
 };
+
+// Lấy danh sách tất cả employee (dành cho admin)
+export const getAllEmployees = async (config = {}) => {
+  const response = await api.get(EMPLOYEE, config);
+  return response.data;
+}
