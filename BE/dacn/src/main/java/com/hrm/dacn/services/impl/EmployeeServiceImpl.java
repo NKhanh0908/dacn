@@ -1,6 +1,7 @@
 package com.hrm.dacn.services.impl;
 
 import java.util.List;
+import java.util.Map;
 
 import com.hrm.dacn.dtos.payroll.PayrollResponseDTO;
 import com.hrm.dacn.entities.Account;
@@ -8,6 +9,7 @@ import com.hrm.dacn.entities.Role;
 import com.hrm.dacn.exceptions.CustomException;
 import com.hrm.dacn.exceptions.Error;
 import com.hrm.dacn.repositories.RoleRepository;
+import com.hrm.dacn.utils.CloudinaryService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -31,12 +33,15 @@ public class EmployeeServiceImpl implements EmployeeService {
     private final EmployeeRepository employeeRepository;
     private final EmployeeMapper employeeMapper;
     private final RoleRepository roleRepository;
+    private final CloudinaryService cloudinaryService;
 
     public EmployeeServiceImpl(EmployeeRepository employeeRepository, EmployeeMapper employeeMapper,
-            RoleRepository roleRepository) {
+            RoleRepository roleRepository,
+                               CloudinaryService cloudinaryService) {
         this.employeeRepository = employeeRepository;
         this.employeeMapper = employeeMapper;
         this.roleRepository = roleRepository;
+        this.cloudinaryService = cloudinaryService;
     }
 
     @Override
@@ -54,6 +59,14 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public EmployeeResponse create(EmployeeCreateRequest request) {
         Employee employee = employeeMapper.toEntity(request);
+
+        if (request.getImage() != null && !request.getImage().isEmpty()) {
+            Map<String, Object> imageUrl = cloudinaryService.uploadFile(request.getImage(), "product");
+            employee.setAvatarUrl((String) imageUrl.get("url"));
+        } else {
+            employee.setAvatarUrl(null);
+        }
+
         Role role = roleRepository.findById(request.getRoleId())
                 .orElseThrow();
         employee.setRole(role);
@@ -67,6 +80,12 @@ public class EmployeeServiceImpl implements EmployeeService {
                 .orElseThrow(() -> new RuntimeException("Employee not found"));
 
         employeeMapper.updateEntity(employee, request);
+        if (request.getImage() != null && !request.getImage().isEmpty()) {
+            Map<String, Object> imageUrl = cloudinaryService.uploadFile(request.getImage(), "product");
+            employee.setAvatarUrl((String) imageUrl.get("url"));
+        } else {
+            employee.setAvatarUrl(null);
+        }
         employeeRepository.save(employee);
 
         return employeeMapper.toResponse(employee);

@@ -8,6 +8,7 @@ import java.time.LocalDate;
 
 import com.hrm.dacn.enums.Employee.EmployeeStatus;
 import com.hrm.dacn.enums.Employee.Gender;
+import org.springframework.web.multipart.MultipartFile;
 
 @Getter
 @Setter
@@ -82,8 +83,7 @@ public class EmployeeCreateRequest {
     @Schema(example = "0123456789")
     private String socialInsuranceNumber;
 
-    @Schema(example = "https://example.com/avatar.jpg")
-    private String avatarUrl;
+    private MultipartFile image;
 
     @Size(max = 100)
     @Schema(example = "Tran Thi B")
