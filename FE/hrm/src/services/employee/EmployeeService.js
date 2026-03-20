@@ -18,14 +18,14 @@ export const getEmployeeById = async (employeeId, config = {}) => {
 };
 
 /* Tạo employee */
-export const createEmployee = async (formData, config = {}) => {
-  const response = await apiFile.post(EMPLOYEE, formData, config);
-  return response.data;
+export const createEmployee = async (formData) => {
+  const res = await apiFile.post(EMPLOYEE, formData);
+  return res.data; // res.data là JSON body của API
 };
 
 /* Cập nhật employee */
-export const updateEmployee = async (employeeId, data, config = {}) => {
-  const response = await api.put(`${EMPLOYEE}/${employeeId}`, data, config);
+export const updateEmployee = async (employeeId, data) => {
+  const response = await apiFile.put(`${EMPLOYEE}/${employeeId}`, data);
   return response.data;
 };
 

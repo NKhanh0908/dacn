@@ -5,12 +5,10 @@ import { useEmployeeContext, useAccount } from "../../../context";
 
 const CreateNewEmployeePage = () => {
   const navigate = useNavigate();
-
   const role = localStorage.getItem("role");
   if (role !== "ADMIN" && role !== "HR") return <Navigate to="/" replace />;
 
   const isAdmin = role === "ADMIN";
-
   const { createEmployee } = useEmployeeContext();
   const { handleCreateAccount } = useAccount();
 
@@ -29,6 +27,7 @@ const CreateNewEmployeePage = () => {
     bankAccount: "",
     bankName: "",
     taxCode: "",
+    roleId: "1",
     socialInsuranceNumber: "",
     emergencyContactName: "",
     emergencyContactPhone: "",
@@ -50,7 +49,7 @@ const CreateNewEmployeePage = () => {
       ]
     : [{ value: "EMPLOYEE", label: "EMPLOYEE" }];
 
-  // ================= LOAD BANK =================
+  // LOAD BANK
   useEffect(() => {
     const fetchBanks = async () => {
       const res = await fetch("https://api.vietqr.io/v2/banks");
@@ -60,7 +59,6 @@ const CreateNewEmployeePage = () => {
     fetchBanks();
   }, []);
 
-  // ================= HANDLERS =================
   const handleChange = (e) => {
     const { name, value } = e.target;
     setEmployee((prev) => ({ ...prev, [name]: value }));
@@ -69,15 +67,8 @@ const CreateNewEmployeePage = () => {
   const handleAvatarChange = (e) => {
     const file = e.target.files[0];
     if (!file) return;
-
     setAvatarFile(file);
     setPreviewAvatar(URL.createObjectURL(file));
-  };
-
-  const formatPassword = (dob) => {
-    if (!dob) return "123456";
-    const [year, month, day] = dob.split("-");
-    return `${day}${month}${year}`;
   };
 
   const TextArea = ({ label, className = "", ...props }) => (
@@ -128,53 +119,42 @@ const CreateNewEmployeePage = () => {
     if (!employee?.department) {
       return [{ value: "", label: "Chọn phòng ban trước" }];
     }
-
     return [
       { value: "", label: "Chọn chức vụ" },
       ...(positionMap[employee.department] || [])
     ];
   })();
 
-  // ================= SUBMIT =================
+  // HANDLE SUBMIT
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    if (!employee.phone) {
-      alert("Chưa nhập số điện thoại");
-      return;
-    }
-
-    if (!employee.dateOfBirth) {
-      alert("Chưa nhập ngày sinh");
-      return;
-    }
-
     setSaving(true);
 
     try {
+      // Tạo formData cho nhân viên
       const formData = new FormData();
-      Object.keys(employee).forEach(key => formData.append(key, employee[key] || ""));
-      if (avatarFile) formData.append("avatar", avatarFile);
+      Object.keys(employee).forEach((key) => formData.append(key, employee[key] || ""));
+      if (avatarFile) formData.append("image", avatarFile);
 
-      const newEmployee = await createEmployee(formData);
+      // 1️⃣ Tạo nhân viên
+      const res = await createEmployee(formData);
+      const newEmployee = res.data;
+      if (!newEmployee?.employeeId) throw new Error("Không lấy được employeeId");
 
-      if (!newEmployee?.employeeId) {
-        throw new Error("Không lấy được employeeId");
-      }
-
-      const password = formatPassword(employee.dateOfBirth);
-
-      await handleCreateAccount({
-        username: employee.phone,
-        password: password,
+      // 2️⃣ Tạo account tự động
+      const accountData = {
+        username: newEmployee.phone,
+        password: newEmployee.dateOfBirth, // hoặc format YYYYMMDD nếu muốn
+        employeeId: newEmployee.employeeId,
         role: employee.role,
-        employeeId: newEmployee.employeeId
-      });
+      };
+      await handleCreateAccount(accountData);
 
+      alert(`Tạo nhân viên và tài khoản thành công!\nID nhân viên: ${newEmployee.employeeId}`);
       navigate("/employees");
     } catch (err) {
       console.error(err);
-      alert("Tạo thất bại!");
+      alert("Tạo nhân viên hoặc tài khoản thất bại!");
     } finally {
       setSaving(false);
     }
@@ -183,16 +163,11 @@ const CreateNewEmployeePage = () => {
   return (
     <div className="overflow-y-auto h-[calc(100vh-100px)] pr-4 pb-4">
       <div className="w-full mx-auto">
-
-        {/* HEADER */}
         <div className="mt-2 mb-3">
-          <h1 className="text-2xl font-bold">
-            Thêm nhân viên
-          </h1>
+          <h1 className="text-2xl font-bold">Thêm nhân viên</h1>
         </div>
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-6">
-
           {/* PERSONAL */}
           <div className="bg-gray-200 p-4 border-[1px] border-[#162F47] rounded-2xl shadow-2xl">
             <div className="border-b-[1px] border-[#162F47]">
@@ -203,11 +178,9 @@ const CreateNewEmployeePage = () => {
               <div className="flex flex-col justify-center items-center gap-6 w-1/6">
                 <img
                   src={previewAvatar || "https://via.placeholder.com/150"}
-                  className="w-32 h-32 rounded-full object-cover border-[1px] border-[#162F47 ]"
+                  className="w-32 h-32 rounded-full object-cover border-[1px] border-[#162F47]"
                 />
-
                 <input type="file" id="avatarUpload" hidden onChange={handleAvatarChange} />
-
                 <label
                   htmlFor="avatarUpload"
                   className="cursor-pointer bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-sm"
@@ -240,7 +213,7 @@ const CreateNewEmployeePage = () => {
                   </div>
                 </div>
 
-                <TextArea name="address" label="Địa chỉ" value={employee.address || ""} onChange={handleChange}/>
+                <TextArea name="address" label="Địa chỉ" value={employee.address || ""} onChange={handleChange} />
               </div>
             </div>
           </div>
@@ -266,13 +239,7 @@ const CreateNewEmployeePage = () => {
                 </div>
 
                 <div className="w-1/5">
-                  <Select
-                    name="role"
-                    label="Quyền tài khoản"
-                    value={employee.role}
-                    onChange={handleChange}
-                    options={roleOptions}
-                  />
+                  <Select name="role" label="Quyền tài khoản" value={employee.role} onChange={handleChange} options={roleOptions} />
                 </div>
 
                 <div className="w-1/5">
@@ -305,27 +272,20 @@ const CreateNewEmployeePage = () => {
               </div>
 
               <div className="w-1/4 relative">
-                <label className="text-xs font-semibold text-gray-500">
-                  Ngân hàng
-                </label>
-
+                <label className="text-xs font-semibold text-gray-500">Ngân hàng</label>
                 <div
                   onClick={() => setOpenBank(!openBank)}
                   className="w-full px-3 py-2 border rounded-lg mt-1 cursor-pointer flex items-center justify-between bg-white"
                 >
                   <span>{employee.bankName || "Chọn ngân hàng"}</span>
                 </div>
-
                 {openBank && (
                   <div className="absolute z-50 mt-1 w-full max-h-60 overflow-y-auto bg-white border rounded shadow">
                     {banks.map((bank) => (
                       <div
                         key={bank.id}
                         onClick={() => {
-                          setEmployee((prev) => ({
-                            ...prev,
-                            bankName: bank.shortName
-                          }));
+                          setEmployee((prev) => ({ ...prev, bankName: bank.shortName }));
                           setOpenBank(false);
                         }}
                         className="flex items-center gap-3 p-2 hover:bg-gray-100 cursor-pointer"
@@ -371,23 +331,13 @@ const CreateNewEmployeePage = () => {
 
           {/* ACTION */}
           <div className="flex justify-end gap-3">
-            <button
-              type="button"
-              onClick={() => navigate("/employees")}
-              className="px-4 py-2 border rounded-lg"
-            >
+            <button type="button" onClick={() => navigate("/employees")} className="px-4 py-2 border rounded-lg">
               Hủy
             </button>
-
-            <button
-              type="submit"
-              disabled={saving}
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg"
-            >
+            <button type="submit" disabled={saving} className="px-4 py-2 bg-blue-600 text-white rounded-lg">
               {saving ? "Đang tạo..." : "Tạo mới"}
             </button>
           </div>
-
         </form>
       </div>
     </div>

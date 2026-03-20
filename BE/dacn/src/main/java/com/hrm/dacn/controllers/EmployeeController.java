@@ -44,7 +44,7 @@ public class EmployeeController {
                         @ApiResponse(responseCode = "500", description = "Internal server error")
         })
         public ResponseEntity<APIResponse<EmployeeResponse>> createEmployee(
-                        @RequestBody EmployeeCreateRequest request,
+                        @ModelAttribute EmployeeCreateRequest request,
                         HttpServletRequest httpRequest) {
                 EmployeeResponse response = employeeService.create(request);
 
@@ -158,7 +158,7 @@ public class EmployeeController {
         })
         public ResponseEntity<APIResponse<EmployeeResponse>> updateEmployee(
                         @PathVariable Long id,
-                        @RequestBody EmployeeUpdateRequest request,
+                        @ModelAttribute EmployeeUpdateRequest request,
                         HttpServletRequest httpRequest) {
                 EmployeeResponse response = employeeService.update(id, request);
 

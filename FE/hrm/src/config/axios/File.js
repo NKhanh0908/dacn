@@ -3,7 +3,6 @@ import { BASE_BACK_END_URL, DEFAULT_TIMEOUT, RESPONSE_DELAY } from "../constants
 
 const apiFile = axios.create({
     baseURL: BASE_BACK_END_URL,
-    // KHÔNG set headers Content-Type gì cả
 });
 
 apiFile.defaults.timeout = DEFAULT_TIMEOUT;

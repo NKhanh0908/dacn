@@ -1,13 +1,10 @@
 import { useState } from "react";
-import { FiCalendar, FiCheckCircle, FiSearch } from "react-icons/fi";
+import { FiCheckCircle, FiSearch, FiXCircle } from "react-icons/fi";
 import { useWorkCalendarContext } from "../../context";
 
 const WorkCalendarPage = () => {
-
-  const { calendar, loading, fetchWorkCalendar, isWorkingDay } = useWorkCalendarContext();
-
+  const { calendar, loading, error, fetchWorkCalendar, isWorkingDay } = useWorkCalendarContext();
   const currentYear = new Date().getFullYear();
-
   const [year, setYear] = useState(currentYear);
   const [checkDate, setCheckDate] = useState("");
   const [checkResult, setCheckResult] = useState(null);
@@ -31,10 +28,11 @@ const WorkCalendarPage = () => {
     <div className="mt-2">
       <div className="flex items-center justify-between gap-3">
         {/* Chọn năm */}
-        <div className="h-40">
+        <div className="h-40 w-1/2">
           <h3 className="font-semibold mb-3">
             Tìm lịch làm việc theo năm
           </h3>
+
           <div className="flex items-center gap-3">
             <input
               type="number"
@@ -50,10 +48,17 @@ const WorkCalendarPage = () => {
               <FiSearch/>
             </button>
           </div>
+
+          {error && (
+            <div className="mt-4 flex items-center gap-2">
+              <FiXCircle className="text-red-600"/>
+              <span className="text-red-600 font-medium">{error}</span>
+            </div>
+          )}
         </div>
 
         {/* Kiểm tra ngày */}
-        <div className="h-40">
+        <div className="h-40 w-1/2 flex flex-col items-end">
           <h3 className="font-semibold mb-3">
             Kiểm tra ngày làm việc
           </h3>
@@ -70,7 +75,7 @@ const WorkCalendarPage = () => {
               onClick={handleCheckDate}
               className="h-10 px-2 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
             >
-              <FiSearch />
+              <FiSearch/>
             </button>
           </div>
 

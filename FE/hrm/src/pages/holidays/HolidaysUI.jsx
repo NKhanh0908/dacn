@@ -20,7 +20,6 @@ const HolidayPage = () => {
             <tr className="bg-gray-200 text-gray-600 text-sm">
               <th className="p-3 text-left">Tên ngày nghỉ</th>
               <th className="p-3 text-left">Ngày</th>
-              <th className="p-3 text-left">Hệ số lương</th>
             </tr>
           </thead>
 
@@ -46,12 +45,6 @@ const HolidayPage = () => {
 
                 <td className="p-3 font-medium text-gray-700">
                   {formatDate(h.startDate)}
-                </td>
-
-                <td className="p-3">
-                  <span className="px-3 py-1 rounded bg-green-100 text-green-700 font-medium">
-                    x{h.salaryMultiplier}
-                  </span>
                 </td>
               </tr>
             ))}

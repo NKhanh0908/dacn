@@ -13,13 +13,13 @@ export const createLeaveRequest = async (data) => {
   return res.data;
 };
 
-/* Duyệt / từ chối đơn nghỉ phép */
+/* Duyệt đơn nghỉ phép */
 export const reviewLeaveRequest = async (id, data) => {
   const res = await api.put(`${LEAVE_REQUESTS}/${id}/${LEAVE_REQUESTS_REVIEW}`, data);
   return res.data;
 };
 
-/* Hủy đơn nghỉ phép */
+/* Từ chối đơn nghỉ phép */
 export const cancelLeaveRequest = async (id) => {
   const res = await api.put(`${LEAVE_REQUESTS}/${id}/${LEAVE_REQUESTS_CANCEL}`);
   return res.data;

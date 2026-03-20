@@ -13,27 +13,60 @@ const LeaveRequestPage = () => {
   } = useLeaveRequestContext();
 
   const [showForm, setShowForm] = useState(false);
-
   const [formData, setFormData] = useState({
     fromDate: "",
     toDate: "",
     leaveType: "ANNUAL",
     reason: ""
   });
+  const [errors, setErrors] = useState({});
 
   const handleChange = (e) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value
     });
+
+    setErrors(prev => ({ 
+      ...prev, 
+      [e.target.name]: "" 
+    }));
+  };
+
+  const validate = () => {
+    const newErrors = {};
+    const today = new Date();
+
+    const from = formData.fromDate ? new Date(formData.fromDate) : null;
+    const to = formData.toDate ? new Date(formData.toDate) : null;
+
+    if (!formData.fromDate) {
+      newErrors.fromDate = "Không được để trống từ ngày";
+    } else if (from < today) {
+      newErrors.fromDate = "Ngày bắt đầu phải là hôm nay hoặc tương lai";
+    }
+
+    if (!formData.toDate) {
+      newErrors.toDate = "Không được để trống đến ngày";
+    } else if (from && to < from) {
+      newErrors.toDate = "Ngày kết thúc không được trước ngày bắt đầu";
+    }
+
+    if (!formData.reason || formData.reason.trim() === "") {
+      newErrors.reason = "Không được để trống lý do";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!validate()) return;
 
     const payload = {
-      startDate: formData.fromDate,   // 🔥 FIX
-      endDate: formData.toDate,       // 🔥 FIX
+      startDate: formData.fromDate,   
+      endDate: formData.toDate,       
       leaveType: formData.leaveType,
       duration: "FULL_DAY",
       reason: formData.reason,
@@ -48,7 +81,6 @@ const LeaveRequestPage = () => {
       leaveType: "ANNUAL",
       reason: ""
     });
-
     setShowForm(false);
     setPage(0);
   };
@@ -99,78 +131,48 @@ const LeaveRequestPage = () => {
         {showForm && (
           <div className="border-2 border-[#162F47] rounded-2xl p-3 shadow-2xl">
             <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-              <div className="flex items-center gap-2 border-b border-[#162F47] pb-2">
-                <span className="text-[#162F47] font-semibold text-lg">
-                  Thông tin đơn nghỉ phép
-                </span>
+              <div className="border-b-[1px] border-[#162F47]">
+                <h3 className="font-semibold">Thông tin đơn nghỉ phép</h3>
               </div>
 
-              <div className="flex items-center gap-16">
-                <div className="flex items-center gap-2 w-1/3">
-                  <label className="font-semibold w-1/2">Từ ngày</label>
-                  <input
-                    type="date"
-                    name="fromDate"
-                    value={formData.fromDate}
-                    onChange={handleChange}
-                    className="w-full border-[1px] border-[#162F47] p-2 rounded"
-                    required
-                  />
+              <div className="space-y-2">
+                <div className="grid grid-cols-3 gap-4">
+                  <Input label="Từ ngày" type="date" name="fromDate" value={formData.fromDate} onChange={handleChange} error={errors.fromDate} />
+                  <Input label="Đến ngày" type="date" name="toDate" value={formData.toDate} onChange={handleChange} error={errors.toDate} />
+                  <div>
+                    <label className="text-xs font-semibold text-gray-500">Loại nghỉ</label>
+                    <select
+                      name="leaveType"
+                      value={formData.leaveType}
+                      onChange={handleChange}
+                      className="w-full px-3 py-[10px] rounded-lg mt-1 outline-none cursor-pointer bg-white border border-gray-300"
+                    >
+                      <option value="ANNUAL">Nghỉ phép năm</option>
+                      <option value="COMPENSATORY">Nghỉ bù</option>
+                      <option value="SICK">Nghỉ bệnh</option>
+                      <option value="MATERNITY">Nghỉ thai sản</option>
+                      <option value="PATERNITY">Nghỉ thai sản (nam)</option>
+                      <option value="MARRIAGE">Nghỉ kết hôn</option>
+                      <option value="FUNERAL">Nghỉ tang</option>
+                      <option value="UNPAID">Nghỉ không lương</option>
+                      <option value="OTHER">Khác</option>
+                    </select>
+                  </div>
                 </div>
-
-                <div className="flex items-center gap-2 w-1/3">
-                  <label className="font-semibold w-1/2">Đến ngày</label>
-                  <input
-                    type="date"
-                    name="toDate"
-                    value={formData.toDate}
-                    onChange={handleChange}
-                    className="w-full border-[1px] border-[#162F47] p-2 rounded"
-                    required
-                  />
+                <div>
+                  <TextArea name="reason" label="Lý do" value={formData.reason} onChange={handleChange} error={errors.reason} />
                 </div>
-
-                <div className="flex items-center gap-2 w-1/3">
-                  <label className="font-semibold w-1/2">Loại nghỉ</label>
-                  <select
-                    name="leaveType"
-                    value={formData.leaveType}
-                    onChange={handleChange}
-                    className="w-full border-[1px] border-[#162F47] p-2 rounded"
-                  >
-                    <option value="ANNUAL">Nghỉ phép năm</option>
-                    <option value="COMPENSATORY">Nghỉ bù</option>
-                    <option value="SICK">Nghỉ bệnh</option>
-                    <option value="MATERNITY">Nghỉ thai sản</option>
-                    <option value="PATERNITY">Nghỉ thai sản (nam)</option>
-                    <option value="MARRIAGE">Nghỉ kết hôn</option>
-                    <option value="FUNERAL">Nghỉ tang</option>
-                    <option value="UNPAID">Nghỉ không lương</option>
-                    <option value="OTHER">Khác</option>
-                  </select>
-                </div>
-              </div>
-
-              <div className="flex flex-col gap-2">
-                <label className="font-semibold">Lý do</label>
-                <textarea
-                  name="reason"
-                  value={formData.reason}
-                  onChange={handleChange}
-                  className="w-full border-[1px] border-[#162F47] p-2 rounded"
-                  rows="3"
-                />
               </div>
 
               <div className="flex gap-3">
-                <button className="bg-[#162F47] text-white px-4 py-2 rounded-xl hover:opacity-90 disabled:opacity-50">
+                <button className="bg-[#162F47] text-white px-4 py-2 rounded-xl hover:bg-blue-500">
                   Gửi đơn
                 </button>
 
                 <button
                   type="button"
                   onClick={() => setShowForm(false)}
-                  className="bg-gray-400 text-white px-4 py-2 rounded-lg hover:opacity-90 disabled:opacity-50"
+                  className="bg-gray-400 text-white px-4 py-2 rounded-lg hover:bg-gray-500"
                 >
                   Hủy
                 </button>
@@ -282,5 +284,41 @@ const LeaveRequestPage = () => {
     </div>
   );
 };
+
+// ================= COMPONENT =================
+const Input = ({ label, error, ...props }) => (
+  <div>
+    <label className="text-xs font-semibold text-gray-500">{label}</label>
+
+    <input
+      {...props}
+      className={`w-full px-3 py-2 border rounded-lg mt-1 outline-none ${
+        error ? "border-red-500 focus:ring-2 focus:ring-red-300" : "border-gray-300"
+      }`}
+    />
+
+    {error && (
+      <p className="text-red-500 text-xs mt-1">{error}</p>
+    )}
+  </div>
+);
+
+const TextArea = ({ label, error, className = "", ...props }) => (
+  <div>
+    <label className="text-xs font-semibold text-gray-500">{label}</label>
+
+    <textarea
+      {...props}
+      className={`w-full px-3 py-2 h-[50px] border rounded-lg mt-1 outline-none ${
+        error ? "border-red-500 focus:ring-2 focus:ring-red-300" : "border-gray-300"
+      } ${className}`}
+      rows={3}
+    />
+
+    {error && (
+      <p className="text-red-500 text-xs mt-1">{error}</p>
+    )}
+  </div>
+);
 
 export default LeaveRequestPage;

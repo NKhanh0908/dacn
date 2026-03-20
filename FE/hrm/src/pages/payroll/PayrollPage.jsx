@@ -56,33 +56,41 @@ const MyPayrollPage = () => {
             </thead>
 
             <tbody>
-              {paginatedPayrolls.map((p, index) => (
-                <tr
-                  key={p.payrollId}
-                  onClick={() => navigate(`/payrolls/${p.payrollId}`)}
-                  className="border-b hover:bg-blue-200 transition cursor-pointer"
-                >
-                  <td className="p-3">{(page - 1) * pageSize + index + 1}</td>
-                  <td className="p-3 flex items-center gap-2">
-                    <FiCalendar />
-                    {p.period}
-                  </td>
+              {paginatedPayrolls.length > 0 ? (
+                paginatedPayrolls.map((p, index) => (
+                  <tr
+                    key={p.payrollId}
+                    onClick={() => navigate(`/payrolls/${p.payrollId}`)}
+                    className="border-b hover:bg-blue-200 transition cursor-pointer"
+                  >
+                    <td className="p-3">{(page - 1) * pageSize + index + 1}</td>
+                    <td className="p-3 flex items-center gap-2">
+                      <FiCalendar />
+                      {p.period}
+                    </td>
 
-                  <td className="p-3 font-medium text-gray-700">
-                    {formatMoney(p.totalIncome)}
-                  </td>
+                    <td className="p-3 font-medium text-gray-700">
+                      {formatMoney(p.totalIncome)}
+                    </td>
 
-                  <td className="p-3 font-medium text-gray-700">
-                    {formatMoney(p.totalDeductions)}
-                  </td>
+                    <td className="p-3 font-medium text-gray-700">
+                      {formatMoney(p.totalDeductions)}
+                    </td>
 
-                  <td className="p-3 font-medium">
-                    <span className="px-3 py-1 rounded bg-blue-100 text-blue-700">
-                      {formatMoney(p.netSalary)}
-                    </span>
+                    <td className="p-3 font-medium">
+                      <span className="px-3 py-1 rounded bg-blue-100 text-blue-700">
+                        {formatMoney(p.netSalary)}
+                      </span>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="5" className="text-center p-6 text-gray-400">
+                    Không có phiếu lương nào
                   </td>
                 </tr>
-              ))}
+              )}
             </tbody>
           </table>
         </div>
@@ -106,7 +114,7 @@ const MyPayrollPage = () => {
 
           {/* PAGE INFO */}
           <div className="text-sm text-gray-500">
-            Trang {page} / {totalPages}
+            Trang {page - 1} / {totalPages}
           </div>
 
           {/* NEXT */}
@@ -115,7 +123,7 @@ const MyPayrollPage = () => {
             onClick={() => setPage(page + 1)}
             className={`px-4 py-2 rounded-lg border text-sm
               ${
-                page === totalPages
+                page - 1 === totalPages
                   ? "bg-gray-100 text-gray-400 cursor-not-allowed"
                   : "bg-white hover:bg-blue-100"
               }`}

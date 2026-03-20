@@ -1,8 +1,7 @@
 /* eslint-disable react-hooks/set-state-in-effect */
-import { FiHome, FiSettings, FiUsers, FiUser, FiCalendar, FiFileText, FiDollarSign, FiClock } from "react-icons/fi";
 import { useState, useEffect } from "react";
-import { NavLink } from "react-router-dom";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation, NavLink } from "react-router-dom";
+import { FiHome, FiUsers, FiUser, FiCalendar, FiFileText, FiDollarSign, FiClock } from "react-icons/fi";
 
 const Sidebar = () => {
   const navigate = useNavigate();

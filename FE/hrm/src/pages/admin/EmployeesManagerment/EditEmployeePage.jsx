@@ -121,28 +121,53 @@ const EditEmployeePage = () => {
     e.preventDefault();
     setSaving(true);
 
-    const formData = new FormData();
-
-    // append data thường
-    Object.keys(employee).forEach((key) => {
-      formData.append(key, employee[key] || "");
-    });
-
-    // append file
-    if (avatarFile) {
-      formData.append("avatar", avatarFile);
-    }
-
-    await updateEmployee(employee.employeeId, formData)
-
     try {
+      let imageUrl = employee.avatarUrl || "";
+
+      if (avatarFile) {
+        const formData = new FormData();
+        formData.append("file", avatarFile);
+        formData.append("upload_preset", "YOUR_PRESET");
+
+        const res = await fetch(
+          "https://api.cloudinary.com/v1_1/YOUR_CLOUD_NAME/image/upload",
+          {
+            method: "POST",
+            body: formData
+          }
+        );
+
+        const data = await res.json();
+        imageUrl = data.secure_url;
+      }
+
       let payload;
 
       if (isAdmin) {
-        // ADMIN update all
-        payload = employee;
+        payload = {
+          fullName: employee.fullName,
+          dateOfBirth: employee.dateOfBirth,
+          gender: employee.gender,
+          idCard: employee.idCard,
+          phone: employee.phone,
+          email: employee.email,
+          address: employee.address,
+          department: employee.department,
+          position: employee.position,
+          roleId: employee.roleId,
+          startDate: employee.startDate,
+          status: employee.status,
+          bankAccount: employee.bankAccount,
+          bankName: employee.bankName,
+          taxCode: employee.taxCode,
+          socialInsuranceNumber: employee.socialInsuranceNumber,
+          emergencyContactName: employee.emergencyContactName,
+          emergencyContactPhone: employee.emergencyContactPhone,
+          emergencyContactRelationship:
+            employee.emergencyContactRelationship,
+          image: imageUrl
+        };
       } else {
-        // HR chỉ update limited field
         payload = {
           fullName: employee.fullName,
           phone: employee.phone,
@@ -158,11 +183,13 @@ const EditEmployeePage = () => {
           emergencyContactName: employee.emergencyContactName,
           emergencyContactPhone: employee.emergencyContactPhone,
           emergencyContactRelationship:
-            employee.emergencyContactRelationship
+            employee.emergencyContactRelationship,
+          image: imageUrl
         };
       }
 
       await updateEmployee(employee.employeeId, payload);
+
       navigate("/employees");
     } catch (err) {
       console.error(err);
@@ -171,7 +198,6 @@ const EditEmployeePage = () => {
       setSaving(false);
     }
   };
-
   if (!employee) return <div className="p-6">Loading...</div>;
 
   return (

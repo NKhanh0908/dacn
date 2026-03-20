@@ -31,6 +31,10 @@ export const EmployeeProvider = ({ children }) => {
     setLoadingEmployee(true);
     try {
       const res = await getCurrentEmployee();
+      setEmployee({
+        ...res.data,
+        avatarUrl: res.data.avatarUrl || ""
+      });
       setEmployee(res.data);
     } catch (err) {
       console.error("Fetch employee failed", err);
@@ -48,13 +52,12 @@ export const EmployeeProvider = ({ children }) => {
     try {
       const res = await getAllEmployees();
 
-      // 🔥 FIX CHUẨN Ở ĐÂY
       const data = res?.data?.data || res?.data || [];
 
       setEmployees(Array.isArray(data) ? data : []);
     } catch (err) {
       console.error("Fetch employees error", err);
-      setEmployees([]); // tránh crash
+      setEmployees([]); 
     } finally {
       setLoadingEmployees(false);
     }
@@ -62,11 +65,17 @@ export const EmployeeProvider = ({ children }) => {
 
   // CREATE
   const handleCreateEmployee = async (data) => {
-    await createEmployee(data);
+    const res = await createEmployee(data);
     await fetchEmployees();
+    return res; 
   };
 
   // UPDATE
+  const handleUpdateMyProfile = async (data) => {
+    await updateEmployee(employee.employeeId, data);
+    await fetchCurrentEmployee();
+  };
+
   const handleUpdateEmployee = async (id, data) => {
     await updateEmployee(id, data);
     await fetchEmployees();
@@ -84,21 +93,18 @@ export const EmployeeProvider = ({ children }) => {
   return (
     <EmployeeContext.Provider 
       value={{ 
-        // current user
         employee,
         setEmployee,
         loadingEmployee,
 
-        // admin
         employees,
         loadingEmployees,
         fetchEmployees,
 
-        // CRUD
         createEmployee: handleCreateEmployee,
+        updateMyProfile: handleUpdateMyProfile,
         updateEmployee: handleUpdateEmployee,
 
-        // pagination
         page,
         setPage,
         totalPages,

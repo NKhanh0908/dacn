@@ -35,7 +35,6 @@ export const PayrollProvider = ({ children }) => {
     }
   };
 
-  // ⭐ CHỈ chạy khi employee đã có ID
   useEffect(() => {
     if (employee?.employeeId) {
       fetchMyPayrolls();
