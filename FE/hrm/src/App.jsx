@@ -10,7 +10,11 @@ import {
   MyPayrollPage,
   PayrollDetailPage,
   WorkSchedulePage,
-  LeaveRequestPage
+  LeaveRequestPage,
+  EmployeesManagement,
+  CreateNewEmployeePage,
+  EditEmployeePage,
+  EmployeeDetailPage
 } from "./pages/index";
 
 const isAuthenticated = () => {
@@ -26,6 +30,16 @@ const router = createBrowserRouter([
     path: "/",
     element: isAuthenticated() ? <DashboardLayout /> : <Navigate to="/login" />,
     children: [
+      {
+        index: true,
+        element: (() => {
+          const role = localStorage.getItem("role");
+          return role === "EMPLOYEE"
+            ? <Navigate to="/profile" />
+            : <Navigate to="/" />;
+        })()
+      },
+
       {
         path: "profile",
         element: <ProfilePage />,
@@ -52,15 +66,33 @@ const router = createBrowserRouter([
       },
       {
         path: "payrolls/:id",
-        element: <PayrollDetailPage />
+        element: <PayrollDetailPage />,
       },
       {
         path: "work-schedule",
-        element: <WorkSchedulePage />
+        element: <WorkSchedulePage />,
       },
       {
         path: "leave-requests",
-        element: <LeaveRequestPage />
+        element: <LeaveRequestPage />,
+      },
+
+      // ADMIN + HR
+      {
+        path: "employees",
+        element: <EmployeesManagement />,
+      },
+      {
+        path: "employees/create",
+        element: <CreateNewEmployeePage />,
+      },
+      {
+        path: "employees/edit/:id",
+        element: <EditEmployeePage />,
+      },
+      {
+        path: "employees/:id",
+        element: <EmployeeDetailPage />,
       }
     ],
   },

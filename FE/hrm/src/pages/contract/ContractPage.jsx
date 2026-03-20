@@ -4,7 +4,6 @@ import { useContractContext } from "../../context";
 
 const ContractPage = () => {
   const navigate = useNavigate();
-
   const {
     contracts,
     page,
@@ -23,9 +22,9 @@ const ContractPage = () => {
       case "PROBATION":
         return "Thử việc";
       case "FIXED_TERM":
-        return "Có thời hạn";
+        return "Ngắn hạn";
       case "INDEFINITE_TERM":
-        return "Vô thời hạn";
+        return "Dài hạn";
       default:
         return type;
     }
@@ -120,7 +119,7 @@ const ContractPage = () => {
           </button>
 
           <span className="text-sm text-gray-500">
-            Trang {page + 1} / {totalPages}
+            Trang {page} / {totalPages}
           </span>
 
           <button
@@ -128,7 +127,7 @@ const ContractPage = () => {
             onClick={() => setPage(page + 1)}
             className={`px-4 py-2 rounded-lg border text-sm
             ${
-              page + 1 === totalPages
+              page === totalPages
                 ? "bg-gray-100 text-gray-400 cursor-not-allowed"
                 : "bg-white hover:bg-blue-100"
             }`}

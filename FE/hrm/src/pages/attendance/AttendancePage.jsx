@@ -26,7 +26,6 @@ const AttendancePage = () => {
   const totalWorkHours = statistics?.totalWorkHours || 0;
   const overtimeHours = statistics?.totalOvertimeHours || 0;
   const lateDays = statistics?.lateDays || 0;
-
   const onTimeDays = (statistics?.presentDays || 0) - (statistics?.lateDays || 0);
 
   const formatHours = (hours) => {
@@ -100,7 +99,7 @@ const AttendancePage = () => {
   }, []);
 
   return (
-    <div className="overflow-y-auto h-[calc(100vh-100px)] pr-4">
+    <div className="overflow-y-auto h-[calc(100vh-100px)] pr-4 pb-4">
       <div className="w-full mx-auto">
 
         {/* ================= HEADER ================= */}
@@ -168,7 +167,6 @@ const AttendancePage = () => {
                 )}
               </div>
             </div>
-
 
             {/* ================= RIGHT PANEL ================= */}
             <div className="w-1/2 flex flex-col gap-4">
@@ -259,7 +257,6 @@ const AttendancePage = () => {
             </div>
           </div>
 
-
           {/* ================= MONTHLY CALENDAR ================= */}
           <div className="border-2 border-[#162F47] rounded-2xl p-5 shadow-2xl mt-6">
             <h2 className="text-lg font-semibold mb-4">
@@ -324,7 +321,6 @@ const AttendancePage = () => {
                     className="border p-2 rounded-lg text-center text-sm"
                   >
                     <p className="font-semibold">{day}</p>
-
                     {attendance ? (
                       <>
                         <p className="text-green-600">

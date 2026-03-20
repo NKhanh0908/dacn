@@ -5,14 +5,14 @@ import { createOvertimeRequest } from "../services";
 const OvertimeRequestContext = createContext();
 
 export const OvertimeRequestProvider = ({ children }) => {
-
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   /* Gửi yêu cầu tăng ca */
   const submitOvertimeRequest = async (data) => {
     try {
       setLoading(true);
-
+      setError(null); 
       console.log("Submit overtime request:", data);
 
       const res = await createOvertimeRequest(data);
@@ -21,9 +21,15 @@ export const OvertimeRequestProvider = ({ children }) => {
 
       return res;
 
-    } catch (error) {
-      console.error("Create overtime request error:", error);
-      throw error;
+    } catch (err) {
+      console.error("Create overtime request error:", err);
+
+      const message =
+        err.response?.data?.errors?.[0] ||
+        err.response?.data?.message ||
+        "Gửi yêu cầu thất bại";
+      setError(message);
+      throw new Error(message);
     } finally {
       setLoading(false);
     }
@@ -33,6 +39,8 @@ export const OvertimeRequestProvider = ({ children }) => {
     <OvertimeRequestContext.Provider
       value={{
         loading,
+        error,
+        setError, 
         submitOvertimeRequest
       }}
     >

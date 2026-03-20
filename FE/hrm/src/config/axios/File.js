@@ -3,12 +3,10 @@ import { BASE_BACK_END_URL, DEFAULT_TIMEOUT, RESPONSE_DELAY } from "../constants
 
 const apiFile = axios.create({
     baseURL: BASE_BACK_END_URL,
-    headers: {
-        "Content-Type": "multipart/form-data"
-    },
-})
+});
 
 apiFile.defaults.timeout = DEFAULT_TIMEOUT;
+
 apiFile.interceptors.request.use(config => {
     const token = localStorage.getItem("access_token");
     if (token) {
@@ -16,12 +14,10 @@ apiFile.interceptors.request.use(config => {
     }
     console.log(`API request: ${config.method?.toUpperCase()} ${config.url}`);
     return config;
-},
-    error => {
-        console.error(`Request error: ${error}`)
-        return Promise.reject(error);
-    }
-);
+}, error => {
+    console.error(`Request error: ${error}`)
+    return Promise.reject(error);
+});
 
 apiFile.interceptors.response.use(
     async (response) => {

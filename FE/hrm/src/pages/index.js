@@ -1,3 +1,8 @@
+export { default as EmployeesManagement } from './admin/EmployeesManagerment/EmployeesManagementPage'
+export { default as CreateNewEmployeePage } from './admin/EmployeesManagerment/CreateNewEmployeePage'
+export { default as EditEmployeePage } from './admin/EmployeesManagerment/EditEmployeePage'
+export { default as EmployeeDetailPage } from './admin/EmployeesManagerment/EmployeeDetailPage'
+
 export { default as AttendancePage} from './attendance/AttendancePage'
 export { default as AttendanceRequestPage } from './attendance_requests/AttendanceRequestsPage'
 export { default as Login } from './auth/Login'

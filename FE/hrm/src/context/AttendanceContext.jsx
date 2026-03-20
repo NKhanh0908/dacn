@@ -1,6 +1,12 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { checkIn, checkOut, getTodayAttendance, getMonthlyAttendance, getAttendanceStatistics } from "../services";
 import { useEmployeeContext } from "./EmployeeContext";
+import { 
+  checkIn, 
+  checkOut, 
+  getTodayAttendance, 
+  getMonthlyAttendance, 
+  getAttendanceStatistics 
+} from "../services";
 
 // Tạo context dùng chung cho module chấm công
 const AttendanceContext = createContext();

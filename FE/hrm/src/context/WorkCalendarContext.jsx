@@ -8,22 +8,27 @@ export const WorkCalendarProvider = ({ children }) => {
 
   const [calendar, setCalendar] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   /* Lấy lịch làm việc theo năm */
   const fetchWorkCalendar = async (year) => {
     try {
       setLoading(true);
-
-      console.log("Fetching work calendar:", year);
+      setError(null); // reset lỗi
 
       const res = await getWorkCalendarByYear(year);
 
-      console.log("Work calendar:", res);
-
       setCalendar(res || null);
-
     } catch (error) {
-      console.error("Get work calendar error:", error);
+      if (error.response?.status === 404) {
+        // case hợp lệ -> không cần log đỏ
+        setError("Năm này chưa có lịch làm việc");
+      } else {
+        console.error("Get work calendar error:", error);
+        setError("Lỗi hệ thống");
+      }
+
+      setCalendar(null);
     } finally {
       setLoading(false);
     }
@@ -54,6 +59,7 @@ export const WorkCalendarProvider = ({ children }) => {
       value={{
         calendar,
         loading,
+        error,
         fetchWorkCalendar,
         isWorkingDay
       }}

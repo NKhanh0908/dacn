@@ -175,7 +175,7 @@ const ProfilePage = () => {
 
               <div className="flex flex-col gap-2 text-l w-1/3">
                 <p className="flex justify-between">
-                  <span className="font-semibold">Mã card:</span>
+                  <span className="font-semibold">CMND/CCCD:</span>
                   <span className="font-bold">{employee.idCard}</span>
                 </p>
                 <p className="flex justify-between">

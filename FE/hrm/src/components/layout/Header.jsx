@@ -1,9 +1,8 @@
 import { useEffect, useState } from "react";
-import { FiBell, FiUser, FiRefreshCw } from "react-icons/fi";
-import { useEmployeeContext } from "../../context/EmployeeContext";
-import { FiLogOut } from "react-icons/fi";
+import { authLogout } from "../../services";
 import { useNavigate } from "react-router-dom";
-import { authLogout } from "../../services/auth/AuthServices";
+import { useEmployeeContext } from "../../context";
+import { FiBell, FiRefreshCw, FiLogOut } from "react-icons/fi";
 
 function useDateTime() {
   const [now, setNow] = useState(new Date());
@@ -52,21 +51,25 @@ export default function Header() {
           <h1 className="text-2xl pl-6 font-bold text-white">
             {/* Welcome, {employee.fullName} */}
           </h1>
+
           <div className="flex items-center gap-5 text-white">
             <div className="text-right leading-tight">
               <p className="text-sm capitalize">{formattedDate}</p>
               <p className="text-xs opacity-70">{formattedTime}</p>
             </div>
+
             <button className="relative hover:text-blue-400 transition">
               <FiBell size={20} />
               <span className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full"></span>
             </button>
+
             <button
               onClick={() => window.location.reload()}
               className="hover:text-blue-400 transition hover:rotate-180 duration-500"
             >
               <FiRefreshCw size={20} />
             </button>
+            
             <img src={employee.avatarUrl} 
               alt="Avatar" 
               onClick={() => setOpen(!open)} 
