@@ -1,5 +1,7 @@
 package com.hrm.dacn.services.impl;
 
+import com.hrm.dacn.dtos.Attendance.response.AttendanceResponse;
+import com.hrm.dacn.dtos.Attendance.response.AttendanceStatistics;
 import com.hrm.dacn.dtos.payroll.PayrollRequestDTO;
 import com.hrm.dacn.dtos.payroll.PayrollResponseDTO;
 import com.hrm.dacn.entities.Contracts;
@@ -10,15 +12,13 @@ import com.hrm.dacn.mappers.PayrollMapper;
 import com.hrm.dacn.repositories.ContractRepository;
 import com.hrm.dacn.repositories.EmployeeRepository;
 import com.hrm.dacn.repositories.PayrollRepository;
-import com.hrm.dacn.services.IEmployeeSalaryComponentService;
-import com.hrm.dacn.services.ITaxDeductionService;
-import com.hrm.dacn.services.PayrollService;
-import com.hrm.dacn.services.PayrollSpecification;
+import com.hrm.dacn.services.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,28 +33,39 @@ public class PayrollServiceImpl implements PayrollService {
     private final ITaxDeductionService taxService;                 // Inject module 1
     private final ContractRepository contractRepository;
     private final EmployeeRepository employeeRepository;
+    private final AttendanceService attendanceService;
     @Override
     @Transactional
     public PayrollResponseDTO calculateAutoPayroll(Long employeeId) {
 
-        // 1. Ngày cuối tháng để check hợp đồng
-        LocalDate targetDate = LocalDate.now();
+        LocalDate now = LocalDate.now();
 
-        // 2. Lấy hợp đồng đang hiệu lực
+        // 1. Contract
         Contracts contract = contractRepository
                 .findActiveContract(employeeId)
-                .orElseThrow(() -> new RuntimeException(
-                        "Nhân viên không có hợp đồng hợp lệ tại thời điểm này"));
+                .orElseThrow(() -> new RuntimeException("Không có contract"));
 
         Employee employee = contract.getEmployee();
 
-        // 3. Lương & phụ cấp từ hợp đồng
+        // 2. Attendance tháng
+        List<AttendanceResponse> attendances =
+                attendanceService.getMonthlyAttendance(employeeId, now.getYear(), now.getMonthValue());
+
+        AttendanceStatistics stats = attendanceService.getStatistics(
+                employeeId,
+                now.withDayOfMonth(1),
+                now.withDayOfMonth(now.lengthOfMonth())
+        );
+
+        // =========================
+        // 3. BASIC + ALLOWANCE
+        // =========================
         BigDecimal basicSalary = contract.getBasicSalary();
         BigDecimal allowances = contract.getAllowances() != null
                 ? contract.getAllowances()
                 : BigDecimal.ZERO;
 
-        // 4. Nếu đang thử việc → nhân % lương
+        // thử việc
         if (contract.isInProbation()) {
             BigDecimal percent = BigDecimal
                     .valueOf(contract.getProbationSalaryPercentage())
@@ -62,7 +73,42 @@ public class PayrollServiceImpl implements PayrollService {
             basicSalary = basicSalary.multiply(percent);
         }
 
-        // 5. Tính bảo hiểm (nếu có tham gia)
+        // =========================
+        // 4. OT (từ Attendance)
+        // =========================
+        BigDecimal overtimePay = BigDecimal.ZERO;
+
+        if (stats.getTotalOvertimeHours() > 0) {
+
+            BigDecimal hourlySalary = basicSalary
+                    .divide(BigDecimal.valueOf(contract.getWorkingDaysPerMonth()), 2, RoundingMode.HALF_UP)
+                    .divide(contract.getWorkingHoursPerDay(), 2, RoundingMode.HALF_UP);
+
+            overtimePay = hourlySalary
+                    .multiply(BigDecimal.valueOf(stats.getTotalOvertimeHours()))
+                    .multiply(BigDecimal.valueOf(1.5)); // OT thường
+        }
+
+        // =========================
+        // 5. TRỪ NGHỈ & ABSENT
+        // =========================
+
+        int leaveDays = stats.getAbsentDays(); // ⚠️ cái này bạn đang dùng sai tên
+
+
+
+        BigDecimal unpaidLeaveDeduction =
+                contract.getUnpaidLeaveDeductionAmount(leaveDays);
+
+
+        int lateTimes = stats.getLateDays();
+
+        BigDecimal lateDeduction =
+                contract.getLateDeductionAmount(lateTimes);
+
+        // =========================
+        // 7. BẢO HIỂM
+        // =========================
         BigDecimal insuranceBase = contract.getInsuranceSalary() != null
                 ? contract.getInsuranceSalary()
                 : basicSalary;
@@ -81,14 +127,14 @@ public class PayrollServiceImpl implements PayrollService {
                 .add(healthInsurance)
                 .add(unemploymentInsurance);
 
-        // 6. Giảm trừ gia cảnh
-
-
+        // =========================
+        // 8. TAX
+        // =========================
         BigDecimal personalDeduction = BigDecimal.valueOf(11_000_000);
 
-        // 7. Thu nhập chịu thuế
         BigDecimal taxableIncome = basicSalary
                 .add(allowances)
+                .add(overtimePay)
                 .subtract(totalInsurance)
                 .subtract(personalDeduction);
 
@@ -96,27 +142,34 @@ public class PayrollServiceImpl implements PayrollService {
             taxableIncome = BigDecimal.ZERO;
         }
 
-        // 8. Thuế TNCN (tạm tính 5%)
         BigDecimal personalIncomeTax = taxableIncome.multiply(BigDecimal.valueOf(0.05));
 
-        // 9. Tổng khấu trừ
-        BigDecimal totalDeductions = totalInsurance.add(personalIncomeTax);
+        // =========================
+        // 9. TOTAL DEDUCTION
+        // =========================
+        BigDecimal totalDeductions = totalInsurance
+                .add(personalIncomeTax)
+                .add(unpaidLeaveDeduction)
+                .add(lateDeduction);
 
-        // 10. Net salary
+        // =========================
+        // 10. NET
+        // =========================
         BigDecimal netSalary = basicSalary
                 .add(allowances)
+                .add(overtimePay)
                 .subtract(totalDeductions);
 
-        // 11. Lưu Payroll
+        // =========================
+        // SAVE
+        // =========================
         Payroll payroll = Payroll.builder()
                 .employee(employee)
-                .month(targetDate.getMonthValue())
-                .year(targetDate.getYear())
+                .month(now.getMonthValue())
+                .year(now.getYear())
                 .basicSalary(basicSalary.doubleValue())
                 .allowances(allowances.doubleValue())
-                .overtimePay(0.0)
-                .bonus(0.0)
-                .otherIncome(0.0)
+                .overtimePay(overtimePay.doubleValue())
                 .socialInsurance(socialInsurance.doubleValue())
                 .healthInsurance(healthInsurance.doubleValue())
                 .unemploymentInsurance(unemploymentInsurance.doubleValue())
@@ -124,6 +177,8 @@ public class PayrollServiceImpl implements PayrollService {
                 .totalDeductions(totalDeductions.doubleValue())
                 .netSalary(netSalary.doubleValue())
                 .status("CALCULATED")
+                .bonus(0.0)
+                .otherIncome(0.0)
                 .build();
 
         return mapper.toDto(repository.save(payroll));
@@ -144,6 +199,7 @@ public class PayrollServiceImpl implements PayrollService {
                 payrolls.add(payroll);
             } catch (Exception e) {
                 System.out.println("Skip employee: " + employee.getEmployeeId());
+                e.printStackTrace();
             }
         }
 
