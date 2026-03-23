@@ -47,11 +47,16 @@ public class PayrollSpecification {
         return (root, query, cb) -> {
             if (companyId == null) return null;
 
-            Join<Payroll, Employee> employeeJoin = root.join("employee");
-            Join<Employee, Contracts> contractJoin = employeeJoin.join("contracts");
-            Join<Contracts, Company> companyJoin = contractJoin.join("company");
+            Subquery<Long> subquery = query.subquery(Long.class);
+            Root<Contracts> contractRoot = subquery.from(Contracts.class);
 
-            return cb.equal(companyJoin.get("companyId"), companyId);
+            subquery.select(contractRoot.get("employee").get("employeeId"))
+                    .where(cb.and(
+                            cb.equal(contractRoot.get("company").get("companyId"), companyId),
+                            cb.equal(contractRoot.get("status"), com.hrm.dacn.enums.contracts.ContractStatus.ACTIVE)
+                    ));
+
+            return cb.in(root.get("employee").get("employeeId")).value(subquery);
         };
     }
 
@@ -62,13 +67,19 @@ public class PayrollSpecification {
         return (root, query, cb) -> {
             if (department == null || department.isBlank()) return null;
 
-            Join<Payroll, Employee> employeeJoin = root.join("employee");
-            Join<Employee, Contracts> contractJoin = employeeJoin.join("contracts");
+            // Tạo một Subquery để tìm kiếm trong bảng Contracts
+            Subquery<Long> subquery = query.subquery(Long.class);
+            Root<Contracts> contractRoot = subquery.from(Contracts.class);
 
-            return cb.like(
-                    cb.lower(contractJoin.get("department")),
-                    "%" + department.toLowerCase() + "%"
-            );
+            // Lấy ra EmployeeId từ những hợp đồng thỏa mãn điều kiện phòng ban
+            subquery.select(contractRoot.get("employee").get("employeeId"))
+                    .where(cb.and(
+                            cb.like(cb.lower(contractRoot.get("department")), "%" + department.toLowerCase() + "%"),
+                            cb.equal(contractRoot.get("status"), com.hrm.dacn.enums.contracts.ContractStatus.ACTIVE)
+                    ));
+
+            // So khớp: Employee của Payroll phải nằm trong danh sách EmployeeId có hợp đồng thỏa mãn ở trên
+            return cb.in(root.get("employee").get("employeeId")).value(subquery);
         };
     }
 
