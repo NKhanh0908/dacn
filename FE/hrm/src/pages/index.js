@@ -1,7 +1,8 @@
-export { default as EmployeesManagement } from './admin/EmployeesManagerment/EmployeesManagementPage'
-export { default as CreateNewEmployeePage } from './admin/EmployeesManagerment/CreateNewEmployeePage'
-export { default as EditEmployeePage } from './admin/EmployeesManagerment/EditEmployeePage'
-export { default as EmployeeDetailPage } from './admin/EmployeesManagerment/EmployeeDetailPage'
+export { default as EmployeesManagement } from './admin/EmployeesManagement/EmployeesManagementPage'
+export { default as CreateNewEmployeePage } from './admin/EmployeesManagement/CreateNewEmployeePage'
+export { default as EditEmployeePage } from './admin/EmployeesManagement/EditEmployeePage'
+export { default as EmployeeDetailPage } from './admin/EmployeesManagement/EmployeeDetailPage'
+export { default as PayrollManagement } from './admin/PayrollManagement/PayrollManagementPage'
 
 export { default as AttendancePage} from './attendance/AttendancePage'
 export { default as AttendanceRequestPage } from './attendance_requests/AttendanceRequestsPage'

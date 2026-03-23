@@ -18,7 +18,6 @@ const EmployeeDetailPage = () => {
   // LOAD DATA 
   useEffect(() => {
     const emp = employees.find((e) => e.employeeId == id);
-
     if (emp) {
       setEmployee({
         ...emp,
@@ -151,7 +150,7 @@ const EmployeeDetailPage = () => {
                   {banks.find(b => b.shortName === employee.bankName)?.logo && (
                     <img
                       src={banks.find(b => b.shortName === employee.bankName)?.logo}
-                      className="w-6 h-6"
+                      className="w-18 h-6"
                     />
                   )}
                   <span>{employee.bankName || "-"}</span>

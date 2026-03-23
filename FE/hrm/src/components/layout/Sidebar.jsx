@@ -88,13 +88,13 @@ const Sidebar = () => {
             </NavLink>
 
             <NavLink
-              to="/contracts"
+              to="/payroll-management"
               className={({ isActive }) =>
                 `${menuClass} ${isActive ? "bg-white/15 text-blue-400" : ""}`
               }
             >
-              <FiFileText size={18} />
-              Hợp đồng
+              <FiDollarSign size={18} />
+              Quản lý lương
             </NavLink>
           </>
         )}

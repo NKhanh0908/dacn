@@ -26,7 +26,6 @@ export const EmployeeProvider = ({ children }) => {
   const role = localStorage.getItem("role");
 
   // EMPLOYEE: lấy user hiện tại
-
   const fetchCurrentEmployee = async () => {
     setLoadingEmployee(true);
     try {
@@ -35,7 +34,7 @@ export const EmployeeProvider = ({ children }) => {
         ...res.data,
         avatarUrl: res.data.avatarUrl || ""
       });
-      setEmployee(res.data);
+      // setEmployee(res.data);
     } catch (err) {
       console.error("Fetch employee failed", err);
       setEmployee(null);

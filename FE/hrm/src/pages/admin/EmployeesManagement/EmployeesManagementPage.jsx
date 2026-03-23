@@ -9,7 +9,9 @@ import {
   FiSearch,
   FiPlus,
   FiEdit2,
-  FiEye
+  FiEye, 
+  FiLock,
+  FiUnlock,
 } from "react-icons/fi";
 
 import { useEmployeeContext } from "../../../context";
@@ -26,7 +28,7 @@ const EmployeesManagement = () => {
   if (!isAdmin && !isHR) return <Navigate to="/" replace />;
 
   const navigate = useNavigate();
-  const { employees, loadingEmployees } = useEmployeeContext();
+  const { employees, loadingEmployees, updateEmployee } = useEmployeeContext();
 
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedDepartment, setSelectedDepartment] = useState("Phòng ban");
@@ -75,6 +77,36 @@ const EmployeesManagement = () => {
         return "Đã nghỉ";
       default:
         return status;
+    }
+  };
+
+  const getStatusColor = (status) => {
+    switch (status) {
+      case "WORKING":
+        return "bg-green-100 text-green-700";
+      case "PROBATION":
+        return "bg-yellow-100 text-yellow-700";
+      case "ON_LEAVE":
+        return "bg-blue-100 text-blue-700";
+      case "RESIGNED":
+        return "bg-red-100 text-red-700";
+      default:
+        return "bg-gray-100 text-gray-600";
+    }
+  };
+
+  const handleToggleStatus = async (emp) => {
+    try {
+      let newStatus =
+        emp.status === "RESIGNED" ? "WORKING" : "RESIGNED";
+
+      const formData = new FormData();
+      formData.append("status", newStatus);
+
+      await updateEmployee(emp.employeeId, formData);
+    } catch (err) {
+      console.error(err);
+      alert("Cập nhật trạng thái thất bại!");
     }
   };
 
@@ -188,6 +220,28 @@ const EmployeesManagement = () => {
                     >
                       <FiEdit2 size={14} /> Chỉnh sửa
                     </button>
+
+                    <button
+                      onClick={() => {
+                        handleToggleStatus(employee);
+                        setActiveMenu(null);
+                      }}
+                      className={`w-full flex items-center gap-2 px-4 py-2 text-sm hover:bg-gray-100 ${
+                        employee.status === "RESIGNED"
+                          ? "text-green-600"
+                          : "text-red-600"
+                      }`}
+                    >
+                      {employee.status === "RESIGNED" ? (
+                        <>
+                          <FiUnlock size={14} /> Mở khóa
+                        </>
+                      ) : (
+                        <>
+                          <FiLock size={14} /> Khóa
+                        </>
+                      )}
+                    </button>
                   </div>
                 )}
               </div>
@@ -203,7 +257,9 @@ const EmployeesManagement = () => {
                   <p className="text-xs text-gray-500">
                     {employee.department} • {employee.position}
                   </p>
-                  <span className="text-xs px-2 py-0.5 bg-green-100 text-green-700 rounded">
+                  <span
+                    className={`text-xs px-2 py-0.5 rounded ${getStatusColor(employee.status)}`}
+                  >
                     {getStatusLabel(employee.status)}
                   </span>
                 </div>

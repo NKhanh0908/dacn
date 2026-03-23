@@ -14,7 +14,8 @@ import {
   EmployeesManagement,
   CreateNewEmployeePage,
   EditEmployeePage,
-  EmployeeDetailPage
+  EmployeeDetailPage,
+  PayrollManagement
 } from "./pages/index";
 
 const isAuthenticated = () => {
@@ -93,6 +94,10 @@ const router = createBrowserRouter([
       {
         path: "employees/:id",
         element: <EmployeeDetailPage />,
+      },
+      {
+        path: "payroll-management",
+        element: <PayrollManagement />,
       }
     ],
   },

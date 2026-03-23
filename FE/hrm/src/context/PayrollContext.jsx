@@ -1,5 +1,10 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { getPayrolls } from "../services";
+import { 
+  getPayrolls,
+  createPayroll,
+  updatePayroll,
+  deletePayroll
+} from "../services";
 import { useEmployeeContext } from "./EmployeeContext";
 
 const PayrollContext = createContext();
@@ -11,7 +16,11 @@ export const PayrollProvider = ({ children }) => {
   const [payrolls, setPayrolls] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  const fetchMyPayrolls = async () => {
+  const role = localStorage.getItem("role")?.toUpperCase();
+  const isAdmin = role?.includes("ADMIN") || role?.includes("HR");
+
+  // ================= FETCH =================
+  const fetchPayrolls = async () => {
     try {
       setLoading(true);
 
@@ -20,29 +29,73 @@ export const PayrollProvider = ({ children }) => {
       console.log("All payroll:", data);
       console.log("Employee ID:", employee?.employeeId);
 
-      const myPayroll = data.filter(
-        p => p.employeeId === employee?.employeeId
-      );
-
-      console.log("My payroll:", myPayroll);
-
-      setPayrolls(myPayroll);
+      if (isAdmin) {
+        setPayrolls(Array.isArray(data) ? data : []);
+      } else {
+        const myPayroll = (data || []).filter(
+          p => p.employeeId === employee?.employeeId
+        );
+        setPayrolls(myPayroll);
+      }
 
     } catch (error) {
       console.error("Fetch payroll error:", error);
+      setPayrolls([]);
     } finally {
       setLoading(false);
     }
   };
 
+  // ================= CREATE =================
+  const handleCreatePayroll = async (employeeId) => {
+    try {
+      await createPayroll({ employId: employeeId });
+      await fetchPayrolls();
+    } catch (err) {
+      console.error("Create payroll error:", err);
+      throw err;
+    }
+  };
+
+  // ================= UPDATE =================
+  const handleUpdatePayroll = async (payrollId, employeeId) => {
+    try {
+      await updatePayroll(payrollId, { employId: employeeId });
+      await fetchPayrolls();
+    } catch (err) {
+      console.error("Update payroll error:", err);
+      throw err;
+    }
+  };
+
+  // ================= DELETE =================
+  const handleDeletePayroll = async (payrollId) => {
+    try {
+      await deletePayroll(payrollId);
+      await fetchPayrolls();
+    } catch (err) {
+      console.error("Delete payroll error:", err);
+      throw err;
+    }
+  };
+
   useEffect(() => {
-    if (employee?.employeeId) {
-      fetchMyPayrolls();
+    if (isAdmin || employee?.employeeId) {
+      fetchPayrolls();
     }
   }, [employee]);
 
   return (
-    <PayrollContext.Provider value={{ payrolls, loading }}>
+    <PayrollContext.Provider 
+      value={{ 
+        payrolls, 
+        loading,
+        fetchPayrolls,
+        isAdmin,
+        
+        createPayroll: handleCreatePayroll, 
+        updatePayroll: handleUpdatePayroll, 
+        deletePayroll: handleDeletePayroll }}>
       {children}
     </PayrollContext.Provider>
   );

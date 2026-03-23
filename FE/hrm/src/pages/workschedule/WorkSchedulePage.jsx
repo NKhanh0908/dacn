@@ -1,4 +1,4 @@
-import { FiCalendar, FiClock, FiFlag } from "react-icons/fi";
+import { FiCalendar, FiFlag } from "react-icons/fi";
 import HolidayPage from "../holidays/HolidaysUI";
 import OvertimeRequestPage from "../overtime/OvertimeUI";
 import WorkCalendarPage from "../workcalendar/WorkCalendarUI";
