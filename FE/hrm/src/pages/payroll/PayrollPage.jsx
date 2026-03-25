@@ -114,7 +114,7 @@ const MyPayrollPage = () => {
 
           {/* PAGE INFO */}
           <div className="text-sm text-gray-500">
-            Trang {page - 1} / {totalPages}
+            Trang {page} / {totalPages}
           </div>
 
           {/* NEXT */}
@@ -123,7 +123,7 @@ const MyPayrollPage = () => {
             onClick={() => setPage(page + 1)}
             className={`px-4 py-2 rounded-lg border text-sm
               ${
-                page - 1 === totalPages
+                page === totalPages
                   ? "bg-gray-100 text-gray-400 cursor-not-allowed"
                   : "bg-white hover:bg-blue-100"
               }`}

@@ -19,19 +19,28 @@ const EditEmployeePage = () => {
   const [previewAvatar, setPreviewAvatar] = useState("");
   const [banks, setBanks] = useState([]);
   const [openBank, setOpenBank] = useState(false);
+  const [errors, setErrors] = useState({});
+  const [originalEmployee, setOriginalEmployee] = useState(null);
 
   // ================= LOAD DATA =================
   useEffect(() => {
     const emp = employees.find((e) => e.employeeId == id);
 
     if (emp) {
-      setEmployee({
+      const formatted = {
         ...emp,
         startDate: emp.startDate?.split("T")[0] || "",
-        dateOfBirth: emp.dateOfBirth?.split("T")[0] || ""
-      });
+        dateOfBirth: emp.dateOfBirth?.split("T")[0] || "",
+        department: emp.department || "",
+        position: emp.position || "",
+        status: emp.status || "",
+        gender: emp.gender || "MALE"
+      };
 
       setPreviewAvatar(emp.avatarUrl || "");
+
+      setEmployee(formatted);
+      setOriginalEmployee(formatted);
     }
   }, [id, employees]);
 
@@ -109,7 +118,7 @@ const EditEmployeePage = () => {
         ...baseOptions,
         {
           value: employee.position,
-          label: employee.position // hoặc format đẹp hơn
+          label: employee.position 
         }
       ];
     }
@@ -117,23 +126,83 @@ const EditEmployeePage = () => {
     return [{ value: "", label: "Chọn chức vụ" }, ...baseOptions];
   })();
 
+  const validate = () => {
+    const newErrors = {};
+
+    const phoneRegex = /^(0[0-9]{9}|\+84[0-9]{9})$/;
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@(gmail\.com|yahoo\.com|outlook\.com)$/;
+    const idCardRegex = /^[0-9]{9}$|^[0-9]{12}$/;
+    
+    const isChanged = (field) => {
+      return employee[field] !== originalEmployee[field];
+    };
+
+    // ===== FORMAT =====
+    if (isChanged("phone") &&  employee.phone && !phoneRegex.test(employee.phone)) {
+      newErrors.phone = "Số điện thoại không hợp lệ";
+    }
+
+    if (isChanged("emergencyContactPhone") && employee.emergencyContactPhone && !phoneRegex.test(employee.emergencyContactPhone)) {
+      newErrors.emergencyContactPhone = "SĐT liên hệ không hợp lệ";
+    }
+
+    if (isChanged("email") && employee.email && !emailRegex.test(employee.email)) {
+      newErrors.email = "Email không hợp lệ";
+    }
+
+    if (isChanged("idCard") && employee.idCard && !idCardRegex.test(employee.idCard)) {
+      newErrors.idCard = "CMND/CCCD phải 9 hoặc 12 số";
+    }
+
+    if (isChanged("bankAccount") && employee.bankAccount && !/^[0-9]{9,20}$/.test(employee.bankAccount)) {
+      newErrors.bankAccount = "Tài khoản ngân hàng không hợp lệ";
+    }
+
+    // ===== AGE >= 18 =====
+    if (employee.dateOfBirth) {
+      const dob = new Date(employee.dateOfBirth);
+      const today = new Date();
+
+      let age = today.getFullYear() - dob.getFullYear();
+      const m = today.getMonth() - dob.getMonth();
+
+      if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) {
+        age--;
+      }
+
+      if (age < 18) {
+        newErrors.dateOfBirth = "Nhân viên phải đủ 18 tuổi";
+      }
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!validate()) {
+      alert("Vui lòng kiểm tra lại thông tin");
+      return;
+    }
+
     setSaving(true);
 
     try {
       let imageUrl = employee.avatarUrl || "";
 
+      // ===== Upload ảnh nếu có =====
       if (avatarFile) {
-        const formData = new FormData();
-        formData.append("file", avatarFile);
-        formData.append("upload_preset", "YOUR_PRESET");
+        const formUpload = new FormData();
+        formUpload.append("file", avatarFile);
+        formUpload.append("upload_preset", "YOUR_PRESET");
 
         const res = await fetch(
           "https://api.cloudinary.com/v1_1/YOUR_CLOUD_NAME/image/upload",
           {
             method: "POST",
-            body: formData
+            body: formUpload
           }
         );
 
@@ -141,54 +210,44 @@ const EditEmployeePage = () => {
         imageUrl = data.secure_url;
       }
 
-      let payload;
+      // ===== Tạo payload giống EditProfile =====
+      const formData = new FormData();
 
+      // ===== Field cho phép sửa =====
+      formData.append("fullName", employee.fullName || "");
+      formData.append("dateOfBirth", employee.dateOfBirth || "");
+      formData.append("gender", employee.gender || "");
+      formData.append("idCard", employee.idCard || "");
+      formData.append("phone", employee.phone || "");
+      formData.append("email", employee.email || "");
+      formData.append("address", employee.address || "");
+      formData.append("bankAccount", employee.bankAccount || "");
+      formData.append("bankName", employee.bankName || "");
+      formData.append("taxCode", employee.taxCode || "");
+      formData.append("socialInsuranceNumber", employee.socialInsuranceNumber || "");
+      formData.append("emergencyContactName", employee.emergencyContactName || "");
+      formData.append("emergencyContactPhone", employee.emergencyContactPhone || "");
+      formData.append("emergencyContactRelationship", employee.emergencyContactRelationship || "");
+
+      // ===== Field admin =====
       if (isAdmin) {
-        payload = {
-          fullName: employee.fullName,
-          dateOfBirth: employee.dateOfBirth,
-          gender: employee.gender,
-          idCard: employee.idCard,
-          phone: employee.phone,
-          email: employee.email,
-          address: employee.address,
-          department: employee.department,
-          position: employee.position,
-          roleId: employee.roleId,
-          startDate: employee.startDate,
-          status: employee.status,
-          bankAccount: employee.bankAccount,
-          bankName: employee.bankName,
-          taxCode: employee.taxCode,
-          socialInsuranceNumber: employee.socialInsuranceNumber,
-          emergencyContactName: employee.emergencyContactName,
-          emergencyContactPhone: employee.emergencyContactPhone,
-          emergencyContactRelationship:
-            employee.emergencyContactRelationship,
-          image: imageUrl
-        };
-      } else {
-        payload = {
-          fullName: employee.fullName,
-          phone: employee.phone,
-          email: employee.email,
-          idCard: employee.idCard,
-          dateOfBirth: employee.dateOfBirth,
-          gender: employee.gender,
-          address: employee.address,
-          bankAccount: employee.bankAccount,
-          bankName: employee.bankName,
-          taxCode: employee.taxCode,
-          socialInsuranceNumber: employee.socialInsuranceNumber,
-          emergencyContactName: employee.emergencyContactName,
-          emergencyContactPhone: employee.emergencyContactPhone,
-          emergencyContactRelationship:
-            employee.emergencyContactRelationship,
-          image: imageUrl
-        };
+        formData.append("department", employee.department || "");
+        formData.append("position", employee.position || "");
+        formData.append("roleId", employee.roleId || "");
+        formData.append("startDate", employee.startDate || "");
+        formData.append("status", employee.status || "");
       }
 
-      await updateEmployee(employee.employeeId, payload);
+      // ===== Avatar (QUAN TRỌNG) =====
+      formData.append("avatarUrl", imageUrl || "");
+
+      // ===== Debug =====
+      console.log("FORM DATA:");
+      for (let pair of formData.entries()) {
+        console.log(pair[0] + ": " + pair[1]);
+      }
+
+      await updateEmployee(employee.employeeId, formData);
 
       navigate("/employees");
     } catch (err) {
@@ -220,24 +279,9 @@ const EditEmployeePage = () => {
 
             <div className="flex gap-4 pt-2">
               <div className="flex flex-col justify-center items-center gap-6 w-1/6">
-                <img
-                  src={previewAvatar || "https://via.placeholder.com/150"}
-                  alt="Avatar"
-                  className="w-32 h-32 object-cover rounded-full border"
-                />
-
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleAvatarChange}
-                  id="avatarUpload"
-                  className="hidden"
-                />
-
-                <label
-                  htmlFor="avatarUpload"
-                  className="cursor-pointer bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-sm"
-                >
+                <img src={previewAvatar || "https://via.placeholder.com/150"} alt="Avatar" className="w-32 h-32 object-cover rounded-full border"/>
+                <input type="file" accept="image/*" onChange={handleAvatarChange} id="avatarUpload" className="hidden" />
+                <label htmlFor="avatarUpload" className="cursor-pointer bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-sm">
                   Chọn ảnh đại diện
                 </label>
               </div>
@@ -245,12 +289,12 @@ const EditEmployeePage = () => {
               <div className="flex flex-col gap-2 w-5/6">
                 <div className="flex gap-4">
                   <div className="w-1/2 space-y-2">
-                    <Input name="fullName" label="Họ tên" value={employee.fullName} onChange={handleChange} />
-                    <Input type="date" name="dateOfBirth" label="Ngày sinh" value={employee.dateOfBirth} onChange={handleChange} />
+                    <Input name="fullName" label="Họ tên" value={employee.fullName} onChange={handleChange} error={errors.fullName} />
+                    <Input type="date" name="dateOfBirth" label="Ngày sinh" value={employee.dateOfBirth} onChange={handleChange} error={errors.dateOfBirth} />
                     <Select
                       name="gender"
                       label="Giới tính"
-                      value={employee.gender}
+                      value={employee.gender || "MALE"}
                       onChange={handleChange}
                       options={[
                         { value: "MALE", label: "Nam" },
@@ -260,13 +304,13 @@ const EditEmployeePage = () => {
                   </div>
 
                   <div className="w-1/2 space-y-2">
-                    <Input name="email" label="Email" value={employee.email} onChange={handleChange} />
-                    <Input name="phone" label="SĐT" value={employee.phone} onChange={handleChange} />
-                    <Input name="idCard" label="CMND/CCCD" value={employee.idCard || ""} onChange={handleChange} />
+                    <Input name="email" label="Email" value={employee.email} onChange={handleChange} error={errors.email} />
+                    <Input name="phone" label="SĐT" value={employee.phone} onChange={handleChange} error={errors.phone} />
+                    <Input name="idCard" label="CMND/CCCD" value={employee.idCard || ""} onChange={handleChange} error={errors.idCard} />
                   </div>
                 </div>
 
-                <TextArea name="address" label="Địa chỉ" value={employee.address || ""} onChange={handleChange}/>                
+                <TextArea name="address" label="Địa chỉ" value={employee.address || ""} onChange={handleChange} error={errors.address} />
               </div>
             </div>
           </div>
@@ -309,7 +353,7 @@ const EditEmployeePage = () => {
                 </div>
 
                 <div className="w-1/4">
-                  <Input type="date" name="startDate" label="Ngày vào làm" value={employee.startDate} onChange={handleChange} />
+                  <Input type="date" name="startDate" label="Ngày vào làm" value={employee.startDate} onChange={handleChange} error={errors.startDate} />
                 </div>
 
                 <div className="w-1/4">
@@ -339,7 +383,7 @@ const EditEmployeePage = () => {
 
               <div className="flex gap-4 pt-2">
                 <div className="w-1/4">
-                  <Input name="bankAccount" label="Số tài khoản" value={employee.bankAccount || ""} onChange={handleChange} />
+                  <Input name="bankAccount" label="Số tài khoản" value={employee.bankAccount || ""} onChange={handleChange} error={errors.bankAccount} />
                 </div>
 
                 <div className="w-1/4 relative">
@@ -395,11 +439,11 @@ const EditEmployeePage = () => {
                 </div>
 
                 <div className="w-1/4">
-                  <Input name="taxCode" label="Mã số thuế" value={employee.taxCode || ""} onChange={handleChange} />
+                  <Input name="taxCode" label="Mã số thuế" value={employee.taxCode || ""} onChange={handleChange} error={errors.taxCode} />
                 </div>
 
                 <div className="w-1/4"> 
-                  <Input name="socialInsuranceNumber" label="Số BHXH" value={employee.socialInsuranceNumber || ""} onChange={handleChange} />
+                  <Input name="socialInsuranceNumber" label="Số BHXH" value={employee.socialInsuranceNumber || ""} onChange={handleChange} error={errors.socialInsuranceNumber} />
                 </div>
               </div>
             </div>
@@ -413,15 +457,15 @@ const EditEmployeePage = () => {
 
             <div className="flex gap-4 pt-2">
               <div className="w-1/3">
-                <Input name="emergencyContactName" label="Tên liên hệ" value={employee.emergencyContactName || ""} onChange={handleChange} />
+                <Input name="emergencyContactName" label="Tên liên hệ" value={employee.emergencyContactName || ""} onChange={handleChange} error={errors.emergencyContactName} />
               </div>
 
               <div className="w-1/3">
-                <Input name="emergencyContactPhone" label="SĐT liên hệ" value={employee.emergencyContactPhone || ""} onChange={handleChange} />
+                <Input name="emergencyContactPhone" label="SĐT liên hệ" value={employee.emergencyContactPhone || ""} onChange={handleChange} error={errors.emergencyContactPhone} />
               </div>
 
               <div className="w-1/3">
-                <Input name="emergencyContactRelationship" label="Mối quan hệ" value={employee.emergencyContactRelationship || ""} onChange={handleChange} />
+                <Input name="emergencyContactRelationship" label="Mối quan hệ" value={employee.emergencyContactRelationship || ""} onChange={handleChange} error={errors.emergencyContactRelationship} />
               </div>
             </div>
           </div>
@@ -451,17 +495,29 @@ const EditEmployeePage = () => {
 };
 
 // ================= COMPONENT =================
-const Input = ({ label, ...props }) => (
+const Input = ({ label, error, ...props }) => (
   <div>
     <label className="text-xs font-semibold text-gray-500">{label}</label>
-    <input {...props} className="w-full px-3 py-2 border rounded-lg mt-1" />
+
+    <input
+      {...props}
+      className={`w-full px-3 py-2 border rounded-lg mt-1 outline-none ${
+        error ? "border-red-500 focus:ring-2 focus:ring-red-300" : "border-gray-300"
+      }`}
+    />
+
+    {error && <p className="text-red-500 text-xs mt-1">{error}</p>}
   </div>
 );
 
-const Select = ({ label, options = [], ...props }) => (
+const Select = ({ label, options = [], value, ...props }) => (
   <div>
     <label className="text-xs font-semibold text-gray-500">{label}</label>
-    <select {...props} className="w-full px-3 py-2 border rounded-lg mt-1">
+    <select
+      {...props}
+      value={value || ""} 
+      className="w-full px-3 py-2 border rounded-lg mt-1"
+    >
       {options.map((opt) => (
         <option key={opt.value} value={opt.value}>
           {opt.label}
@@ -471,14 +527,19 @@ const Select = ({ label, options = [], ...props }) => (
   </div>
 );
 
-const TextArea = ({ label, className = "", ...props }) => (
+const TextArea = ({ label, error, className = "", ...props }) => (
   <div>
     <label className="text-xs font-semibold text-gray-500">{label}</label>
+
     <textarea
       {...props}
-      className={`w-full px-3 py-2 border rounded-lg mt-1 ${className}`}
+      className={`w-full px-3 py-2 border rounded-lg mt-1 outline-none ${
+        error ? "border-red-500 focus:ring-2 focus:ring-red-300" : "border-gray-300"
+      } ${className}`}
       rows={3}
     />
+
+    {error && <p className="text-red-500 text-xs mt-1">{error}</p>}
   </div>
 );
 

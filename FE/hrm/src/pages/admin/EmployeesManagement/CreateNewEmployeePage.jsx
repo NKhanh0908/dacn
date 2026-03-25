@@ -40,6 +40,7 @@ const CreateNewEmployeePage = () => {
   const [previewAvatar, setPreviewAvatar] = useState("");
   const [banks, setBanks] = useState([]);
   const [openBank, setOpenBank] = useState(false);
+  const [errors, setErrors] = useState({});
 
   const roleOptions = isAdmin
     ? [
@@ -61,7 +62,15 @@ const CreateNewEmployeePage = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setEmployee((prev) => ({ ...prev, [name]: value }));
+    setEmployee((prev) => ({ 
+      ...prev, 
+      [name]: value 
+    }));
+
+    setErrors((prev) => ({
+      ...prev,
+      [name]: ""
+    }));
   };
 
   const handleAvatarChange = (e) => {
@@ -70,17 +79,6 @@ const CreateNewEmployeePage = () => {
     setAvatarFile(file);
     setPreviewAvatar(URL.createObjectURL(file));
   };
-
-  const TextArea = ({ label, className = "", ...props }) => (
-    <div>
-      <label className="text-xs font-semibold text-gray-500">{label}</label>
-      <textarea
-        {...props}
-        className={`w-full px-3 py-2 border rounded-lg mt-1 ${className}`}
-        rows={3}
-      />
-    </div>
-  );
 
   const departmentOptions = [
     { value: "", label: "Chọn phòng ban" },
@@ -93,25 +91,25 @@ const CreateNewEmployeePage = () => {
 
   const positionMap = {
     HR: [
-      { value: "HR_MANAGER", label: "Trưởng phòng HR" },
-      { value: "HR_STAFF", label: "Nhân viên HR" }
+      { value: "HR_Manager", label: "Trưởng phòng HR" },
+      { value: "HR_Staff", label: "Nhân viên HR" }
     ],
     IT: [
-      { value: "DEV", label: "Developer" },
-      { value: "TESTER", label: "Tester" },
-      { value: "IT_SUPPORT", label: "IT Support" }
+      { value: "Developer", label: "Developer" },
+      { value: "Tester", label: "Tester" },
+      { value: "IT_Support", label: "IT Support" }
     ],
     Finance: [
-      { value: "ACCOUNTANT", label: "Kế toán" },
-      { value: "FINANCE_MANAGER", label: "Trưởng phòng tài chính" }
+      { value: "Accountant", label: "Kế toán" },
+      { value: "Finance_Manager", label: "Trưởng phòng tài chính" }
     ],
     Marketing: [
-      { value: "CONTENT", label: "Content" },
+      { value: "Content", label: "Content" },
       { value: "ADS", label: "Chạy quảng cáo" }
     ],
     Sales: [
-      { value: "SALES_STAFF", label: "Nhân viên kinh doanh" },
-      { value: "SALES_MANAGER", label: "Trưởng phòng kinh doanh" }
+      { value: "Sales_Staff", label: "Nhân viên kinh doanh" },
+      { value: "Sales_Manager", label: "Trưởng phòng kinh doanh" }
     ]
   };
 
@@ -125,9 +123,85 @@ const CreateNewEmployeePage = () => {
     ];
   })();
 
+  const validate = () => {
+    const newErrors = {};
+
+    const phoneRegex = /^(0[0-9]{9}|\+84[0-9]{9})$/;
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@(gmail\.com|yahoo\.com|outlook\.com)$/;
+    const idCardRegex = /^[0-9]{9}$|^[0-9]{12}$/;
+
+    // ===== REQUIRED =====
+    Object.keys(employee).forEach((key) => {
+      if (!employee[key] || employee[key].toString().trim() === "") {
+        newErrors[key] = "Không được để trống";
+      }
+    });
+
+    // ===== FORMAT =====
+    if (employee.phone && !phoneRegex.test(employee.phone)) {
+      newErrors.phone = "SĐT không hợp lệ";
+    }
+
+    if (employee.emergencyContactPhone && !phoneRegex.test(employee.emergencyContactPhone)) {
+      newErrors.emergencyContactPhone = "SĐT liên hệ không hợp lệ";
+    }
+
+    if (employee.email && !emailRegex.test(employee.email)) {
+      newErrors.email = "Email phải là gmail/yahoo/outlook";
+    }
+
+    if (employee.idCard && !idCardRegex.test(employee.idCard)) {
+      newErrors.idCard = "CMND/CCCD phải 9 hoặc 12 số";
+    }
+
+    if (employee.bankAccount && !/^[0-9]{9,20}$/.test(employee.bankAccount)) {
+      newErrors.bankAccount = "Tài khoản ngân hàng không hợp lệ";
+    }
+
+    // ===== TUỔI >= 18 =====
+    if (employee.dateOfBirth) {
+      const today = new Date();
+      const dob = new Date(employee.dateOfBirth);
+
+      let age = today.getFullYear() - dob.getFullYear();
+      const m = today.getMonth() - dob.getMonth();
+
+      if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) {
+        age--;
+      }
+
+      if (age < 18) {
+        newErrors.dateOfBirth = "Nhân viên phải đủ 18 tuổi";
+      }
+    }
+
+    // ===== NGÀY VÀO >= HÔM NAY =====
+    if (employee.startDate) {
+      const today = new Date();
+      const start = new Date(employee.startDate);
+
+      // reset giờ để so sánh đúng ngày
+      today.setHours(0, 0, 0, 0);
+      start.setHours(0, 0, 0, 0);
+
+      if (start < today) {
+        newErrors.startDate = "Ngày vào làm phải từ hôm nay trở đi";
+      }
+    }
+
+      setErrors(newErrors);
+      return Object.keys(newErrors).length === 0;
+    };
+
   // HANDLE SUBMIT
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!validate()) {
+      alert("Vui lòng kiểm tra lại thông tin");
+      return;
+    }
+
     setSaving(true);
 
     try {
@@ -192,8 +266,8 @@ const CreateNewEmployeePage = () => {
               <div className="flex flex-col gap-2 w-5/6">
                 <div className="flex gap-4">
                   <div className="w-1/2 space-y-2">
-                    <Input name="fullName" label="Họ tên" value={employee.fullName} onChange={handleChange} />
-                    <Input type="date" name="dateOfBirth" label="Ngày sinh" value={employee.dateOfBirth} onChange={handleChange} />
+                    <Input name="fullName" label="Họ tên" value={employee.fullName} onChange={handleChange} error={errors.fullName} />
+                    <Input type="date" name="dateOfBirth" label="Ngày sinh" value={employee.dateOfBirth} onChange={handleChange} error={errors.dateOfBirth} />
                     <Select
                       name="gender"
                       label="Giới tính"
@@ -207,13 +281,13 @@ const CreateNewEmployeePage = () => {
                   </div>
 
                   <div className="w-1/2 space-y-2">
-                    <Input name="email" label="Email" value={employee.email} onChange={handleChange} />
-                    <Input name="phone" label="SĐT" value={employee.phone} onChange={handleChange} />
-                    <Input name="idCard" label="CMND/CCCD" value={employee.idCard || ""} onChange={handleChange} />
+                    <Input name="email" label="Email" value={employee.email} onChange={handleChange} error={errors.email} />
+                    <Input name="phone" label="SĐT" value={employee.phone} onChange={handleChange} error={errors.phone} />
+                    <Input name="idCard" label="CMND/CCCD" value={employee.idCard || ""} onChange={handleChange} error={errors.idCard} />
                   </div>
                 </div>
 
-                <TextArea name="address" label="Địa chỉ" value={employee.address || ""} onChange={handleChange} />
+                <TextArea name="address" label="Địa chỉ" value={employee.address || ""} onChange={handleChange} error={errors.address} />
               </div>
             </div>
           </div>
@@ -235,7 +309,7 @@ const CreateNewEmployeePage = () => {
                 </div>
 
                 <div className="w-1/5">
-                  <Input type="date" name="startDate" label="Ngày vào làm" value={employee.startDate} onChange={handleChange} />
+                  <Input type="date" name="startDate" label="Ngày vào làm" value={employee.startDate} onChange={handleChange} error={errors.startDate} />
                 </div>
 
                 <div className="w-1/5">
@@ -268,7 +342,7 @@ const CreateNewEmployeePage = () => {
 
             <div className="flex gap-4 pt-2">
               <div className="w-1/4">
-                <Input name="bankAccount" label="Số tài khoản" value={employee.bankAccount || ""} onChange={handleChange} />
+                <Input name="bankAccount" label="Số tài khoản" value={employee.bankAccount || ""} onChange={handleChange} error={errors.bankAccount} />
               </div>
 
               <div className="w-1/4 relative">
@@ -299,11 +373,11 @@ const CreateNewEmployeePage = () => {
               </div>
 
               <div className="w-1/4">
-                <Input name="taxCode" label="Mã số thuế" value={employee.taxCode || ""} onChange={handleChange} />
+                <Input name="taxCode" label="Mã số thuế" value={employee.taxCode || ""} onChange={handleChange} error={errors.taxCode} />
               </div>
 
               <div className="w-1/4">
-                <Input name="socialInsuranceNumber" label="Số BHXH" value={employee.socialInsuranceNumber || ""} onChange={handleChange} />
+                <Input name="socialInsuranceNumber" label="Số BHXH" value={employee.socialInsuranceNumber || ""} onChange={handleChange} error={errors.socialInsuranceNumber} />
               </div>
             </div>
           </div>
@@ -316,15 +390,15 @@ const CreateNewEmployeePage = () => {
 
             <div className="flex gap-4 pt-2">
               <div className="w-1/3">
-                <Input name="emergencyContactName" label="Tên liên hệ" value={employee.emergencyContactName || ""} onChange={handleChange} />
+                <Input name="emergencyContactName" label="Tên liên hệ" value={employee.emergencyContactName || ""} onChange={handleChange} error={errors.emergencyContactName} />
               </div>
 
               <div className="w-1/3">
-                <Input name="emergencyContactPhone" label="SĐT liên hệ" value={employee.emergencyContactPhone || ""} onChange={handleChange} />
+                <Input name="emergencyContactPhone" label="SĐT liên hệ" value={employee.emergencyContactPhone || ""} onChange={handleChange} error={errors.emergencyContactPhone} />
               </div>
 
               <div className="w-1/3">
-                <Input name="emergencyContactRelationship" label="Mối quan hệ" value={employee.emergencyContactRelationship || ""} onChange={handleChange} />
+                <Input name="emergencyContactRelationship" label="Mối quan hệ" value={employee.emergencyContactRelationship || ""} onChange={handleChange} error={errors.emergencyContactRelationship} />
               </div>
             </div>
           </div>
@@ -345,13 +419,20 @@ const CreateNewEmployeePage = () => {
 };
 
 // COMPONENT
-const Input = ({ label, ...props }) => (
+const Input = ({ label, error, ...props }) => (
   <div>
     <label className="text-xs font-semibold text-gray-500">{label}</label>
-    <input {...props} className="w-full px-3 py-2 border rounded-lg mt-1" />
+    <input
+      {...props}
+      className={`w-full px-3 py-2 border rounded-lg mt-1 outline-none ${
+        error
+          ? "border-red-500 focus:ring-2 focus:ring-red-300"
+          : "border-gray-300"
+      }`}
+    />
+    {error && <p className="text-red-500 text-xs mt-1">{error}</p>}
   </div>
 );
-
 const Select = ({ label, options = [], ...props }) => (
   <div>
     <label className="text-xs font-semibold text-gray-500">{label}</label>
@@ -362,6 +443,24 @@ const Select = ({ label, options = [], ...props }) => (
         </option>
       ))}
     </select>
+  </div>
+);
+
+const TextArea = ({ label, error, className = "", ...props }) => (
+  <div>
+    <label className="text-xs font-semibold text-gray-500">{label}</label>
+
+    <textarea
+      {...props}
+      className={`w-full px-3 py-2 border rounded-lg mt-1 outline-none ${
+        error
+          ? "border-red-500 focus:ring-2 focus:ring-red-300"
+          : "border-gray-300"
+      } ${className}`}
+      rows={3}
+    />
+
+    {error && <p className="text-red-500 text-xs mt-1">{error}</p>}
   </div>
 );
 

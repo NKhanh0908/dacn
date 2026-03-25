@@ -1,123 +1,230 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import {
   getAllWorkSchedules,
+  getWorkScheduleById,
   createWorkSchedule,
   updateWorkSchedule,
   deleteWorkSchedule,
   activateWorkSchedule,
   deactivateWorkSchedule,
   setDefaultWorkSchedule,
-  getDefaultWorkSchedule 
+  getDefaultWorkSchedule,
+  getActiveWorkSchedules
 } from "../services";
 
-// Context dùng để quản lý ca làm việc trong toàn hệ thống
 const WorkScheduleContext = createContext();
 
 export const WorkScheduleProvider = ({ children }) => {
   const [workSchedules, setWorkSchedules] = useState([]);
+  const [activeSchedules, setActiveSchedules] = useState([]);
   const [defaultSchedule, setDefaultSchedule] = useState(null);
+  const [detailSchedule, setDetailSchedule] = useState(null);
 
-  /*Lấy toàn bộ danh sách ca làm từ API*/
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  // ================= GET ALL =================
   const fetchWorkSchedules = async () => {
     try {
+      console.log("CALL API: getAllWorkSchedules");
+
+      setLoading(true);
       const res = await getAllWorkSchedules();
-      setWorkSchedules(res.data);
-    } catch (error) {
-      console.error("Lỗi lấy danh sách ca làm:", error);
+
+      console.log("RAW RESPONSE:", res);
+
+      const data = res?.data?.data || res?.data || res;
+
+      console.log("PARSED DATA:", data);
+
+      if (!Array.isArray(data)) {
+        console.warn("DATA KHÔNG PHẢI ARRAY:", data);
+      }
+
+      setWorkSchedules(Array.isArray(data) ? data : []);
+    } catch (err) {
+      console.error("Lỗi lấy danh sách ca làm:", err);
+      setError("Không tải được danh sách ca làm");
+    } finally {
+      setLoading(false);
     }
   };
 
-  /*Thêm ca làm mới*/
-  const addWorkSchedule = async (data) => {
+  // ================= ACTIVE =================
+  const fetchActiveSchedules = async () => {
     try {
-      await createWorkSchedule(data);
-      await fetchWorkSchedules();
-    } catch (error) {
-      console.error("Lỗi thêm ca làm:", error);
+      console.log("CALL API: getActiveWorkSchedules");
+
+      const data = await getActiveWorkSchedules();
+
+      console.log("ACTIVE DATA:", data);
+
+      setActiveSchedules(Array.isArray(data) ? data : []);
+    } catch (err) {
+      console.error("Lỗi lấy ca active:", err);
     }
   };
 
-  /*Cập nhật ca làm*/
-  const editWorkSchedule = async (id, data) => {
-    try {
-      await updateWorkSchedule(id, data);
-      await fetchWorkSchedules();
-    } catch (error) {
-      console.error("Lỗi sửa ca làm:", error);
-    }
-  };
-
-  /*Xóa ca làm*/
-  const removeWorkSchedule = async (id) => {
-    try {
-      await deleteWorkSchedule(id);
-      await fetchWorkSchedules();
-    } catch (error) {
-      console.error("Lỗi xóa ca làm:", error);
-    }
-  };
-
-  /*Kích hoạt ca làm*/
-  const activateSchedule = async (id) => {
-    try {
-      await activateWorkSchedule(id);
-      await fetchWorkSchedules();
-    } catch (error) {
-      console.error("Lỗi kích hoạt ca làm:", error);
-    }
-  };
-
-  /*Vô hiệu hóa ca làm*/
-  const deactivateSchedule = async (id) => {
-    try {
-      await deactivateWorkSchedule(id);
-      await fetchWorkSchedules();
-    } catch (error) {
-      console.error("Lỗi vô hiệu hóa ca làm:", error);
-    }
-  };
-
-  /*Thiết lập ca làm mặc định*/
-  const setDefaultWorkScheduleHandler = async (id) => {
-    try {
-      await setDefaultWorkSchedule(id);
-      await fetchWorkSchedules();
-      await fetchDefaultSchedule();
-    } catch (error) {
-      console.error("Lỗi thiết lập ca làm mặc định:", error);
-    }
-  };
-
-  /*Lấy ca làm mặc định*/
+  // ================= DEFAULT =================
   const fetchDefaultSchedule = async () => {
     try {
-      const res = await getDefaultWorkSchedule();
-      setDefaultSchedule(res);
-    } catch (error) {
-      console.error("Lỗi lấy ca làm mặc định:", error);
+      console.log("CALL API: getDefaultWorkSchedule");
+
+      const data = await getDefaultWorkSchedule();
+
+      console.log("DEFAULT:", data);
+
+      setDefaultSchedule(data);
+    } catch (err) {
+      console.error("Lỗi lấy ca mặc định:", err);
     }
   };
 
-  /*Khi app load lần đầu -> load dữ liệu*/
+  // ================= DETAIL =================
+  const fetchScheduleById = async (id) => {
+    try {
+      console.log("CALL API DETAIL:", id);
+
+      setLoading(true);
+      const data = await getWorkScheduleById(id);
+
+      console.log("DETAIL DATA:", data);
+
+      setDetailSchedule(data);
+      return data;
+    } catch (err) {
+      console.error("Lỗi lấy chi tiết ca:", err);
+      setDetailSchedule(null);
+      return null;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // ================= CREATE =================
+  const addWorkSchedule = async (data) => {
+    try {
+      console.log("CREATE:", data);
+
+      await createWorkSchedule(data);
+      await fetchWorkSchedules();
+      await fetchActiveSchedules();
+
+      alert("Tạo ca làm thành công!");
+    } catch (err) {
+      console.error("Lỗi thêm ca:", err);
+      alert("Lỗi tạo ca làm!");
+    }
+  };
+
+  // ================= UPDATE =================
+  const editWorkSchedule = async (id, data) => {
+    try {
+      console.log("UPDATE:", id, data);
+
+      await updateWorkSchedule(id, data);
+      await fetchWorkSchedules();
+
+      alert("Cập nhật thành công!");
+    } catch (err) {
+      console.error("Lỗi update:", err);
+      alert("Lỗi cập nhật!");
+    }
+  };
+
+  // ================= DELETE =================
+  const removeWorkSchedule = async (id) => {
+    try {
+      console.log("DELETE:", id);
+
+      await deleteWorkSchedule(id);
+      await fetchWorkSchedules();
+
+      alert("Xóa thành công!");
+    } catch (err) {
+      console.error("Lỗi xóa:", err);
+      alert("Lỗi xóa!");
+    }
+  };
+
+  // ================= ACTIVATE =================
+  const activateSchedule = async (id) => {
+    try {
+      console.log("ACTIVATE:", id);
+
+      await activateWorkSchedule(id);
+      await fetchWorkSchedules();
+      await fetchActiveSchedules();
+
+      alert("Đã kích hoạt!");
+    } catch (err) {
+      console.error("Lỗi activate:", err);
+      alert("Lỗi kích hoạt!");
+    }
+  };
+
+  // ================= DEACTIVATE =================
+  const deactivateSchedule = async (id) => {
+    try {
+      console.log("DEACTIVATE:", id);
+
+      await deactivateWorkSchedule(id);
+      await fetchWorkSchedules();
+      await fetchActiveSchedules();
+
+      alert("Đã vô hiệu hóa!");
+    } catch (err) {
+      console.error("Lỗi deactivate:", err);
+      alert("Lỗi vô hiệu hóa!");
+    }
+  };
+
+  // ================= SET DEFAULT =================
+  const setDefaultScheduleHandler = async (id) => {
+    try {
+      console.log("SET DEFAULT:", id);
+
+      await setDefaultWorkSchedule(id);
+      await fetchDefaultSchedule();
+      await fetchWorkSchedules();
+
+      alert("Đã đặt làm ca mặc định!");
+    } catch (err) {
+      console.error("Lỗi set default:", err);
+      alert("Lỗi đặt mặc định!");
+    }
+  };
+
+  // ================= INIT =================
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
+    console.log("INIT WORK SCHEDULE CONTEXT");
+
     fetchWorkSchedules();
     fetchDefaultSchedule();
+    fetchActiveSchedules();
   }, []);
 
   return (
     <WorkScheduleContext.Provider
       value={{
         workSchedules,
+        activeSchedules,
         defaultSchedule,
+        detailSchedule,
+        loading,
+        error,
+
         fetchWorkSchedules,
+        fetchActiveSchedules,
         fetchDefaultSchedule,
+        fetchScheduleById,
+
         addWorkSchedule,
         editWorkSchedule,
         removeWorkSchedule,
         activateSchedule,
         deactivateSchedule,
-        setDefaultWorkSchedule: setDefaultWorkScheduleHandler
+        setDefaultWorkSchedule: setDefaultScheduleHandler
       }}
     >
       {children}
@@ -126,6 +233,5 @@ export const WorkScheduleProvider = ({ children }) => {
 };
 
 // eslint-disable-next-line react-refresh/only-export-components
-export const useWorkScheduleContext = () => {
-   return useContext(WorkScheduleContext);
-};
+export const useWorkScheduleContext = () =>
+  useContext(WorkScheduleContext);

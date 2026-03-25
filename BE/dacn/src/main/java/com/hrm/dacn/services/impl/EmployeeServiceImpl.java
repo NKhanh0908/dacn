@@ -2,6 +2,7 @@ package com.hrm.dacn.services.impl;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.hrm.dacn.dtos.payroll.PayrollResponseDTO;
 import com.hrm.dacn.entities.Account;
@@ -86,17 +87,25 @@ public class EmployeeServiceImpl implements EmployeeService {
         Employee employee = employeeRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Employee not found"));
 
+        // Lưu trạng thái cũ (để tối ưu nếu cần)
+        EmployeeStatus oldStatus = employee.getStatus();
+
         employeeMapper.updateEntity(employee, request);
         if (request.getImage() != null && !request.getImage().isEmpty()) {
             Map<String, Object> imageUrl = cloudinaryService.uploadFile(request.getImage(), "product");
             employee.setAvatarUrl((String) imageUrl.get("url"));
-        } 
-        // else {
-        //     employee.setAvatarUrl(null);
-        // }
+        }
+
         Employee saved = employeeRepository.save(employee);
-        if(employee.getStatus() == EmployeeStatus.WORKING) accountService.updateStatus(saved, Boolean.TRUE);
-        if(employee.getStatus() == EmployeeStatus.ON_LEAVE) accountService.updateStatus(saved, Boolean.FALSE);
+        boolean isActive = Set.of(
+                EmployeeStatus.WORKING,
+                EmployeeStatus.PROBATION,
+                EmployeeStatus.ON_LEAVE
+        ).contains(saved.getStatus());
+
+        if (oldStatus != saved.getStatus()) {
+            accountService.updateStatus(saved, isActive);
+        }
 
         return employeeMapper.toResponse(saved);
     }

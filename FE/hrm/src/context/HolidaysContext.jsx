@@ -1,46 +1,61 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { getHolidaysByDateRange, checkHoliday } from "../services";
+import {
+  getHolidaysByDateRange,
+  checkHoliday,
+  createHoliday,
+  updateHoliday,
+  deleteHoliday,
+  getHolidayById
+} from "../services";
 
-// Tạo context dùng chung cho module ngày nghỉ
 const HolidayContext = createContext();
 
 export const HolidayProvider = ({ children }) => {
-
   const [holidays, setHolidays] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  /* Lấy danh sách ngày nghỉ từ hôm nay đến cuối năm */
-  const fetchUpcomingHolidays = async () => {
+  const role = localStorage.getItem("role")?.toUpperCase();
+
+  /* ================= COMMON ================== */
+  const getCurrentYearRange = (year = new Date().getFullYear()) => {
+    return {
+      fromDate: `${year}-01-01`,
+      toDate: `${year}-12-31`
+    };
+  };
+
+  /* ================= FETCH ================= */
+  const fetchHolidays = async (year) => {
     try {
       setLoading(true);
+      let fromDate, toDate;
 
-      const today = new Date();
-      const fromDate = today.toISOString().split("T")[0];
-
-      const toDate = new Date(today.getFullYear(), 11, 31)
-        .toISOString()
-        .split("T")[0];
+      if (role?.includes("ADMIN") || role?.includes("HR")) {
+        const range = getCurrentYearRange(year);
+        fromDate = range.fromDate;
+        toDate = range.toDate;
+      } 
+      else {
+        const today = new Date();
+        fromDate = today.toISOString().split("T")[0];
+        toDate = new Date(today.getFullYear(), 11, 31)
+          .toISOString()
+          .split("T")[0];
+      }
 
       const res = await getHolidaysByDateRange(fromDate, toDate);
-
-      console.log("Upcoming holidays:", res);
-
       setHolidays(res || []);
-
     } catch (error) {
-      console.error("Get holidays error:", error);
+      console.error("Fetch holidays error:", error);
     } finally {
       setLoading(false);
     }
   };
 
-  /* Kiểm tra một ngày có phải ngày nghỉ hay không */
+  /* ================= EMPLOYEE ================= */
   const isHoliday = async (date) => {
     try {
       const res = await checkHoliday(date);
-
-      console.log("Check holiday:", res);
-
       return res;
     } catch (error) {
       console.error("Check holiday error:", error);
@@ -48,9 +63,49 @@ export const HolidayProvider = ({ children }) => {
     }
   };
 
-  /* Khi component load -> lấy danh sách ngày nghỉ */
+  /* ================= ADMIN ================= */
+  const addHoliday = async (data, employeeId) => {
+    try {
+      await createHoliday(data, employeeId); 
+      await fetchHolidays();
+    } catch (err) {
+      console.error("Create holiday error:", err);
+      throw err;
+    }
+  };
+
+  const editHoliday = async (id, data) => {
+    try {
+      await updateHoliday(id, data);
+      await fetchHolidays();
+    } catch (err) {
+      console.error("Update holiday error:", err);
+    }
+  };
+
+  const removeHoliday = async (id) => {
+    try {
+      await deleteHoliday(id);
+      await fetchHolidays();
+    } catch (err) {
+      console.error("Delete holiday error:", err);
+      throw err;
+    }
+  };
+
+  const getHolidayDetail = async (id) => {
+    try {
+      const res = await getHolidayById(id);
+      return res;
+    } catch (err) {
+      console.error("Get detail error:", err);
+      return null;
+    }
+  };
+
+  /* ================= INIT ================= */
   useEffect(() => {
-    fetchUpcomingHolidays();
+    fetchHolidays();
   }, []);
 
   return (
@@ -58,8 +113,15 @@ export const HolidayProvider = ({ children }) => {
       value={{
         holidays,
         loading,
-        fetchUpcomingHolidays,
-        isHoliday
+
+        fetchHolidays,
+
+        isHoliday,
+
+        addHoliday,
+        editHoliday,
+        removeHoliday,
+        getHolidayDetail
       }}
     >
       {children}
@@ -68,6 +130,4 @@ export const HolidayProvider = ({ children }) => {
 };
 
 // eslint-disable-next-line react-refresh/only-export-components
-export const useHolidayContext = () => {
-  return useContext(HolidayContext);
-};
+export const useHolidayContext = () => useContext(HolidayContext);
