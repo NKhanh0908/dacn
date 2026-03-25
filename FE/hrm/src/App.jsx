@@ -15,7 +15,14 @@ import {
   CreateNewEmployeePage,
   EditEmployeePage,
   EmployeeDetailPage,
-  PayrollManagement
+  PayrollManagement,
+  PayrollManagementDetailPage,
+  WorkScheduleManagementPage,
+  WorkScheduleEditPage,
+  WorkScheduleCreatePage,
+  WorkCalendarCreatePage,
+  HolidayEditPage,
+  HolidayCreatePage
 } from "./pages/index";
 
 const isAuthenticated = () => {
@@ -98,7 +105,37 @@ const router = createBrowserRouter([
       {
         path: "payroll-management",
         element: <PayrollManagement />,
+      },
+      {
+        path: "payroll-management/:payrollId",
+        element: <PayrollManagementDetailPage />,
+      },
+      {
+        path: "work-schedule-management",
+        element: <WorkScheduleManagementPage />,
+      },
+      {
+        path: "work-schedule-management/edit/:id",
+        element: <WorkScheduleEditPage />,
+      },
+      {
+        path: "work-schedule-management/create",
+        element: <WorkScheduleCreatePage />,
+      },
+      {
+        path: "work-calendar-management/create",
+        element: <WorkCalendarCreatePage />,
+      },
+      {
+        path: "holiday-management/edit/:id",
+        element: <HolidayEditPage />,
+      },
+      {
+        path: "holiday-management/create",
+        element: <HolidayCreatePage />,
       }
+
+
     ],
   },
 ]);

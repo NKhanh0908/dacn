@@ -1,20 +1,24 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { 
   getPayrolls,
+  getPayrollById,
   createPayroll,
   updatePayroll,
-  deletePayroll
+  deletePayroll,
+  calculateAllPayrolls
 } from "../services";
 import { useEmployeeContext } from "./EmployeeContext";
 
 const PayrollContext = createContext();
 
 export const PayrollProvider = ({ children }) => {
-
   const { employee } = useEmployeeContext();
 
   const [payrolls, setPayrolls] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [detailPayroll, setDetailPayroll] = useState(null);
+  const [loadingDetail, setLoadingDetail] = useState(false);
+  const [errorDetail, setErrorDetail] = useState(null);
 
   const role = localStorage.getItem("role")?.toUpperCase();
   const isAdmin = role?.includes("ADMIN") || role?.includes("HR");
@@ -43,6 +47,24 @@ export const PayrollProvider = ({ children }) => {
       setPayrolls([]);
     } finally {
       setLoading(false);
+    }
+  };
+
+  // ================= FETCH DETAIL PAYROLL =================
+  const fetchPayrollById = async (payrollId) => {
+    try {
+      setLoadingDetail(true);
+      setErrorDetail(null);
+      const data = await getPayrollById(payrollId);
+      setDetailPayroll(data);
+      return data;
+    } catch (err) {
+      console.error("Fetch payroll detail error:", err);
+      setErrorDetail("Không tìm thấy payroll");
+      setDetailPayroll(null);
+      return null;
+    } finally {
+      setLoadingDetail(false);
     }
   };
 
@@ -79,6 +101,21 @@ export const PayrollProvider = ({ children }) => {
     }
   };
 
+  // ================ CALCULATE ALL PAYROLLS =================
+  const handleCalculateAllPayrolls = async () => {
+    try {
+      setLoading(true);
+      await calculateAllPayrolls();
+      await fetchPayrolls();
+      alert("Đã tính lương toàn bộ!");
+    } catch (err) {
+      console.error("Tính lương toàn bộ lỗi:", err);
+      alert("Lỗi tính lương toàn bộ!");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     if (isAdmin || employee?.employeeId) {
       fetchPayrolls();
@@ -92,10 +129,14 @@ export const PayrollProvider = ({ children }) => {
         loading,
         fetchPayrolls,
         isAdmin,
-        
+        calculateAllPayrolls: handleCalculateAllPayrolls,
         createPayroll: handleCreatePayroll, 
         updatePayroll: handleUpdatePayroll, 
-        deletePayroll: handleDeletePayroll }}>
+        deletePayroll: handleDeletePayroll,
+        fetchPayrollById: fetchPayrollById,
+        detailPayroll: detailPayroll,
+        loadingDetail: loadingDetail,
+        errorDetail: errorDetail }}>
       {children}
     </PayrollContext.Provider>
   );

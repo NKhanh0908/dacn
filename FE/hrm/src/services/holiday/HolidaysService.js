@@ -14,8 +14,12 @@ export const getHolidayById = async (id) => {
 };
 
 /*Tạo ngày nghỉ mới */
-export const createHoliday = async (data) => {
-  const res = await api.post(`${HOLIDAYS}`, data);
+export const createHoliday = async (data, createdByEmployeeId) => {
+  const res = await api.post(`${HOLIDAYS}`, data, {
+    params: {
+      createdByEmployeeId
+    }
+  });
   return res.data;
 };
 

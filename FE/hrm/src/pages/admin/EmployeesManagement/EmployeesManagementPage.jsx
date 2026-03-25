@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/rules-of-hooks */
-import React, { useState } from "react";
+import { useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 import {
   FiMail,
@@ -122,12 +122,18 @@ const EmployeesManagement = () => {
           </h1>
           <p className="text-gray-500 mt-2">
             Tổng cộng {filteredEmployees.length} nhân viên 
-            {/* •{" "}
+            • {" "}
             {
-              filteredEmployees.filter((e) => e.status === "WORKING")
+              filteredEmployees.filter((e) => e.status === "WORKING" || e.status === "PROBATION")
                 .length
-            }{" "}
-            đang làm việc */}
+            } {" "}
+            đang làm việc 
+            • {" "}
+            {
+              filteredEmployees.filter((e) => e.status === "ON_LEAVE")
+                .length
+            } {" "}
+            nghỉ phép
           </p>
         </div>
 

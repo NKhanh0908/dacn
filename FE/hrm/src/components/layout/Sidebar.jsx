@@ -96,6 +96,20 @@ const Sidebar = () => {
               <FiDollarSign size={18} />
               Quản lý lương
             </NavLink>
+
+            <NavLink
+              to="/work-schedule-management"
+              className={({ isActive }) => {
+                const isCalendar = location.pathname.startsWith("/work-calendar-management");
+
+                return `${menuClass} ${
+                  isActive || isCalendar ? "bg-white/15 text-blue-400" : ""
+                }`;
+              }}
+            >
+              <FiClock size={18} />
+              Quản lý ca làm việc
+            </NavLink>
           </>
         )}
 

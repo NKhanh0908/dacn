@@ -43,7 +43,7 @@ const EmployeeDetailPage = () => {
       <div className="w-full mx-auto">
 
         {/* HEADER */}
-        <div className="mt-2 mb-3 flex justify-between items-center">
+        <div className="mb-3 flex justify-between items-center">
           <h1 className="text-2xl font-bold">
             Chi tiết nhân viên
           </h1>
