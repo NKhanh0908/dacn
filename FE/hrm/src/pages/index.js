@@ -2,6 +2,7 @@ export { default as EmployeesManagement } from './admin/EmployeesManagerment/Emp
 export { default as CreateNewEmployeePage } from './admin/EmployeesManagerment/CreateNewEmployeePage'
 export { default as EditEmployeePage } from './admin/EmployeesManagerment/EditEmployeePage'
 export { default as EmployeeDetailPage } from './admin/EmployeesManagerment/EmployeeDetailPage'
+export { default as AttendanceManagement } from './admin/EmployeesManagerment/AttendanceManagement'
 
 export { default as AttendancePage} from './attendance/AttendancePage'
 export { default as AttendanceRequestPage } from './attendance_requests/AttendanceRequestsPage'
@@ -18,3 +19,4 @@ export { default as ProfilePage } from './profile/ProfilePage'
 export { default as EditProfile } from './profile/EditProfile'
 export { default as WorkCalendarPage } from './workcalendar/WorkCalendarUI'
 export { default as WorkSchedulePage } from './workschedule/WorkSchedulePage'
+

@@ -96,6 +96,16 @@ const Sidebar = () => {
               <FiFileText size={18} />
               Hợp đồng
             </NavLink>
+
+            <NavLink
+              to="/attendances"
+              className={({ isActive }) =>
+                `${menuClass} ${isActive ? "bg-white/15 text-blue-400" : ""}`
+              }
+            >
+              <FiFileText size={18} />
+              Quản lý chấm công
+            </NavLink>
           </>
         )}
 
