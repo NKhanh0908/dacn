@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/rules-of-hooks */
 import { useEffect } from "react";
 import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
@@ -70,6 +69,7 @@ const PayrollManagementDetailPage = () => {
 
   useEffect(() => {
     if (payrollId) fetchPayrollById(payrollId);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [payrollId]);
 
   const role = localStorage.getItem("role")?.toUpperCase();

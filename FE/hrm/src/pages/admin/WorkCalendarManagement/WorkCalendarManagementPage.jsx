@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/rules-of-hooks */
 import { useEffect, useState } from "react";
 import { FiPlus, FiXCircle, FiGrid } from "react-icons/fi";
 import { useWorkCalendarContext } from "../../../context";
@@ -24,6 +23,7 @@ const WorkCalendarManagementPage = () => {
   // ================= LOAD =================
   useEffect(() => {
     fetchAllCalendars();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // ================= AUTO NEXT YEAR =================

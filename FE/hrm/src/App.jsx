@@ -22,7 +22,11 @@ import {
   WorkScheduleCreatePage,
   WorkCalendarCreatePage,
   HolidayEditPage,
-  HolidayCreatePage
+  HolidayCreatePage,
+  AttendanceManagementPage,
+  AttendanceManagementDetailPage,
+  AttendanceManagementEditPage,
+  AttendanceCreatePage
 } from "./pages/index";
 
 const isAuthenticated = () => {
@@ -102,6 +106,23 @@ const router = createBrowserRouter([
         path: "employees/:id",
         element: <EmployeeDetailPage />,
       },
+      {
+        path: "attendance-management",
+        element: <AttendanceManagementPage/>,
+      },
+      {
+        path: "attendance-management/:id",
+        element: <AttendanceManagementDetailPage />,
+      },
+      {
+        path: "attendance-management/edit/:id",
+        element: <AttendanceManagementEditPage />,
+      },
+      {
+        path: "attendance-management/create",
+        element: <AttendanceCreatePage />,
+      },
+
       {
         path: "payroll-management",
         element: <PayrollManagement />,

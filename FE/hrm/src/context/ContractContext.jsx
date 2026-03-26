@@ -40,6 +40,7 @@ export const ContractProvider = ({ children }) => {
     if (employee?.employeeId) {
       fetchContracts(page);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [employee, page]);
 
   return (

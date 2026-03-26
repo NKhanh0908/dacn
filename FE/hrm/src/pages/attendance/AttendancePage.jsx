@@ -83,6 +83,7 @@ const AttendancePage = () => {
 
     fetchMonthlyAttendance(employee.employeeId, year, month);
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentDate, employee?.employeeId]);
 
   useEffect(() => {

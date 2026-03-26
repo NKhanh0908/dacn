@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/rules-of-hooks */
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { FiXCircle } from "react-icons/fi";
@@ -60,6 +59,7 @@ const WorkScheduleEditPage = () => {
       }
     };
     load();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
   // ================= CHANGE =================

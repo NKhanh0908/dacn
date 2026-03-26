@@ -88,6 +88,26 @@ const Sidebar = () => {
             </NavLink>
 
             <NavLink
+              to="/attendance-management"
+              className={({ isActive }) =>
+                `${menuClass} ${isActive ? "bg-white/15 text-blue-400" : ""}`
+              }
+            >
+              <FiCalendar size={18} />
+              Quản lý chấm công
+            </NavLink>
+
+            <NavLink
+              to="/contract-management"
+              className={({ isActive }) =>
+                `${menuClass} ${isActive ? "bg-white/15 text-blue-400" : ""}`
+              }
+            >
+              <FiFileText size={18} />
+              Quản lý hợp đồng
+            </NavLink>
+
+            <NavLink
               to="/payroll-management"
               className={({ isActive }) =>
                 `${menuClass} ${isActive ? "bg-white/15 text-blue-400" : ""}`
@@ -101,14 +121,25 @@ const Sidebar = () => {
               to="/work-schedule-management"
               className={({ isActive }) => {
                 const isCalendar = location.pathname.startsWith("/work-calendar-management");
+                const isHoliday = location.pathname.startsWith("/holiday-management");
 
                 return `${menuClass} ${
-                  isActive || isCalendar ? "bg-white/15 text-blue-400" : ""
+                  isActive || isCalendar || isHoliday ? "bg-white/15 text-blue-400" : ""
                 }`;
               }}
             >
               <FiClock size={18} />
               Quản lý ca làm việc
+            </NavLink>
+
+            <NavLink
+              to="/leave-requests-management"
+              className={({ isActive }) =>
+                `${menuClass} ${isActive ? "bg-white/15 text-blue-400" : ""}`
+              }
+            >
+              <FiFileText size={18} />
+              Quản lý nghỉ phép
             </NavLink>
           </>
         )}

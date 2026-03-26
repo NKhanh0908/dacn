@@ -49,6 +49,7 @@ export const AttendanceRequestProvider = ({ children }) => {
     if (employee?.employeeId) {
       fetchMyAttendanceRequests();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [employee]);
 
   return (

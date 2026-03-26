@@ -124,6 +124,7 @@ const PayrollManagement = () => {
   };
 
   // ========== GROUP PAYROLLS THEO NĂM + THÁNG ==========
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const groupedData = {};
 
   safePayrolls.forEach(p => {

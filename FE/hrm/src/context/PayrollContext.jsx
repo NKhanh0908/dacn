@@ -120,6 +120,7 @@ export const PayrollProvider = ({ children }) => {
     if (isAdmin || employee?.employeeId) {
       fetchPayrolls();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [employee]);
 
   return (

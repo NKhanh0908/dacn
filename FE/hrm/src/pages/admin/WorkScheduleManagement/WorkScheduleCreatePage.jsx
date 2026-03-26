@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/rules-of-hooks */
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FiXCircle } from "react-icons/fi";
