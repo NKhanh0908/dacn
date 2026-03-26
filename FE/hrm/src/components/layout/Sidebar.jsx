@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/set-state-in-effect */
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation, NavLink } from "react-router-dom";
-import { FiHome, FiUsers, FiUser, FiCalendar, FiFileText, FiDollarSign, FiClock } from "react-icons/fi";
+import { FiHome, FiUsers, FiUser, FiCalendar, FiFileText, FiDollarSign, FiClock, FiCheckSquare, FiTrendingUp, } from "react-icons/fi";
 
 const Sidebar = () => {
   const navigate = useNavigate();
@@ -103,8 +103,28 @@ const Sidebar = () => {
                 `${menuClass} ${isActive ? "bg-white/15 text-blue-400" : ""}`
               }
             >
-              <FiFileText size={18} />
+              <FiCheckSquare size={18} />
               Quản lý chấm công
+            </NavLink>
+
+            <NavLink
+              to="/overtime-requests-mn"
+              className={({ isActive }) =>
+                `${menuClass} ${isActive ? "bg-white/15 text-blue-400" : ""}`
+              }
+            >
+              <FiTrendingUp size={18} />
+              Quản lý tăng ca
+            </NavLink>           
+
+            <NavLink
+              to="/leave-requests-mn"
+              className={({ isActive }) =>
+                `${menuClass} ${isActive ? "bg-white/15 text-blue-400" : ""}`
+              }
+            >
+              <FiFileText size={18} />
+              Phê duyệt nghỉ phép
             </NavLink>
           </>
         )}
