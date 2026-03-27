@@ -5,7 +5,6 @@ import com.hrm.dacn.dtos.contracts.request.*;
 import com.hrm.dacn.dtos.contracts.response.ContractResponse;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 
 @Service
 public interface ContractService {

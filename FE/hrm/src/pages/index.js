@@ -5,6 +5,7 @@ export { default as EmployeeDetailPage } from './admin/EmployeesManagerment/Empl
 export { default as AttendanceManagement } from './admin/EmployeesManagerment/AttendanceManagement'
 export { default as LeaveRequestManagement } from './admin/EmployeesManagerment/LeaveRequestManagement'
 export { default as OvertimeManagement } from './admin/EmployeesManagerment/OvertimeManagement'
+export { default as ContractManagement } from './admin/EmployeesManagerment/ContractManagement'
 
 
 export { default as AttendancePage} from './attendance/AttendancePage'
