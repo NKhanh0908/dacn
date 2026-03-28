@@ -53,6 +53,7 @@ export const LeaveRequestProvider = ({ children }) => {
 
   useEffect(() => {
     fetchLeaveRequests();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

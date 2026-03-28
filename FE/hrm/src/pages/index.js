@@ -12,6 +12,19 @@ export { default as WorkCalendarCreatePage } from './admin/WorkCalendarManagemen
 export { default as HolidayManagementPage } from './admin/HolidaysManagement/HolidayManagementPage'
 export { default as HolidayEditPage } from './admin/HolidaysManagement/HolidayEditPage'
 export { default as HolidayCreatePage } from './admin/HolidaysManagement/HolidayCreatePage'
+export { default as AttendanceManagementPage } from './admin/AttendanceManagement/AttendanceManagementPage'
+export { default as AttendanceManagementDetailPage } from './admin/AttendanceManagement/AttendanceDetailPage'
+export { default as AttendanceManagementEditPage } from './admin/AttendanceManagement/AttendanceEditPage'
+export { default as AttendanceCreatePage } from './admin/AttendanceManagement/AttendanceCreatePage'
+
+export { default as LeaveRequestManagement } from './admin/LeaveRequestsManagement/LeaveRequestManagement'
+export { default as OvertimeManagement } from './admin/OvertimeManagement/OvertimeManagement'
+export { default as ContractManagement } from './admin/ContractsManagement/ContractManagement'
+export { default as ContractDetailPage } from './admin/ContractsManagement/ContractDetailPage'
+export { default as ContractEditPage } from './admin/ContractsManagement/ContractEditPage'
+export { default as ContractCreatePage } from './admin/ContractsManagement/ContractCreatePage'
+export { default as AttendanceRequestManagement } from './admin/AttendanceRequestManagement/AttendanceRequestPage'
+
 
 export { default as AttendancePage} from './attendance/AttendancePage'
 export { default as AttendanceRequestPage } from './attendance_requests/AttendanceRequestsPage'

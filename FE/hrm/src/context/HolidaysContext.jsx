@@ -106,6 +106,7 @@ export const HolidayProvider = ({ children }) => {
   /* ================= INIT ================= */
   useEffect(() => {
     fetchHolidays();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

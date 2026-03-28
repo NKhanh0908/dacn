@@ -15,7 +15,7 @@ export const createAttendanceRequest = async (data) => {
 
 /* Duyệt yêu cầu chấm công (approve / reject) */
 export const reviewAttendanceRequest = async (id, data) => {
-  const res = await api.post(`${ATTENDANCE_REVIEW}/${id}/review`, data);
+  const res = await api.post(`${ATTENDANCE_REQUESTS}/${id}/${ATTENDANCE_REVIEW}`, data);
   return res.data;
 };
 
@@ -33,7 +33,7 @@ export const cancelAttendanceRequest = async (id) => {
 
 /* Lấy danh sách các yêu cầu chấm công đang chờ duyệt - Thường dành cho Manager / Admin */
 export const getPendingAttendanceRequests = async () => {
-  const res = await api.get(ATTENDANCE_PENDING);
+  const res = await api.get(`${ATTENDANCE_REQUESTS}/${ATTENDANCE_PENDING}`);
   return res.data;
 };
 
@@ -45,6 +45,6 @@ export const getMyAttendanceRequests = async () => {
 
 /* Lấy tất cả yêu cầu chấm công trong hệ thống - Thường dành cho Admin */
 export const getAllAttendanceRequests = async () => {
-  const res = await api.get(ATTENDANCE_ALL);
-  return res.data;
+  const res = await api.get(`${ATTENDANCE_REQUESTS}/${ATTENDANCE_ALL}`);
+  return res.data.data.content || [];
 };

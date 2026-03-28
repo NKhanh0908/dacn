@@ -35,6 +35,7 @@ export const useFetchById = (apiFunc, id, config = {}) => {
     return () => {
       isMounted = false;
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
   return { data, loading, error };

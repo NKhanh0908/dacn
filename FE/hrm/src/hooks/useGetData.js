@@ -33,6 +33,7 @@ export const useGetData = (apiFunc, params = {}, config = {}) => {
     return () => {
       isMounted = false;
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return { data, loading, error };
