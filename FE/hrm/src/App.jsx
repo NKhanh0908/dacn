@@ -33,6 +33,7 @@ import {
   ContractDetailPage,
   ContractEditPage,
   ContractCreatePage,
+  AttendanceRequestManagement
 } from "./pages/index";
 
 const isAuthenticated = () => {
@@ -84,6 +85,8 @@ const router = createBrowserRouter([
       { path: "attendance-management/:id", element: <AttendanceManagementDetailPage /> },
       { path: "attendance-management/edit/:id", element: <AttendanceManagementEditPage /> },
       { path: "attendance-management/create", element: <AttendanceCreatePage /> },
+
+      { path: "attendance-requests-mn", element: <AttendanceRequestManagement /> },
 
       { path: "payroll-management", element: <PayrollManagement /> },
       { path: "payroll-management/:payrollId", element: <PayrollManagementDetailPage /> },

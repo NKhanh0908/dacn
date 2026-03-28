@@ -23,6 +23,7 @@ export { default as ContractManagement } from './admin/ContractsManagement/Contr
 export { default as ContractDetailPage } from './admin/ContractsManagement/ContractDetailPage'
 export { default as ContractEditPage } from './admin/ContractsManagement/ContractEditPage'
 export { default as ContractCreatePage } from './admin/ContractsManagement/ContractCreatePage'
+export { default as AttendanceRequestManagement } from './admin/AttendanceRequestManagement/AttendanceRequestPage'
 
 
 export { default as AttendancePage} from './attendance/AttendancePage'

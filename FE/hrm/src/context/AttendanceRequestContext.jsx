@@ -1,26 +1,37 @@
+/* eslint-disable react-refresh/only-export-components */
 import { createContext, useContext, useEffect, useState } from "react";
 import { useEmployeeContext } from "./EmployeeContext";
-import { 
+
+import {
   createAttendanceRequest,
-  getMyAttendanceRequests 
+  getMyAttendanceRequests,
+  getAllAttendanceRequests,
+  getPendingAttendanceRequests,
+  reviewAttendanceRequest
 } from "../services";
 
-// Tạo context cho module yêu cầu chấm công
 const AttendanceRequestContext = createContext();
 
 export const AttendanceRequestProvider = ({ children }) => {
   const { employee } = useEmployeeContext();
+
+  // ================= EMPLOYEE =================
   const [myRequests, setMyRequests] = useState([]);
+
+  // ================= ADMIN =================
+  const [allRequests, setAllRequests] = useState([]);
+  const [pendingRequests, setPendingRequests] = useState([]);
+
   const [loading, setLoading] = useState(false);
 
-  /*Lấy danh sách yêu cầu chấm công của nhân viên*/
+  // ================= EMPLOYEE =================
+
   const fetchMyAttendanceRequests = async () => {
     try {
       if (!employee?.employeeId) return;
+
       setLoading(true);
-      console.log("Fetching my attendance requests...");
       const res = await getMyAttendanceRequests();
-      console.log("My attendance requests:", res);
       setMyRequests(res.data || []);
     } catch (error) {
       console.error("Get my attendance requests error:", error);
@@ -29,11 +40,9 @@ export const AttendanceRequestProvider = ({ children }) => {
     }
   };
 
-  /*Gửi yêu cầu chấm công*/
   const submitAttendanceRequest = async (data) => {
     try {
       setLoading(true);
-      console.log("Submitting attendance request:", data);
       await createAttendanceRequest(data);
 
       await fetchMyAttendanceRequests();
@@ -44,21 +53,69 @@ export const AttendanceRequestProvider = ({ children }) => {
     }
   };
 
-  /*Khi employee thay đổi -> load danh sách request*/
+  // ================= ADMIN =================
+  const fetchAllRequests = async () => {
+    try {
+      setLoading(true);
+      const res = await getAllAttendanceRequests();
+      setAllRequests(res);
+    } catch (error) {
+      console.error("Get all attendance requests error:", error);
+      setAllRequests([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchPendingRequests = async () => {
+    try {
+      const res = await getPendingAttendanceRequests();
+      setPendingRequests(res.data || []);
+    } catch (error) {
+      console.error("Get pending attendance requests error:", error);
+    }
+  };
+
+  const reviewRequest = async (id, payload) => {
+    try {
+      setLoading(true);
+      await reviewAttendanceRequest(id, payload);
+
+      await fetchAllRequests();
+      await fetchPendingRequests();
+    } catch (error) {
+      console.error("Review attendance request error:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // ================= EFFECT =================
+
   useEffect(() => {
     if (employee?.employeeId) {
       fetchMyAttendanceRequests();
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [employee]);
 
   return (
     <AttendanceRequestContext.Provider
       value={{
+        // EMPLOYEE
         myRequests,
-        loading,
         fetchMyAttendanceRequests,
-        submitAttendanceRequest
+        submitAttendanceRequest,
+
+        // ADMIN
+        allRequests,
+        pendingRequests,
+        fetchAllRequests,
+        fetchPendingRequests,
+        reviewRequest,
+
+        // COMMON
+        loading
       }}
     >
       {children}
@@ -66,7 +123,5 @@ export const AttendanceRequestProvider = ({ children }) => {
   );
 };
 
-// eslint-disable-next-line react-refresh/only-export-components
-export const useAttendanceRequestContext = () => {
-  return useContext(AttendanceRequestContext);
-};
+export const useAttendanceRequestContext = () =>
+  useContext(AttendanceRequestContext);

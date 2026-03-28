@@ -3,6 +3,7 @@ import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { FiSearch, FiClock, FiMoreVertical, FiEdit2, FiEye, FiCalendar, FiPlus } from "react-icons/fi";
 import { useEmployeeContext, useAttendanceContext } from "../../../context";
+import { AttendanceRequestManagement, OvertimeManagement } from "../../index";
 
 const AttendanceManagementPage = () => {
   const navigate = useNavigate();
@@ -467,15 +468,9 @@ const AttendanceManagementPage = () => {
           </div>
         </div>
       ) : viewMode === "attendance-requests" ? (
-        <div className="animate-fade-in duration-300 border rounded-lg shadow p-5 bg-white">
-          <h1 className="text-2xl font-bold mb-3">Yêu cầu chấm công</h1>
-          <p>Chưa có yêu cầu nào.</p>
-        </div>
+        <AttendanceRequestManagement />
       ) : (
-        <div className="animate-fade-in duration-300 border rounded-lg shadow p-5 bg-white">
-          <h1 className="text-2xl font-bold mb-3">Yêu cầu nghỉ phép</h1>
-          <p>Chưa có yêu cầu nào.</p>
-        </div>
+        <OvertimeManagement />
       )}
     </div>
   );
