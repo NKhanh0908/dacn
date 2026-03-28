@@ -17,9 +17,12 @@ export { default as AttendanceManagementDetailPage } from './admin/AttendanceMan
 export { default as AttendanceManagementEditPage } from './admin/AttendanceManagement/AttendanceEditPage'
 export { default as AttendanceCreatePage } from './admin/AttendanceManagement/AttendanceCreatePage'
 
-export { default as LeaveRequestManagement } from './admin/EmployeesManagement/LeaveRequestManagement'
-export { default as OvertimeManagement } from './admin/EmployeesManagement/OvertimeManagement'
-export { default as ContractManagement } from './admin/EmployeesManagement/ContractManagement'
+export { default as LeaveRequestManagement } from './admin/LeaveRequestsManagement/LeaveRequestManagement'
+export { default as OvertimeManagement } from './admin/OvertimeManagement/OvertimeManagement'
+export { default as ContractManagement } from './admin/ContractsManagement/ContractManagement'
+export { default as ContractDetailPage } from './admin/ContractsManagement/ContractDetailPage'
+export { default as ContractEditPage } from './admin/ContractsManagement/ContractEditPage'
+export { default as ContractCreatePage } from './admin/ContractsManagement/ContractCreatePage'
 
 
 export { default as AttendancePage} from './attendance/AttendancePage'
@@ -37,4 +40,3 @@ export { default as ProfilePage } from './profile/ProfilePage'
 export { default as EditProfile } from './profile/EditProfile'
 export { default as WorkCalendarPage } from './workcalendar/WorkCalendarUI'
 export { default as WorkSchedulePage } from './workschedule/WorkSchedulePage'
-

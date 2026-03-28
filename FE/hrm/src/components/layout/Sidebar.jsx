@@ -98,7 +98,7 @@ const Sidebar = () => {
             </NavLink>
 
             <NavLink
-              to="/contract-management"
+              to="/contracts-management"
               className={({ isActive }) =>
                 `${menuClass} ${isActive ? "bg-white/15 text-blue-400" : ""}`
               }
@@ -133,7 +133,7 @@ const Sidebar = () => {
             </NavLink>
 
             <NavLink
-              to="/leave-requests-management"
+              to="/leave-requests-mn"
               className={({ isActive }) =>
                 `${menuClass} ${isActive ? "bg-white/15 text-blue-400" : ""}`
               }
@@ -142,17 +142,7 @@ const Sidebar = () => {
               Quản lý nghỉ phép
             </NavLink>
 
-            <NavLink
-              to="/attendances"
-              className={({ isActive }) =>
-                `${menuClass} ${isActive ? "bg-white/15 text-blue-400" : ""}`
-              }
-            >
-              <FiCheckSquare size={18} />
-              Quản lý chấm công
-            </NavLink>
-
-            <NavLink
+            {/* <NavLink
               to="/overtime-requests-mn"
               className={({ isActive }) =>
                 `${menuClass} ${isActive ? "bg-white/15 text-blue-400" : ""}`
@@ -160,27 +150,7 @@ const Sidebar = () => {
             >
               <FiTrendingUp size={18} />
               Quản lý tăng ca
-            </NavLink>           
-
-            <NavLink
-              to="/leave-requests-mn"
-              className={({ isActive }) =>
-                `${menuClass} ${isActive ? "bg-white/15 text-blue-400" : ""}`
-              }
-            >
-              <FiFileText size={18} />
-              Phê duyệt nghỉ phép
-            </NavLink>
-
-            <NavLink
-              to="/contracts-management"
-              className={({ isActive }) =>
-                `${menuClass} ${isActive ? "bg-white/15 text-blue-400" : ""}`
-              }
-            >
-              <FiFileText size={18} />
-              Quản lý hợp đồng
-            </NavLink>           
+            </NavLink>                   */}
           </>
         )}
 
