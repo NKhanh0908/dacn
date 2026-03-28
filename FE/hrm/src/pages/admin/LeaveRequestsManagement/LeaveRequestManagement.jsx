@@ -1,18 +1,9 @@
 /* eslint-disable react-hooks/rules-of-hooks */
-import React, { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Navigate } from "react-router-dom";
-import {
-  FiSearch,
-  FiCheckCircle,
-  FiXCircle,
-  FiClock,
-  FiRefreshCw,
-  FiUser,
-} from "react-icons/fi";
-import {
-  getLeaveRequests,
-  reviewLeaveRequest,
-} from "../../../services/leave_requests/LeaveRequestsService";
+import { FiCheckCircle, FiXCircle, FiSearch } from "react-icons/fi";
+import { getLeaveRequests, reviewLeaveRequest,
+} from "../../../services";
 
 const removeVietnameseTones = (str = "") => {
   return str
@@ -43,7 +34,6 @@ const LeaveRequestManagement = () => {
     try {
       const res = await getLeaveRequests({ page: 0, size: 100 });
 
-      // backend trả PageDTO có thể là content/items/data
       const rawData =
         res?.content || res?.items || res?.data || res || [];
 
@@ -71,9 +61,31 @@ const LeaveRequestManagement = () => {
   };
 
   const getLeaveType = (item) => {
-    return item?.leaveType || item?.type || "Nghỉ phép";
-  };
+    const type = item?.leaveType || item?.type || "ANNUAL";
 
+    const typeMap = {
+      ANNUAL: "Nghỉ phép năm",
+      ANNUAL_LEAVE: "Nghỉ phép năm",
+
+      SICK: "Nghỉ ốm",
+      SICK_LEAVE: "Nghỉ ốm",
+
+      UNPAID: "Nghỉ không lương",
+      UNPAID_LEAVE: "Nghỉ không lương",
+
+      MATERNITY: "Nghỉ thai sản",
+      MATERNITY_LEAVE: "Nghỉ thai sản",
+
+      PATERNITY: "Nghỉ chăm con",
+      PATERNITY_LEAVE: "Nghỉ chăm con",
+
+      BEREAVEMENT: "Nghỉ tang",
+      STUDY: "Nghỉ học",
+      OTHER: "Khác",
+    };
+
+    return typeMap[type] || type;
+  };
   const getReason = (item) => {
     return item?.reason || item?.description || "--";
   };
@@ -191,125 +203,121 @@ const LeaveRequestManagement = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 px-3 md:px-6 py-6">
-      <div className="w-full max-w-screen-2xl mx-auto space-y-5">
+    <div className="overflow-y-auto h-[calc(100vh-100px)] pr-4 pb-4">
+
         {/* HEADER */}
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold">Quản lý nghỉ phép</h1>
-            <p className="text-sm text-gray-500">
+            <h1 className="text-3xl font-bold text-gray-800">Quản lý nghỉ phép</h1>
+            <p className="text-gray-500 mt-2">
               Quản lý và xét duyệt các yêu cầu nghỉ phép của nhân viên
             </p>
           </div>
-
-          <button
-            onClick={fetchLeaveRequests}
-            className="inline-flex items-center gap-2 border px-4 py-2 rounded-lg bg-white hover:bg-gray-50"
-          >
-            <FiRefreshCw />
-            Làm mới
-          </button>
         </div>
 
         {/* FILTER */}
-        <div className="bg-white p-4 rounded-xl shadow-sm border space-y-4">
-          <div className="grid md:grid-cols-2 gap-4">
-            {/* Search */}
-            <div>
-              <label className="text-sm font-medium text-gray-700 mb-1 block">
-                Tìm theo nhân viên
-              </label>
-              <div className="relative">
-                <FiUser className="absolute left-3 top-3 text-gray-400" />
-                <input
-                  type="text"
-                  placeholder="Nhập tên nhân viên... (VD: luan)"
-                  value={employeeKeyword}
-                  onChange={(e) => setEmployeeKeyword(e.target.value)}
-                  className="w-full pl-10 pr-3 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-blue-100"
-                />
-              </div>
+        <div className="flex flex-col sm:flex-row gap-4 bg-white p-4 border rounded-lg shadow mt-3 mb-3">
+          {/* Search */}
+          <div className="relative flex-1">
+            <label className="text-sm font-medium text-gray-700 mb-1 block">
+              Tìm theo nhân viên
+            </label>
+            <div className="relative">
+              <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+              <input
+                type="text"
+                placeholder="Nhập tên nhân viên... (VD: luan)"
+                value={employeeKeyword}
+                onChange={(e) => setEmployeeKeyword(e.target.value)}
+                className="w-full pl-10 pr-4 py-2 border rounded-lg"
+              />
             </div>
+          </div>
 
-            {/* Tabs */}
-            <div>
-              <label className="text-sm font-medium text-gray-700 mb-1 block">
-                Trạng thái xử lý
-              </label>
-              <div className="flex gap-2">
-                <button
-                  onClick={() => setActiveTab("PENDING")}
-                  className={`px-4 py-2 rounded-lg border text-sm font-medium ${
-                    activeTab === "PENDING"
-                      ? "bg-yellow-50 text-yellow-700 border-yellow-300"
-                      : "bg-white hover:bg-gray-50"
-                  }`}
-                >
-                  Chưa xử lý ({pendingCount})
-                </button>
+          {/* Tabs */}
+          <div>
+            <label className="text-sm font-medium text-gray-700 mb-1 block">
+              Trạng thái xử lý
+            </label>
+            <div className="flex gap-2">
+              <button
+                onClick={() => setActiveTab("PENDING")}
+                className={`px-4 py-2 rounded-lg border text-sm font-medium ${
+                  activeTab === "PENDING"
+                    ? "bg-yellow-50 text-yellow-700 border-yellow-300"
+                    : "bg-white hover:bg-gray-50"
+                }`}
+              >
+                Chưa xử lý ({pendingCount})
+              </button>
 
-                <button
-                  onClick={() => setActiveTab("PROCESSED")}
-                  className={`px-4 py-2 rounded-lg border text-sm font-medium ${
-                    activeTab === "PROCESSED"
-                      ? "bg-green-50 text-green-700 border-green-300"
-                      : "bg-white hover:bg-gray-50"
-                  }`}
-                >
-                  Đã xử lý ({processedCount})
-                </button>
-              </div>
+              <button
+                onClick={() => setActiveTab("PROCESSED")}
+                className={`px-4 py-2 rounded-lg border text-sm font-medium ${
+                  activeTab === "PROCESSED"
+                    ? "bg-green-50 text-green-700 border-green-300"
+                    : "bg-white hover:bg-gray-50"
+                }`}
+              >
+                Đã xử lý ({processedCount})
+              </button>
             </div>
           </div>
         </div>
 
         {/* TABLE */}
-        <div className="bg-white rounded-xl overflow-hidden shadow-sm border">
-          <div className="overflow-x-auto">
-            <table className="w-full min-w-[1000px]">
-              <thead className="bg-gray-100">
-                <tr>
-                  <th className="text-left px-4 py-3">Nhân viên</th>
-                  <th className="text-left px-4 py-3">Loại nghỉ</th>
-                  <th className="text-left px-4 py-3">Từ ngày</th>
-                  <th className="text-left px-4 py-3">Đến ngày</th>
-                  <th className="text-left px-4 py-3">Lý do</th>
-                  <th className="text-left px-4 py-3">Trạng thái</th>
-                  <th className="text-left px-4 py-3">Lý do từ chối</th>
-                  <th className="text-center px-4 py-3">Hành động</th>
+        <div className="flex-1 min-h-0 bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+          <div className="h-full overflow-auto">
+            <table className="w-full min-w-[1200px] text-sm">
+              <thead className="bg-slate-100 sticky top-0 z-10">
+                <tr className="text-slate-700">
+                  <th className="text-left px-4 py-4 font-semibold">Nhân viên</th>
+                  <th className="text-left px-4 py-4 font-semibold">Loại nghỉ</th>
+                  <th className="text-left px-4 py-4 font-semibold">Từ ngày</th>
+                  <th className="text-left px-4 py-4 font-semibold">Đến ngày</th>
+                  <th className="text-left px-4 py-4 font-semibold">Lý do</th>
+                  <th className="text-left px-4 py-4 font-semibold">Trạng thái</th>
+                  <th className="text-left px-4 py-4 font-semibold">Lý do từ chối</th>
+                  <th className="text-center px-4 py-4 font-semibold">Hành động</th>
                 </tr>
               </thead>
 
               <tbody>
                 {loading ? (
                   <tr>
-                    <td colSpan="8" className="text-center p-8 text-gray-500">
+                    <td colSpan="9" className="text-center py-10 text-slate-500">
                       Đang tải dữ liệu...
                     </td>
                   </tr>
-                ) : filteredRequests.length > 0 ? (
+                ) : filteredRequests.length === 0 ? (
+                  <tr>
+                    <td colSpan="9" className="text-center py-10 text-slate-500">
+                      Không có dữ liệu phù hợp
+                    </td>
+                  </tr>
+                ) : (
                   filteredRequests.map((item) => {
                     const status = getStatus(item);
 
                     return (
-                      <tr key={item.id} className="border-t hover:bg-gray-50">
-                        <td className="px-4 py-3 font-medium">
+                      <tr key={item.id} className="border-t border-slate-100 hover:bg-slate-200 transition">
+                        <td className="px-4 py-4 font-semibold text-slate-800">
                           {getEmployeeName(item)}
                         </td>
-                        <td className="px-4 py-3">{getLeaveType(item)}</td>
-                        <td className="px-4 py-3">{getStartDate(item)}</td>
-                        <td className="px-4 py-3">{getEndDate(item)}</td>
-                        <td className="px-4 py-3 max-w-[240px]">
+                        <td className="px-4 py-4">{getLeaveType(item)}</td>
+                        <td className="px-4 py-4">{getStartDate(item)}</td>
+                        <td className="px-4 py-4">{getEndDate(item)}</td>
+                        <td className="px-4 py-4 max-w-[240px]">
                           <div className="truncate" title={getReason(item)}>
                             {getReason(item)}
                           </div>
                         </td>
-                        <td className="px-4 py-3">{getStatusBadge(status)}</td>
-                        <td className="px-4 py-3 text-sm text-red-600">
+                        <td className="px-4 py-4">{getStatusBadge(status)}</td>
+                        <td className="px-4 py-4 text-sm text-red-600">
                           {item?.rejectReason || "--"}
                         </td>
 
-                        <td className="px-4 py-3">
+                        <td className="px-4 py-4">
                           {status === "PENDING" ? (
                             <div className="flex items-center justify-center gap-2">
                               <button
@@ -340,12 +348,6 @@ const LeaveRequestManagement = () => {
                       </tr>
                     );
                   })
-                ) : (
-                  <tr>
-                    <td colSpan="8" className="text-center p-8 text-gray-500">
-                      Không có dữ liệu phù hợp
-                    </td>
-                  </tr>
                 )}
               </tbody>
             </table>
@@ -392,7 +394,6 @@ const LeaveRequestManagement = () => {
             </div>
           </div>
         )}
-      </div>
     </div>
   );
 };
