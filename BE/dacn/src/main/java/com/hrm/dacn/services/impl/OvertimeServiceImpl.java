@@ -16,6 +16,8 @@ import org.springframework.stereotype.Service;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -139,5 +141,23 @@ public class OvertimeServiceImpl implements OvertimeService {
                         ? entity.getApprovedBy().getEmployeeId()
                         : null)
                 .build();
+    }
+
+    @Override
+    public List<OvertimeResponse> getAll() {
+        return overtimeRepo.findAll()
+                .stream()
+                .map(this::mapToResponse)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<OvertimeResponse> getMyRequests() {
+        Employee employee = employeeService.getCurrentEntity();
+
+        return overtimeRepo.findByEmployee(employee)
+                .stream()
+                .map(this::mapToResponse)
+                .collect(Collectors.toList());
     }
 }
