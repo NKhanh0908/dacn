@@ -4,9 +4,7 @@ import com.hrm.dacn.dtos.PageDTO;
 import com.hrm.dacn.dtos.contracts.request.ContractCreateRequest;
 import com.hrm.dacn.dtos.contracts.request.ContractUpdateRequest;
 import com.hrm.dacn.dtos.contracts.response.ContractResponse;
-import com.hrm.dacn.entities.Company;
 import com.hrm.dacn.entities.Contracts;
-import com.hrm.dacn.entities.Employee;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Component;
 
@@ -190,10 +188,6 @@ public class ContractMapper {
                 // BASIC
                 .contractId(c.getContractId())
                 .contractNumber(c.getContractNumber())
-
-                // COMPANY
-                .companyId(c.getCompany() != null ? c.getCompany().getCompanyId() : null)
-                .companyName(c.getCompany() != null ? c.getCompany().getCompanyName() : null)
 
                 // EMPLOYEE
                 .employeeId(c.getEmployee() != null ? c.getEmployee().getEmployeeId() : null)

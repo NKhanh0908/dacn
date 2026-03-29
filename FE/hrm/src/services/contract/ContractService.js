@@ -1,9 +1,9 @@
 import { api } from "../../config/axios";
-import { 
-  CONTRACT, 
-  CONTRACT_FILTER, 
-  CONTRACT_TERMINATE, 
-  CONTRACT_SIGN 
+import {
+  CONTRACT,
+  CONTRACT_FILTER,
+  CONTRACT_TERMINATE,
+  CONTRACT_SIGN,
 } from "../../config/constants";
 
 /* Tạo hợp đồng */
@@ -31,14 +31,22 @@ export const deleteContract = async (contractId, config = {}) => {
 };
 
 /* Ký hợp đồng */
-export const signContract = async (contractId, config = {}) => {
-  const response = await api.post(`${CONTRACT}/${contractId}/${CONTRACT_SIGN}`, {}, config);
+export const signContract = async (contractId, data = {}, config = {}) => {
+  const response = await api.post(
+    `${CONTRACT}/${contractId}/${CONTRACT_SIGN}`,
+    data,
+    config
+  );
   return response.data;
 };
 
 /* Chấm dứt hợp đồng */
-export const terminateContract = async (contractId, config = {}) => {
-  const response = await api.post(`${CONTRACT}/${contractId}/${CONTRACT_TERMINATE}`, {}, config);
+export const terminateContract = async (contractId, data = {}, config = {}) => {
+  const response = await api.post(
+    `${CONTRACT}/${contractId}/${CONTRACT_TERMINATE}`,
+    data,
+    config
+  );
   return response.data;
 };
 
@@ -46,7 +54,7 @@ export const terminateContract = async (contractId, config = {}) => {
 export const filterContracts = async (params, config = {}) => {
   const response = await api.get(`${CONTRACT}/${CONTRACT_FILTER}`, {
     params,
-    ...config
+    ...config,
   });
   return response.data;
 };

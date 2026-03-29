@@ -4,7 +4,6 @@ import com.hrm.dacn.dtos.PageDTO;
 import com.hrm.dacn.dtos.contracts.request.*;
 import com.hrm.dacn.dtos.contracts.response.ContractResponse;
 import com.hrm.dacn.entities.Account;
-import com.hrm.dacn.entities.Company;
 import com.hrm.dacn.entities.Contracts;
 import com.hrm.dacn.entities.Employee;
 import com.hrm.dacn.enums.contracts.ContractStatus;
@@ -52,14 +51,10 @@ public class ContractServiceImpl implements ContractService {
         Employee employee = employeeRepository.findById(request.getEmployeeId())
                 .orElseThrow(() -> new CustomException(Error.EMPLOYEE_NOT_FOUND));
 
-        Company company = companyRepository.findById(request.getCompanyId())
-                .orElseThrow(() -> new CustomException(Error.COMPANY_NOT_FOUND));
-
         validateCreateContract(employee.getEmployeeId(), request);
 
         Contracts contract = ContractMapper.toEntity(request);
         contract.setEmployee(employee);
-        contract.setCompany(company);
         contract.setStatus(ContractStatus.DRAFT);
 
         Contracts createdContracts = contractRepository.save(contract);

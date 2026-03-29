@@ -33,6 +33,7 @@ export const useFetchList = (apiFunc, query = {}, config = {}) => {
     return () => {
       isMounted = false;
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [JSON.stringify(query)]);
 
   return { data, loading, error };

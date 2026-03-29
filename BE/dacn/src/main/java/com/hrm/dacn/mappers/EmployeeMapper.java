@@ -47,7 +47,6 @@ public class EmployeeMapper {
                 .bankName(request.getBankName())
                 .taxCode(request.getTaxCode())
                 .socialInsuranceNumber(request.getSocialInsuranceNumber())
-                .avatarUrl(request.getAvatarUrl())
                 .emergencyContactName(request.getEmergencyContactName())
                 .emergencyContactPhone(request.getEmergencyContactPhone())
                 .emergencyContactRelationship(request.getEmergencyContactRelationship())
@@ -92,8 +91,6 @@ public class EmployeeMapper {
             employee.setTaxCode(request.getTaxCode());
         if (request.getSocialInsuranceNumber() != null)
             employee.setSocialInsuranceNumber(request.getSocialInsuranceNumber());
-        if (request.getAvatarUrl() != null)
-            employee.setAvatarUrl(request.getAvatarUrl());
         if (request.getEmergencyContactName() != null)
             employee.setEmergencyContactName(request.getEmergencyContactName());
         if (request.getEmergencyContactPhone() != null)

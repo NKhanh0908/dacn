@@ -1,116 +1,213 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { checkIn, checkOut, getTodayAttendance, getMonthlyAttendance, getAttendanceStatistics } from "../services/attendance/AttendanceService";
 import { useEmployeeContext } from "./EmployeeContext";
+import { 
+  checkIn, 
+  checkOut, 
+  getTodayAttendance, 
+  getMonthlyAttendance, 
+  getAttendanceStatistics,
+  filterAttendances,
+  createManualAttendance,
+  updateAttendance,
+  deleteAttendance,
+  approveAttendance,
+  getAttendanceById
+} from "../services";
 
-// Tạo context dùng chung cho module chấm công
 const AttendanceContext = createContext();
 
 export const AttendanceProvider = ({ children }) => {
   const { employee } = useEmployeeContext();
+
+  // ================= STATE =================
   const [todayAttendance, setTodayAttendance] = useState(null);
   const [monthlyAttendances, setMonthlyAttendances] = useState([]);
   const [statistics, setStatistics] = useState(null);
+  const [attendanceDetail, setAttendanceDetail] = useState(null);
+
+  // 👉 ADMIN
+  const [attendances, setAttendances] = useState([]);
+
   const [loading, setLoading] = useState(false);
 
-  /*Lấy dữ liệu chấm công hôm nay của nhân viên*/
+  // ================= EMPLOYEE =================
   const fetchTodayAttendance = async (employeeId) => {
     try {
-      console.log("Fetching today attendance for:", employeeId);
       const res = await getTodayAttendance(employeeId);
-      console.log("Today attendance:", res);
       setTodayAttendance(res || null);
     } catch (error) {
-      console.error("Get today attendance error:", error);
+      console.error(error);
     }
   };
 
-  /*Lấy dữ liệu chấm công theo tháng*/
   const fetchMonthlyAttendance = async (employeeId, year, month) => {
     try {
       const res = await getMonthlyAttendance(employeeId, year, month);
-      console.log("Monthly attendance:", res);
       setMonthlyAttendances(res || []);
     } catch (error) {
-      console.error("Get monthly attendance error:", error);
+      console.error(error);
     }
   };
 
-  /*Lấy thống kê chấm công của nhân viên*/
   const fetchStatistics = async (employeeId) => {
     try {
-      const startDate = "2024-01-01"; 
+      const startDate = "2024-01-01";
       const endDate = new Date().toISOString().split("T")[0];
+
       const res = await getAttendanceStatistics(
         employeeId,
         startDate,
         endDate
       );
-      console.log("Statistics:", res);
+
       setStatistics(res);
     } catch (error) {
-      console.error("Get statistics error:", error);
+      console.error(error);
     }
   };
 
-  /*Xử lý check-in*/
   const handleCheckIn = async () => {
     try {
       if (!employee?.employeeId) return;
       setLoading(true);
+
       await checkIn({ method: "BUTTON" });
-      // Sau khi check-in -> lấy lại dữ liệu hôm nay
-      const res = await getTodayAttendance(employee.employeeId);
-      setTodayAttendance(res);
-    } catch (error) {
-      console.error("Check-in error:", error);
+
+      await fetchTodayAttendance(employee.employeeId);
     } finally {
       setLoading(false);
     }
   };
 
-  /*Xử lý check-out*/
   const handleCheckOut = async () => {
     try {
       if (!employee?.employeeId) return;
       setLoading(true);
+
       await checkOut({ method: "BUTTON" });
-      // Sau khi check-out -> lấy lại dữ liệu hôm nay
-      const res = await getTodayAttendance(employee.employeeId);
-      setTodayAttendance(res);
-    } catch (error) {
-      console.error("Check-out error:", error);
+
+      await fetchTodayAttendance(employee.employeeId);
     } finally {
       setLoading(false);
     }
   };
 
-  /*Khi employee thay đổi -> load lại toàn bộ dữ liệu chấm công*/
-  useEffect(() => {
-    if (employee?.employeeId) {
-      fetchTodayAttendance(employee.employeeId);
+  // ================= ADMIN =================
+  // Lấy danh sách attendance (filter)
+  const fetchAttendances = async (params = {}) => {
+    try {
+      setLoading(true);
 
-      const now = new Date();
+      const res = await filterAttendances(params);
 
-      fetchMonthlyAttendance(
-        employee.employeeId,
-        now.getFullYear(),
-        now.getMonth() + 1
-      );
+      const data = res?.data?.content || res?.data || [];
 
-      fetchStatistics(employee.employeeId);
+      setAttendances(data);
+    } finally {
+      setLoading(false);
     }
-  }, [employee]);
+  };
+
+  // Thêm thủ công
+  const addManualAttendance = async (data) => {
+    try {
+      await createManualAttendance(data);
+      await fetchAttendances();
+      return { success: true };
+    } catch (error) {
+      console.error("Create manual attendance error:", error);
+
+      const message =
+        error?.response?.data?.errors?.[0] ||
+        error?.response?.data?.message ||
+        "Lỗi tạo chấm công";
+
+      return {
+        success: false,
+        message,
+      };
+    }
+  };
+
+  // Update
+  const editAttendance = async (id, data) => {
+    try {
+      await updateAttendance(id, data);
+      await fetchAttendances();
+    } catch (error) {
+      console.error("Update attendance error:", error);
+    }
+  };
+
+  // Delete
+  const removeAttendance = async (id) => {
+    try {
+      await deleteAttendance(id);
+      await fetchAttendances();
+    } catch (error) {
+      console.error("Delete attendance error:", error);
+    }
+  };
+
+  // Approve
+  const approve = async (id) => {
+    try {
+      await approveAttendance(id);
+      await fetchAttendances();
+    } catch (error) {
+      console.error("Approve error:", error);
+    }
+  };
+
+  const fetchAttendanceById = async (id) => {
+    try {
+      setLoading(true);
+
+      const res = await getAttendanceById(id);
+
+      const data = res?.data || res; // tùy format BE
+
+      setAttendanceDetail(data);
+    } catch (error) {
+      console.error("Fetch attendance detail error:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // ================= AUTO LOAD =================
+  useEffect(() => {
+    if (!employee?.employeeId) return;
+
+    fetchTodayAttendance(employee.employeeId);
+    fetchStatistics(employee.employeeId);
+
+  }, [employee?.employeeId]);
 
   return (
     <AttendanceContext.Provider
       value={{
+        // employee
         todayAttendance,
         monthlyAttendances,
         statistics,
-        loading,
         handleCheckIn,
         handleCheckOut,
-        fetchMonthlyAttendance 
+        fetchMonthlyAttendance,
+
+        // admin
+        attendances,
+        fetchAttendances,
+        addManualAttendance,
+        editAttendance,
+        removeAttendance,
+        approve,
+
+        // ✅ NEW
+        attendanceDetail,
+        fetchAttendanceById,
+
+        loading
       }}
     >
       {children}

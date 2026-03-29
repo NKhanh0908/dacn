@@ -1,11 +1,40 @@
 import { createBrowserRouter, RouterProvider, Navigate } from "react-router-dom";
-import Login from "./pages/auth/Login";
-import DashboardLayout from "./pages/dashboard/Dashboard";
-import ProfilePage from "./pages/profile/ProfilePage";
-import ContractPage from "./pages/contract/ContractPage";
-import ContractDetail from "./pages/contract/ContractDetail";
-import AttendancePage from "./pages/attendance/AttendancePage";
-import AttendanceRequestPage from "./pages/attendance_requests/AttendanceRequestsPage";
+import {
+  Login, 
+  DashboardLayout, 
+  ProfilePage, 
+  ContractPage, 
+  ContractDetail, 
+  AttendancePage, 
+  AttendanceRequestPage, 
+  MyPayrollPage,
+  PayrollDetailPage,
+  WorkSchedulePage,
+  LeaveRequestPage,
+  EmployeesManagement,
+  CreateNewEmployeePage,
+  EditEmployeePage,
+  EmployeeDetailPage,
+  PayrollManagement,
+  PayrollManagementDetailPage,
+  WorkScheduleManagementPage,
+  WorkScheduleEditPage,
+  WorkScheduleCreatePage,
+  WorkCalendarCreatePage,
+  HolidayEditPage,
+  HolidayCreatePage,
+  AttendanceManagementPage,
+  AttendanceManagementDetailPage,
+  AttendanceManagementEditPage,
+  AttendanceCreatePage,
+  LeaveRequestManagement,
+  OvertimeManagement,
+  ContractManagement,
+  ContractDetailPage,
+  ContractEditPage,
+  ContractCreatePage,
+  AttendanceRequestManagement
+} from "./pages/index";
 
 const isAuthenticated = () => {
   return !!localStorage.getItem("access_token");
@@ -21,25 +50,65 @@ const router = createBrowserRouter([
     element: isAuthenticated() ? <DashboardLayout /> : <Navigate to="/login" />,
     children: [
       {
-        path: "profile",
-        element: <ProfilePage />,
+        index: true,
+        element: (() => {
+          const role = localStorage.getItem("role");
+          if (role === "EMPLOYEE") 
+            return <Navigate to="/profile" replace />;
+            return <Navigate to="/" replace />; 
+        })()
       },
-      {
-        path: "attendance",
-        element: <AttendancePage />,
-      },
-      {
-        path: "attendance-requests",
-        element: <AttendanceRequestPage />,
-      },
-      {
-        path: "contracts",
-        element: <ContractPage />,
-      },
-      {
-        path: "contracts/:id",
-        element: <ContractDetail />,
-      }
+
+      // CÁC ROUTE CÁ NHÂN (Dùng chung hoặc Employee)
+      { path: "profile", element: <ProfilePage /> },
+
+      { path: "attendance", element: <AttendancePage /> },
+      { path: "attendance-requests", element: <AttendanceRequestPage /> },
+
+      { path: "contracts", element: <ContractPage /> },
+      { path: "contracts/:id", element: <ContractDetail /> },
+
+      { path: "payrolls", element: <MyPayrollPage /> },
+      { path: "payrolls/:id", element: <PayrollDetailPage /> },
+
+      { path: "work-schedule", element: <WorkSchedulePage /> },
+
+      { path: "leave-requests", element: <LeaveRequestPage /> },
+
+      // CÁC ROUTE QUẢN LÝ (Admin/HR) - Đảm bảo PATH là duy nhất
+      { path: "employees", element: <EmployeesManagement /> },
+      { path: "employees/create", element: <CreateNewEmployeePage /> },
+      { path: "employees/edit/:id", element: <EditEmployeePage /> },
+      { path: "employees/:id", element: <EmployeeDetailPage /> },
+
+      { path: "attendance-management", element: <AttendanceManagementPage/> },
+      { path: "attendance-management/:id", element: <AttendanceManagementDetailPage /> },
+      { path: "attendance-management/edit/:id", element: <AttendanceManagementEditPage /> },
+      { path: "attendance-management/create", element: <AttendanceCreatePage /> },
+
+      { path: "attendance-requests-mn", element: <AttendanceRequestManagement /> },
+
+      { path: "payroll-management", element: <PayrollManagement /> },
+      { path: "payroll-management/:payrollId", element: <PayrollManagementDetailPage /> },
+
+      { path: "work-schedule-management", element: <WorkScheduleManagementPage /> },
+      { path: "work-schedule-management/edit/:id", element: <WorkScheduleEditPage /> },
+      { path: "work-schedule-management/create", element: <WorkScheduleCreatePage /> },
+
+      { path: "work-calendar-management/create", element: <WorkCalendarCreatePage /> },
+
+      { path: "holiday-management/edit/:id", element: <HolidayEditPage /> },
+      { path: "holiday-management/create", element: <HolidayCreatePage /> },
+
+      { path: "leave-requests-mn", element: <LeaveRequestManagement /> },
+
+      { path: "overtime-requests-mn", element: <OvertimeManagement /> },
+      
+      { path: "contracts-management", element: <ContractManagement /> },
+      { path: "contracts-management/:id", element: <ContractDetailPage /> },
+      { path: "contracts-management/edit/:id", element: <ContractEditPage /> },
+      { path: "contracts-management/create", element: <ContractCreatePage /> },
+
     ],
   },
 ]);

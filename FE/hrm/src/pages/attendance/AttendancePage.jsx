@@ -1,7 +1,5 @@
 import { useEffect, useState } from "react";
-import { useEmployeeContext } from "../../context/EmployeeContext";
-import { useAttendanceContext } from "../../context/AttendanceContext";
-import { useWorkScheduleContext } from "../../context/WorkScheduleContext";
+import { useEmployeeContext, useAttendanceContext, useWorkScheduleContext } from "../../context";
 import { FiCalendar, FiClock, FiCheckCircle, FiAlertTriangle, FiPlusCircle } from "react-icons/fi";
 
 const AttendancePage = () => {
@@ -28,7 +26,6 @@ const AttendancePage = () => {
   const totalWorkHours = statistics?.totalWorkHours || 0;
   const overtimeHours = statistics?.totalOvertimeHours || 0;
   const lateDays = statistics?.lateDays || 0;
-
   const onTimeDays = (statistics?.presentDays || 0) - (statistics?.lateDays || 0);
 
   const formatHours = (hours) => {
@@ -80,10 +77,14 @@ const AttendancePage = () => {
 
   useEffect(() => {
     if (!employee?.employeeId) return;
+
     const year = currentDate.getFullYear();
     const month = currentDate.getMonth() + 1;
+
     fetchMonthlyAttendance(employee.employeeId, year, month);
-  }, [currentDate, employee]);
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentDate, employee?.employeeId]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -99,7 +100,7 @@ const AttendancePage = () => {
   }, []);
 
   return (
-    <div className="overflow-y-auto h-[calc(100vh-100px)] pr-4">
+    <div className="overflow-y-auto h-[calc(100vh-100px)] pr-4 pb-4">
       <div className="w-full mx-auto">
 
         {/* ================= HEADER ================= */}
@@ -168,7 +169,6 @@ const AttendancePage = () => {
               </div>
             </div>
 
-
             {/* ================= RIGHT PANEL ================= */}
             <div className="w-1/2 flex flex-col gap-4">
               <div className="border-2 border-[#162F47] rounded-2xl p-5 shadow-2xl">
@@ -183,16 +183,14 @@ const AttendancePage = () => {
                   <p className="text-gray-500 flex justify-between">
                     Ca làm việc:
                     <span className="font-semibold text-black">
-                      {defaultSchedule?.startTime || "--:--"} -
-                      {defaultSchedule?.endTime || "--:--"}
+                      {defaultSchedule?.startTime || "--:--"} - {defaultSchedule?.endTime || "--:--"}
                     </span>
                   </p>
 
                   <p className="text-gray-500 flex justify-between">
                     Nghỉ trưa:
                     <span className="font-semibold text-black">
-                      {defaultSchedule?.breakStartTime || "--:--"} -
-                      {defaultSchedule?.breakEndTime || "--:--"}
+                      {defaultSchedule?.breakStartTime || "--:--"} - {defaultSchedule?.breakEndTime || "--:--"}
                     </span>
                   </p>
 
@@ -260,7 +258,6 @@ const AttendancePage = () => {
             </div>
           </div>
 
-
           {/* ================= MONTHLY CALENDAR ================= */}
           <div className="border-2 border-[#162F47] rounded-2xl p-5 shadow-2xl mt-6">
             <h2 className="text-lg font-semibold mb-4">
@@ -325,7 +322,6 @@ const AttendancePage = () => {
                     className="border p-2 rounded-lg text-center text-sm"
                   >
                     <p className="font-semibold">{day}</p>
-
                     {attendance ? (
                       <>
                         <p className="text-green-600">

@@ -1,6 +1,7 @@
-import { FiHome, FiSettings, FiUsers, FiUser, FiCalendar, FiFileText, FiDollarSign, FiClock } from "react-icons/fi";
+/* eslint-disable react-hooks/set-state-in-effect */
 import { useState, useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation, NavLink } from "react-router-dom";
+import { FiHome, FiUsers, FiUser, FiCalendar, FiFileText, FiDollarSign, FiClock, FiCheckSquare, FiTrendingUp, } from "react-icons/fi";
 
 const Sidebar = () => {
   const navigate = useNavigate();
@@ -21,7 +22,6 @@ const Sidebar = () => {
   // mở submenu khi đang ở trang attendance
   useEffect(() => {
     if (location.pathname.startsWith("/attendance")) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       setOpenAttendance(true);
     } else {
       setOpenAttendance(false);
@@ -52,13 +52,18 @@ const Sidebar = () => {
       {/* MENU */}
       <div className="flex flex-col gap-2 px-4">
         {/* Trang chủ */}
-        <button
-          onClick={() => handleNavigate("/")}
-          className={`${menuClass} ${isActive("/")}`}
-        >
-          <FiHome size={18} />
-          Trang chủ
-        </button>
+        {role !== "EMPLOYEE" && (
+          <NavLink
+            to="/"
+            end
+            className={({ isActive }) =>
+              `${menuClass} ${isActive ? "bg-white/15 text-blue-400" : ""}`
+            }
+          >
+            <FiHome size={18} />
+            Trang chủ
+          </NavLink>
+        )} 
 
         {/* Profile */}
         <button
@@ -70,23 +75,82 @@ const Sidebar = () => {
         </button>
 
         {/* ADMIN */}
-        {role === "ADMIN" && (
+        {(role === "HR" || role === "ADMIN") && (
           <>
-            <button
-              onClick={() => handleNavigate("/employees")}
-              className={`${menuClass} ${isActive("/employees")}`}
+            <NavLink
+              to="/employees"
+              className={({ isActive }) =>
+                `${menuClass} ${isActive ? "bg-white/15 text-blue-400" : ""}`
+              }
             >
               <FiUsers size={18} />
               Quản lý nhân viên
-            </button>
+            </NavLink>
 
-            <button
-              onClick={() => handleNavigate("/accounts")}
-              className={`${menuClass} ${isActive("/accounts")}`}
+            <NavLink
+              to="/attendance-management"
+              className={({ isActive }) =>
+                `${menuClass} ${isActive ? "bg-white/15 text-blue-400" : ""}`
+              }
             >
-              <FiSettings size={18} />
-              Quản lý tài khoản
-            </button>
+              <FiCalendar size={18} />
+              Quản lý chấm công
+            </NavLink>
+
+            <NavLink
+              to="/contracts-management"
+              className={({ isActive }) =>
+                `${menuClass} ${isActive ? "bg-white/15 text-blue-400" : ""}`
+              }
+            >
+              <FiFileText size={18} />
+              Quản lý hợp đồng
+            </NavLink>
+
+            <NavLink
+              to="/payroll-management"
+              className={({ isActive }) =>
+                `${menuClass} ${isActive ? "bg-white/15 text-blue-400" : ""}`
+              }
+            >
+              <FiDollarSign size={18} />
+              Quản lý lương
+            </NavLink>
+
+            <NavLink
+              to="/work-schedule-management"
+              className={({ isActive }) => {
+                const isCalendar = location.pathname.startsWith("/work-calendar-management");
+                const isHoliday = location.pathname.startsWith("/holiday-management");
+
+                return `${menuClass} ${
+                  isActive || isCalendar || isHoliday ? "bg-white/15 text-blue-400" : ""
+                }`;
+              }}
+            >
+              <FiClock size={18} />
+              Quản lý ca làm việc
+            </NavLink>
+
+            <NavLink
+              to="/leave-requests-mn"
+              className={({ isActive }) =>
+                `${menuClass} ${isActive ? "bg-white/15 text-blue-400" : ""}`
+              }
+            >
+              <FiFileText size={18} />
+              Quản lý nghỉ phép
+            </NavLink>
+
+            {/* <NavLink
+              to="/overtime-requests-mn"
+              className={({ isActive }) =>
+                `${menuClass} ${isActive ? "bg-white/15 text-blue-400" : ""}`
+              }
+            >
+              <FiTrendingUp size={18} />
+              Quản lý tăng ca
+            </NavLink>                   */}
           </>
         )}
 
@@ -95,7 +159,6 @@ const Sidebar = () => {
           <>
             {/* CHẤM CÔNG */}
             <div>
-
               <button
                 onClick={() => {
                   setOpenAttendance(true);
@@ -133,22 +196,26 @@ const Sidebar = () => {
             </div>
 
             {/* Hợp đồng */}
-            <button
-              onClick={() => handleNavigate("/contracts")}
-              className={`${menuClass} ${isActive("/contracts")}`}
+            <NavLink
+              to="/contracts"
+              className={({ isActive }) =>
+                `${menuClass} ${isActive ? "bg-white/15 text-blue-400" : ""}`
+              }
             >
               <FiFileText size={18} />
               Hợp đồng
-            </button>
+            </NavLink>
 
             {/* Lương */}
-            <button
-              onClick={() => handleNavigate("/salary")}
-              className={`${menuClass} ${isActive("/salary")}`}
+            <NavLink
+              to="/payrolls"
+              className={({ isActive }) =>
+                `${menuClass} ${isActive ? "bg-white/15 text-blue-400" : ""}`
+              }
             >
               <FiDollarSign size={18} />
               Lương
-            </button>
+            </NavLink>
 
             {/* Ca làm */}
             <button

@@ -32,12 +32,6 @@ public class Company {
     @NotBlank(message = "Mã số thuế không được để trống")
     private String taxCode;
 
-    @Column(name = "business_registration_number", length = 50)
-    private String businessRegistrationNumber;
-
-    @Column(name = "registration_date")
-    private java.time.LocalDate registrationDate;
-
     @Column(name = "legal_representative", nullable = false, length = 100)
     @NotBlank(message = "Người đại diện pháp luật không được để trống")
     private String legalRepresentative;
@@ -56,15 +50,12 @@ public class Company {
     @Column(name = "website", length = 200)
     private String website;
 
-    @Column(name = "fax", length = 20)
-    private String fax;
-
     @Column(name = "head_office_address", nullable = false, length = 500)
     @NotBlank(message = "Địa chỉ trụ sở chính không được để trống")
     private String headOfficeAddress;
 
     @Column(name = "business_sector", length = 200)
-    private String businessSector; // Ngành nghề kinh doanh
+    private String businessSector;
 
     @Column(name = "number_of_employees")
     private Integer numberOfEmployees;
@@ -72,11 +63,8 @@ public class Company {
     @Column(name = "logo_url")
     private String logoUrl;
 
-    @Column(name = "company_seal_url")
-    private String companySealUrl; // Con dấu công ty
-
     @Column(name = "is_active")
-    private Boolean isActive = true;
+    private Boolean isActive;
 
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
@@ -86,6 +74,7 @@ public class Company {
 
     @PrePersist
     protected void onCreate() {
+        this.isActive = true;
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
     }

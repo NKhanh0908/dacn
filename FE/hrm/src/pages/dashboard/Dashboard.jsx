@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";    
 import { Outlet } from "react-router-dom";
-import Sidebar from "../../components/layout/Sidebar";
-import Header from "../../components/layout/Header";
+import { Sidebar, Header} from "../../components";
 import EditProfile from "../profile/EditProfile";
 
 const DashboardLayout = () => {

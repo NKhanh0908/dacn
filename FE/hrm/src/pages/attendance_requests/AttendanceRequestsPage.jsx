@@ -1,17 +1,10 @@
 import { useState } from "react";
-import { useAttendanceRequestContext } from "../../context/AttendanceRequestContext";
+import { useAttendanceRequestContext } from "../../context";
 import { FiPlus, FiClock, FiCalendar, FiGrid } from "react-icons/fi";
 
 const AttendanceRequestPage = () => {
-
-  const {
-    myRequests,
-    loading,
-    submitAttendanceRequest
-  } = useAttendanceRequestContext();
-
+  const { myRequests, loading, submitAttendanceRequest } = useAttendanceRequestContext();
   const [showForm, setShowForm] = useState(false);
-
   const [formData, setFormData] = useState({
     requestDate: "",
     checkInTime: "",
@@ -19,27 +12,75 @@ const AttendanceRequestPage = () => {
     requestType: "FORGOT_CHECK_IN",
     reason: ""
   });
+  const [errors, setErrors] = useState({});
 
   // pagination
   const [page, setPage] = useState(1);
-  const pageSize = 5;
+  const pageSize = 10;
 
   const totalPages = Math.ceil(myRequests.length / pageSize);
 
-  const paginatedRequests = myRequests.slice(
+  const sortedRequests = [...myRequests].sort((a, b) => {
+    const dateA = a.requestDate ? new Date(a.requestDate) : 0;
+    const dateB = b.requestDate ? new Date(b.requestDate) : 0;
+    return dateB - dateA; 
+  });
+
+  const paginatedRequests = sortedRequests.slice(
     (page - 1) * pageSize,
     page * pageSize
   );
 
   const handleChange = (e) => {
+    const { name, value } = e.target;
+
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
+      [name]: value
     });
+
+    setErrors((prev) => ({
+      ...prev,
+      [name]: ""
+    }));
+  };
+
+  const validate = () => {
+    const newErrors = {};
+
+    if (!formData.requestDate) {
+      newErrors.requestDate = "Không được để trống ngày";
+    }
+
+    if (!formData.checkInTime) {
+      newErrors.checkInTime = "Không được để trống check in";
+    }
+
+    if (!formData.checkOutTime) {
+      newErrors.checkOutTime = "Không được để trống check out";
+    }
+
+    if (!formData.reason || formData.reason.trim() === "") {
+      newErrors.reason = "Không được để trống lý do";
+    }
+
+    // logic thêm: check giờ
+    if (formData.checkInTime && formData.checkOutTime) {
+      if (formData.checkOutTime <= formData.checkInTime) {
+        newErrors.checkOutTime = "Check out phải sau check in";
+      }
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!validate()) {
+      return;
+    }
 
     const payload = {
       requestDate: formData.requestDate,
@@ -61,9 +102,8 @@ const AttendanceRequestPage = () => {
       reason: ""
     });
 
+    setErrors({});
     setShowForm(false);
-
-    // quay về trang đầu
     setPage(1);
   };
 
@@ -99,78 +139,39 @@ const AttendanceRequestPage = () => {
 
         {/* FORM */}
         {showForm && (
-          <div className="border-2 border-[#162F47] rounded-2xl p-3 shadow-2xl">
+          <div className="bg-gray-200 border-2 border-[#162F47] rounded-2xl p-3 shadow-2xl">
             <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-              <div className="flex items-center gap-2 border-b border-[#162F47] pb-2">
-                <span className="text-[#162F47] font-semibold text-lg">
-                  Thông tin yêu cầu
-                </span>
+              <div className="border-b-[1px] border-[#162F47]">
+                <h3 className="font-semibold">Thông tin yêu cầu</h3>
               </div>
 
-              <div className="flex items-center gap-4">
-                <div className="flex items-center gap-2 w-1/4">
-                  <label className="font-semibold w-1/2">Ngày</label>
-                  <input
-                    type="date"
-                    name="requestDate"
-                    value={formData.requestDate}
-                    onChange={handleChange}
-                    className="w-full border-[1px] border-[#162F47] p-2 rounded"
-                    required
-                  />
+              <div className="space-y-2">
+                <div className="grid grid-cols-4 gap-4">
+                  <Input label="Ngày" type="date" name="requestDate" value={formData.requestDate} onChange={handleChange} error={errors.requestDate} />
+                  <Input label="Check In" type="time" name="checkInTime" value={formData.checkInTime} onChange={handleChange} error={errors.checkInTime} />
+                  <Input label="Check Out" type="time" name="checkOutTime" value={formData.checkOutTime} onChange={handleChange} error={errors.checkOutTime} />
+                  <div>
+                    <label className="text-xs font-semibold text-gray-500">Loại yêu cầu</label>
+                    <select
+                      name="requestType"
+                      value={formData.requestType}
+                      onChange={handleChange}
+                      className="w-full px-3 py-[10px] rounded-lg mt-1 outline-none cursor-pointer bg-white border border-gray-300"
+                    >
+                      <option value="FORGOT_CHECK_IN">Quên check in</option>
+                      <option value="FORGOT_CHECK_OUT">Quên check out</option>
+                    </select>
+                  </div>
                 </div>
-
-                <div className="flex items-center gap-2 w-1/4">
-                  <label className="font-semibold w-1/2">Check In</label>
-                  <input
-                    type="time"
-                    name="checkInTime"
-                    value={formData.checkInTime || ""}
-                    onChange={handleChange}
-                    className="w-full border-[1px] border-[#162F47] p-2 rounded"
-                  />
+                <div>
+                  <TextArea name="reason" label="Lý do" value={formData.reason} onChange={handleChange} error={errors.reason} />
                 </div>
-
-                <div className="flex items-center gap-2 w-1/4">
-                  <label className="font-semibold w-1/2">Check Out</label>
-                  <input
-                    type="time"
-                    name="checkOutTime"
-                    value={formData.checkOutTime || ""}
-                    onChange={handleChange}
-                    className="w-full border-[1px] border-[#162F47] p-2 rounded"
-                  />
-                </div>
-
-                <div className="flex items-center gap-2 w-1/4">
-                  <label className="font-semibold w-1/2">Loại yêu cầu</label>
-                  <select
-                    name="requestType"
-                    value={formData.requestType}
-                    onChange={handleChange}
-                    className="w-full border-[1px] border-[#162F47] p-2 rounded"
-                  >
-                    <option value="FORGOT_CHECK_IN">Quên check in</option>
-                    <option value="FORGOT_CHECK_OUT">Quên check out</option>
-                  </select>
-                </div>
-              </div>
-
-              <div className="flex flex-col gap-2">
-                <label className="font-semibold">Lý do</label>
-                <textarea
-                  name="reason"
-                  value={formData.reason}
-                  onChange={handleChange}
-                  className="w-full border-[1px] border-[#162F47] p-2 rounded"
-                  rows="3"
-                />
               </div>
 
               <div className="flex gap-3">
                 <button
                   type="submit"
-                  className="bg-[#162F47] text-white px-4 py-2 rounded-xl hover:opacity-90 disabled:opacity-50"
+                  className="bg-[#162F47] text-white px-4 py-2 rounded-xl hover:bg-blue-500"
                 >
                   Gửi yêu cầu
                 </button>
@@ -178,7 +179,7 @@ const AttendanceRequestPage = () => {
                 <button
                   type="button"
                   onClick={() => setShowForm(false)}
-                  className="bg-gray-400 text-white px-4 py-2 rounded-lg hover:opacity-90 disabled:opacity-50"
+                  className="bg-gray-400 text-white px-4 py-2 rounded-lg hover:bg-gray-500"
                 >
                   Hủy
                 </button>
@@ -220,10 +221,7 @@ const AttendanceRequestPage = () => {
 
                   <tbody>
                     {paginatedRequests.map((req) => (
-                      <tr 
-                        key={req.id} 
-                        className="border-b hover:bg-blue-200 transition"
-                      >
+                      <tr key={req.id} className="border-b hover:bg-blue-200 transition">
                         <td className="p-3 flex items-center gap-2">
                           <FiCalendar />
                           {new Date(req.requestDate).toLocaleDateString("vi-VN")}
@@ -301,5 +299,41 @@ const AttendanceRequestPage = () => {
     </div>
   );
 };
+
+// ================= COMPONENT =================
+const Input = ({ label, error, ...props }) => (
+  <div>
+    <label className="text-xs font-semibold text-gray-500">{label}</label>
+
+    <input
+      {...props}
+      className={`w-full px-3 py-2 border rounded-lg mt-1 outline-none ${
+        error ? "border-red-500 focus:ring-2 focus:ring-red-300" : "border-gray-300"
+      }`}
+    />
+
+    {error && (
+      <p className="text-red-500 text-xs mt-1">{error}</p>
+    )}
+  </div>
+);
+
+const TextArea = ({ label, error, className = "", ...props }) => (
+  <div>
+    <label className="text-xs font-semibold text-gray-500">{label}</label>
+
+    <textarea
+      {...props}
+      className={`w-full px-3 py-2 h-[50px] border rounded-lg mt-1 outline-none ${
+        error ? "border-red-500 focus:ring-2 focus:ring-red-300" : "border-gray-300"
+      } ${className}`}
+      rows={3}
+    />
+
+    {error && (
+      <p className="text-red-500 text-xs mt-1">{error}</p>
+    )}
+  </div>
+);
 
 export default AttendanceRequestPage;

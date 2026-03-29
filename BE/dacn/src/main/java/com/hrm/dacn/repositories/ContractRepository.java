@@ -5,6 +5,7 @@ import com.hrm.dacn.enums.contracts.ContractStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
@@ -12,7 +13,9 @@ import java.util.Optional;
 @Repository
 public interface ContractRepository extends JpaRepository<Contracts, Long>, JpaSpecificationExecutor<Contracts> {
 
-    @Query(value = "SELECT c from Contracts  c where c.status = 'ACTIVE' ")
-    Optional<Contracts> findActiveContract(Long employId);
+    @Query("SELECT c FROM Contracts c WHERE c.employee.employeeId = :employeeId AND c.status = 'ACTIVE'")
+    Optional<Contracts> findActiveContract(@Param("employeeId") Long employeeId);
+    @Query("SELECT COUNT(c) > 0 FROM Contracts c WHERE c.employee.employeeId = :employeeId AND c.status = 'ACTIVE'")
+    boolean existsActiveContract(@Param("employeeId") Long employeeId);
 
 }
