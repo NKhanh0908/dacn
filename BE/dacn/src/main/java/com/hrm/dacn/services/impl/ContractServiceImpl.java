@@ -22,7 +22,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -117,6 +119,22 @@ public class ContractServiceImpl implements ContractService {
     }
 
     @Override
+    public ContractResponse sign(Long contractId) {
+        Contracts contract = contractRepository.findById(contractId)
+                .orElseThrow(() -> new CustomException(Error.CONTRACT_NOT_FOUND));
+
+        if(contract.getStatus() == ContractStatus.PENDING_SIGNATURE
+                || contract.getStatus() == ContractStatus.DRAFT
+        ) {
+            throw new CustomException(Error.CONTRACT_INVALID_STATUS_FOR_SIGNING);
+        }
+
+        contract.setStatus(ContractStatus.ACTIVE);
+
+        return ContractMapper.toResponse(contractRepository.save(contract));
+    }
+
+    @Override
     public ContractResponse terminateContract(Long contractId, ContractTerminateRequest request) {
         Contracts contract = contractRepository.findById(contractId)
                 .orElseThrow(() -> new CustomException(Error.CONTRACT_NOT_FOUND));
@@ -144,6 +162,25 @@ public class ContractServiceImpl implements ContractService {
                 .orElseThrow(() -> new CustomException(Error.CONTRACT_NOT_FOUND));
 
         return ContractMapper.toResponse(contracts);
+    }
+
+    @Scheduled(cron = "0 0 1 * * ?")
+    @Transactional
+    @Override
+    public void expireContractsJob() {
+
+        List<Contracts> expiredContracts = contractRepository.findExpiredActiveContracts();
+
+        if (expiredContracts.isEmpty()) {
+            return;
+        }
+
+        for (Contracts contract : expiredContracts) {
+            contract.setStatus(ContractStatus.EXPIRED);
+        }
+
+        contractRepository.saveAll(expiredContracts);
+
     }
 
     @Override
