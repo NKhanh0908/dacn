@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { createLeaveRequest, filterLeaveRequests } from "../services";
+import { createLeaveRequest, getMyLeaveRequests  } from "../services";
 
 // Tạo context
 const LeaveRequestContext = createContext();
@@ -10,26 +10,17 @@ export const LeaveRequestProvider = ({ children }) => {
   const [loading, setLoading] = useState(false);
   
   const [page, setPage] = useState(0);
-  const [size] = useState(10);
   const [totalPages, setTotalPages] = useState(0);
 
-  const [filters, setFilters] = useState({});
-
   /* Lấy danh sách đơn nghỉ phép của nhân viên */
-  const fetchLeaveRequests  = async () => {
+  const fetchLeaveRequests = async () => {
     try {
       setLoading(true);
 
-      const res = await filterLeaveRequests({
-        ...filters,
-        page,
-        size
-      });
+      const data = await getMyLeaveRequests();
 
-      const data = res.data || res; 
-      setLeaveRequests(data.content || []);
-      setTotalPages(data.totalPages || 0);
-
+      setLeaveRequests(data || []);
+      setTotalPages(1); 
     } catch (err) {
       console.error("Lỗi load leave requests:", err);
     } finally {
@@ -64,7 +55,6 @@ export const LeaveRequestProvider = ({ children }) => {
         page,
         totalPages,
         setPage,
-        setFilters,
         submitLeaveRequest
       }}
     >

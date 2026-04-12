@@ -119,7 +119,7 @@ const ContractPage = () => {
           </button>
 
           <span className="text-sm text-gray-500">
-            Trang {page} / {totalPages}
+            Trang {page + 1} / {totalPages}
           </span>
 
           <button
