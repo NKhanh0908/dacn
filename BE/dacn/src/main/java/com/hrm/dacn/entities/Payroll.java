@@ -1,8 +1,6 @@
 package com.hrm.dacn.entities;
 
 import jakarta.persistence.*;
-import lombok.Builder;
-import lombok.Data;
 
 import java.time.LocalDateTime;
 import jakarta.persistence.*;
@@ -76,6 +74,15 @@ public class Payroll {
 
     @Column(name = "total_deductions")
     private Double totalDeductions; // Tổng các khoản khấu trừ (Bảo hiểm + Thuế + Phạt...)
+
+    @Column(name = "late_deduction")
+    private Double lateDeduction; // Tiền phạt đi muộn (Nếu có)
+
+    @Column(name = "unpaid_leave_deduction")
+    private Double unpaidLeaveDeduction; // Tiền khấu trừ nghỉ khi đã hết phép năm
+
+    @Column(name = "daily_salary_leave")
+    private Double dailySalaryLeave; // Tiền khấu trừ nghỉ phép dự
 
     // =========================
     // TỔNG KẾT

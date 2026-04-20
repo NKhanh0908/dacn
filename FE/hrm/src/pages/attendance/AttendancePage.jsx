@@ -324,12 +324,22 @@ const AttendancePage = () => {
                     <p className="font-semibold">{day}</p>
                     {attendance ? (
                       <>
-                        <p className="text-green-600">
-                          {attendance.checkInTime}
-                        </p>
-                        <p className="text-red-600">
-                          {attendance.checkOutTime || "--:--"}
-                        </p>
+                        {/* CASE: có check in */}
+                        {attendance.checkInTime ? (
+                          <>
+                            <p className="text-green-600">
+                              {attendance.checkInTime}
+                            </p>
+                            <p className="text-red-600">
+                              {attendance.checkOutTime || "--:--"}
+                            </p>
+                          </>
+                        ) : (
+                          /* CASE: không có cả check in/out */
+                          <p className="text-blue-500 font-semibold text-xs">
+                            Nghỉ phép
+                          </p>
+                        )}
                       </>
                     ) : (
                       <p className="text-gray-400 text-xs">---</p>

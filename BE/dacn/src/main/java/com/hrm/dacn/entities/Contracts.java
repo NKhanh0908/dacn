@@ -104,6 +104,9 @@ public class Contracts {
     @Min(value = 0, message = "Số ngày nghỉ phép không âm")
     private Integer annualLeaveDays = 12; // Nghỉ phép năm
 
+    @Column(name = "available_annual_leave_days")
+    private Integer availableAnnualLeaveDays; 
+
     // =========================
     // TIỀN LƯƠNG VÀ PHỤ CẤP
     // =========================
@@ -235,6 +238,7 @@ public class Contracts {
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
+        this.availableAnnualLeaveDays = this.annualLeaveDays;
 
         // Tính ngày kết thúc thử việc
         if (probationPeriod != null && probationPeriod > 0) {
@@ -365,7 +369,8 @@ public class Contracts {
     /**
      * Lương cơ bản 1 ngày công = basicSalary / totalWorkingDays.
      */
-    private BigDecimal getDailyBasicSalary() {
+    @Transient
+    public BigDecimal getDailyBasicSalary() {
         if (workingDaysPerMonth <= 0) {
             throw new IllegalArgumentException("Tổng ngày công phải lớn hơn 0");
         }
@@ -383,10 +388,18 @@ public class Contracts {
 
     @Transient
     public BigDecimal getUnpaidLeaveDeductionAmount(int unpaidLeaveDays) {
-        if (unpaidLeaveDays <= 0) return BigDecimal.ZERO;
+        if (unpaidLeaveDays <= 0 || availableAnnualLeaveDays <= 0) {
+            return BigDecimal.ZERO;
+        }
+
+        // Chỉ tính khấu trừ cho số ngày nằm trong hạn mức phép còn lại
+        int daysToDeduct = Math.min(unpaidLeaveDays, availableAnnualLeaveDays);
+
+        this.availableAnnualLeaveDays -= daysToDeduct;
+
         return getDailyBasicSalary()
                 .multiply(unpaidLeaveDeductionRate.divide(BigDecimal.valueOf(100), 4, RoundingMode.HALF_UP))
-                .multiply(BigDecimal.valueOf(unpaidLeaveDays))
+                .multiply(BigDecimal.valueOf(daysToDeduct))
                 .setScale(2, RoundingMode.HALF_UP);
     }
 

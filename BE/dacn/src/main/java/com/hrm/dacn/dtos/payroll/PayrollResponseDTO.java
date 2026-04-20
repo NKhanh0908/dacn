@@ -32,6 +32,12 @@ public class PayrollResponseDTO {
     private Double personalIncomeTax;
     private Double totalDeductions;
 
+    // ===== Deductions =====
+    private Double lateDeduction;
+    private Double unpaidLeaveDeduction;
+    private Double dailySalaryLeave;
+
+
     // ===== Final Salary =====
     private Double netSalary;
 

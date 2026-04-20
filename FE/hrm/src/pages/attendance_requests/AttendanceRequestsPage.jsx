@@ -71,10 +71,21 @@ const AttendanceRequestPage = () => {
       }
     }
 
+    const isDuplicateDate = myRequests.some(req => {
+      if (!req.requestDate) return false;
+
+      const reqDate = new Date(req.requestDate).toISOString().split("T")[0];
+      return reqDate === formData.requestDate;
+    });
+
+    if (isDuplicateDate) {
+      newErrors.requestDate = "Ngày này đã chấm công hoặc đã gửi yêu cầu";
+    }
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
-
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
 

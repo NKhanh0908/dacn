@@ -16,8 +16,10 @@ public class PayrollMapper {
         double allowance = safeDouble(entity.getAllowances());
         double bonus = safeDouble(entity.getBonus());
         double other = safeDouble(entity.getOtherIncome());
+        double unpaidLeaveDeduction = safeDouble(entity.getUnpaidLeaveDeduction());
+        double dailySalaryLeave = safeDouble(entity.getDailySalaryLeave());
 
-        double totalIncome = basic + ot + allowance + bonus + other;
+        double totalIncome = basic - dailySalaryLeave + ot + allowance + unpaidLeaveDeduction + bonus + other;
 
         return PayrollResponseDTO.builder()
                 .payrollId(entity.getPayrollId())
@@ -42,6 +44,10 @@ public class PayrollMapper {
                 .personalIncomeTax(safeDouble(entity.getPersonalIncomeTax()))
                 .totalDeductions(safeDouble(entity.getTotalDeductions()))
 
+                .lateDeduction(safeDouble(entity.getLateDeduction()))
+                .unpaidLeaveDeduction(safeDouble(entity.getUnpaidLeaveDeduction()))
+                .dailySalaryLeave(safeDouble(entity.getDailySalaryLeave()))
+        
                 // Final
                 .netSalary(safeDouble(entity.getNetSalary()))
                 .status(entity.getStatus())

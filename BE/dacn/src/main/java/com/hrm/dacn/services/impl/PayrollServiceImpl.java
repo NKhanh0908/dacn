@@ -14,6 +14,8 @@ import com.hrm.dacn.repositories.EmployeeRepository;
 import com.hrm.dacn.repositories.PayrollRepository;
 import com.hrm.dacn.services.*;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,6 +27,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class PayrollServiceImpl implements PayrollService {
 
     private final PayrollRepository repository;
@@ -65,6 +68,8 @@ public class PayrollServiceImpl implements PayrollService {
                 ? contract.getAllowances()
                 : BigDecimal.ZERO;
 
+        log.info("3. BASIC + ALLOWANCE: {}, {}", basicSalary, allowances);
+
         // thử việc
         if (contract.isInProbation()) {
             BigDecimal percent = BigDecimal
@@ -80,6 +85,8 @@ public class PayrollServiceImpl implements PayrollService {
 
         if (stats.getTotalOvertimeHours() > 0) {
 
+                log.info("Tổng OT: {} giờ", stats.getTotalOvertimeHours());
+
             BigDecimal hourlySalary = basicSalary
                     .divide(BigDecimal.valueOf(contract.getWorkingDaysPerMonth()), 2, RoundingMode.HALF_UP)
                     .divide(contract.getWorkingHoursPerDay(), 2, RoundingMode.HALF_UP);
@@ -89,22 +96,37 @@ public class PayrollServiceImpl implements PayrollService {
                     .multiply(BigDecimal.valueOf(1.5)); // OT thường
         }
 
+        log.info("4. OT: {}", overtimePay);
+
         // =========================
         // 5. TRỪ NGHỈ & ABSENT
-        // =========================
+        // =========================        
+        int totalLeaveWorkingDays = contract.getWorkingDaysPerMonth() - stats.getPresentDays() ; // Số ngày công thực tế (đã trừ nghỉ phép nhưng chưa trừ absent)
+
+        BigDecimal dailySalaryLeave = contract.getDailyBasicSalary()
+                .multiply(BigDecimal.valueOf(totalLeaveWorkingDays));
+
+        log.info("5. Daily Salary * Working Days: {} * {} = {}", contract.getDailyBasicSalary(), totalLeaveWorkingDays, dailySalaryLeave);
 
         int leaveDays = stats.getAbsentDays(); // ⚠️ cái này bạn đang dùng sai tên
 
+        log.info("5. Absent days: {}", leaveDays);
 
 
         BigDecimal unpaidLeaveDeduction =
                 contract.getUnpaidLeaveDeductionAmount(leaveDays);
 
+        log.info("5. Unpaid Leave Deduction: {}", unpaidLeaveDeduction);
 
-        int lateTimes = stats.getLateDays();
+
+        int lateTimes = stats.getLateDays(); // Thoi gian di tre. 
+
+        log.info("5. Late times: {}", lateTimes);
 
         BigDecimal lateDeduction =
                 contract.getLateDeductionAmount(lateTimes);
+
+        log.info("5. Late Deduction: {}", lateDeduction);
 
         // =========================
         // 7. BẢO HIỂM
@@ -149,8 +171,8 @@ public class PayrollServiceImpl implements PayrollService {
         // =========================
         BigDecimal totalDeductions = totalInsurance
                 .add(personalIncomeTax)
-                .add(unpaidLeaveDeduction)
                 .add(lateDeduction);
+                // .add(dailySalaryLeave);
 
         // =========================
         // 10. NET
@@ -158,7 +180,11 @@ public class PayrollServiceImpl implements PayrollService {
         BigDecimal netSalary = basicSalary
                 .add(allowances)
                 .add(overtimePay)
-                .subtract(totalDeductions);
+                .add(unpaidLeaveDeduction)
+                .subtract(totalDeductions)
+                .subtract(dailySalaryLeave);
+
+        contractRepository.save(contract); // Cập nhật lại số ngày phép còn lại sau khi tính lương
 
         // =========================
         // SAVE
@@ -175,6 +201,9 @@ public class PayrollServiceImpl implements PayrollService {
                 .unemploymentInsurance(unemploymentInsurance.doubleValue())
                 .personalIncomeTax(personalIncomeTax.doubleValue())
                 .totalDeductions(totalDeductions.doubleValue())
+                .lateDeduction(lateDeduction.doubleValue())
+                .unpaidLeaveDeduction(unpaidLeaveDeduction.doubleValue())
+                .dailySalaryLeave(dailySalaryLeave.doubleValue())
                 .netSalary(netSalary.doubleValue())
                 .status("CALCULATED")
                 .bonus(0.0)

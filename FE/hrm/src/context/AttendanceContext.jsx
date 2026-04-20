@@ -94,13 +94,13 @@ export const AttendanceProvider = ({ children }) => {
 
   // ================= ADMIN =================
   // Lấy danh sách attendance (filter)
-  const fetchAttendances = async (params = {}) => {
+  const fetchAttendances = async (params = { page: 0, size: 2000000000 }) => {
     try {
       setLoading(true);
 
       const res = await filterAttendances(params);
 
-      const data = res?.data?.content || res?.data || [];
+      const data = res?.data?.content || [];
 
       setAttendances(data);
     } finally {

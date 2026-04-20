@@ -111,13 +111,8 @@ const PayrollDetailPage = () => {
 
             <tbody>
               <tr>
-                <td className="border p-2">Lương cơ bản</td>
-                <td className="border p-2 text-right">{formatMoney(payroll.basicSalary)}</td>
-              </tr>
-
-              <tr>
-                <td className="border p-2">Tăng ca</td>
-                <td className="border p-2 text-right">{formatMoney(payroll.overtimePay)}</td>
+                <td className="border p-2">Lương</td>
+                <td className="border p-2 text-right">{formatMoney(payroll.basicSalary - payroll.dailySalaryLeave)}</td>
               </tr>
 
               <tr>
@@ -126,14 +121,24 @@ const PayrollDetailPage = () => {
               </tr>
 
               <tr>
+                <td className="border p-2">Tăng ca</td>
+                <td className="border p-2 text-right">{formatMoney(payroll.overtimePay)}</td>
+              </tr>
+
+              <tr>
+                <td className="border p-2">Nghỉ có phép</td>
+                <td className="border p-2 text-right">{formatMoney(payroll.unpaidLeaveDeduction)}</td>
+              </tr>
+
+              <tr>
                 <td className="border p-2">Thưởng</td>
                 <td className="border p-2 text-right">{formatMoney(payroll.bonus)}</td>
               </tr>
 
-              <tr>
+              {/* <tr>
                 <td className="border p-2">Thu nhập khác</td>
                 <td className="border p-2 text-right">{formatMoney(payroll.otherIncome)}</td>
-              </tr>
+              </tr> */}
 
               <tr className="font-bold">
                 <td className="border p-2">Tổng thu nhập</td>
@@ -172,6 +177,11 @@ const PayrollDetailPage = () => {
               <tr>
                 <td className="border p-2">Thuế TNCN</td>
                 <td className="border p-2 text-right">{formatMoney(payroll.personalIncomeTax)}</td>
+              </tr>
+
+              <tr>
+                <td className="border p-2">Đi trễ</td>
+                <td className="border p-2 text-right">{formatMoney(payroll.lateDeduction)}</td>
               </tr>
 
               <tr className="font-bold">
