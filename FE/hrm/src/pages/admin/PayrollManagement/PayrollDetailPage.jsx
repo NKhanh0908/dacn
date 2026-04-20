@@ -31,9 +31,10 @@ const PayrollManagementDetailPage = () => {
 
       // ===== THU NHẬP =====
       {},
-      { "Thông tin": "Lương cơ bản", "Giá trị": detailPayroll.basicSalary },
+      { "Thông tin": "Lương", "Giá trị": detailPayroll.basicSalary - detailPayroll.dailySalaryLeave },
       { "Thông tin": "Phụ cấp", "Giá trị": detailPayroll.allowances },
-      { "Thông tin": "Overtime", "Giá trị": detailPayroll.overtimePay },
+      { "Thông tin": "Tăng ca", "Giá trị": detailPayroll.overtimePay },
+      { "Thông tin": "Nghỉ có phép", "Giá trị": detailPayroll.unpaidLeaveDeduction },
       { "Thông tin": "Thưởng", "Giá trị": detailPayroll.bonus },
       { "Thông tin": "Thu nhập khác", "Giá trị": detailPayroll.otherIncome },
       { "Thông tin": "Tổng thu nhập", "Giá trị": detailPayroll.totalIncome },
@@ -44,6 +45,7 @@ const PayrollManagementDetailPage = () => {
       { "Thông tin": "BHYT", "Giá trị": detailPayroll.healthInsurance },
       { "Thông tin": "BHTN", "Giá trị": detailPayroll.unemploymentInsurance },
       { "Thông tin": "Thuế TNCN", "Giá trị": detailPayroll.personalIncomeTax },
+      { "Thông tin": "Đi trễ", "Giá trị": detailPayroll.lateDeduction },
       { "Thông tin": "Tổng khấu trừ", "Giá trị": detailPayroll.totalDeductions },
 
       // ===== NET =====
@@ -145,11 +147,12 @@ const PayrollManagementDetailPage = () => {
               <h3 className="font-semibold text-green-700 mb-3">Thu nhập</h3>
 
               <div className="space-y-2 text-sm">
-                <Row label="Lương cơ bản" value={detailPayroll.basicSalary} />
+                <Row label="Lương " value={detailPayroll.basicSalary - detailPayroll.dailySalaryLeave} />
                 <Row label="Phụ cấp" value={detailPayroll.allowances} />
-                <Row label="Overtime" value={detailPayroll.overtimePay} />
+                <Row label="Tăng ca" value={detailPayroll.overtimePay} />
+                <Row label="Nghỉ có phép" value={detailPayroll.unpaidLeaveDeduction} />
                 <Row label="Thưởng" value={detailPayroll.bonus} />
-                <Row label="Thu nhập khác" value={detailPayroll.otherIncome} />
+                {/* <Row label="Thu nhập khác" value={detailPayroll.otherIncome} /> */}
 
                 <div className="flex justify-between font-semibold border-t pt-2">
                   <span>Tổng thu nhập</span>
@@ -167,6 +170,7 @@ const PayrollManagementDetailPage = () => {
                 <Row label="BHYT" value={detailPayroll.healthInsurance} />
                 <Row label="BHTN" value={detailPayroll.unemploymentInsurance} />
                 <Row label="Thuế TNCN" value={detailPayroll.personalIncomeTax} />
+                <Row label="Đi trễ" value={detailPayroll.lateDeduction} />
 
                 <div className="flex justify-between font-semibold border-t pt-2 text-red-600">
                   <span>Tổng khấu trừ</span>
