@@ -52,7 +52,7 @@ const Sidebar = () => {
       {/* MENU */}
       <div className="flex flex-col gap-2 px-4">
         {/* Trang chủ */}
-        {role !== "EMPLOYEE" && (
+        {/* {role !== "EMPLOYEE" && (
           <NavLink
             to="/"
             end
@@ -63,7 +63,7 @@ const Sidebar = () => {
             <FiHome size={18} />
             Trang chủ
           </NavLink>
-        )} 
+        )}  */}
 
         {/* Profile */}
         <button
